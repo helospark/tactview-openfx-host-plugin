@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "imageLoader.h"
 
 int readInt(std::ifstream& file) {
@@ -62,18 +63,31 @@ int charToUnsignedInt(char data) {
     }
 }
 
-void writeImage(const char* fileName, Image* image) {
+void writeImage(const char* fileName, Image* image, char* type) {
     std::ofstream file(fileName);
 
     file << "P3\n";
     file << image->width << " " << image->height << " 255 255 255\n";
 
-    for (int i = 0; i < image->height; ++i) {
-        for (int j = 0; j < image->width; ++j) {
-            file << charToUnsignedInt(image->data[i * image->width * 4 + j * 4 + 0]) << " ";
-            file << charToUnsignedInt(image->data[i * image->width * 4 + j * 4 + 1]) << " ";
-            file << charToUnsignedInt(image->data[i * image->width * 4 + j * 4 + 2]) << " ";
-            file << "\n";
+    if (strcmp(type, "OfxBitDepthByte") == 0) {
+        char* imageData = (char*)image->data;
+        for (int i = 0; i < image->height; ++i) {
+            for (int j = 0; j < image->width; ++j) {
+                file << charToUnsignedInt(imageData[i * image->width * 4 + j * 4 + 0]) << " ";
+                file << charToUnsignedInt(imageData[i * image->width * 4 + j * 4 + 1]) << " ";
+                file << charToUnsignedInt(imageData[i * image->width * 4 + j * 4 + 2]) << " ";
+                file << "\n";
+            }
+        }
+    } else {
+        float* imageData = (float*)image->data;
+        for (int i = 0; i < image->height; ++i) {
+            for (int j = 0; j < image->width; ++j) {
+                file << (int)(imageData[i * image->width * 4 + j * 4 + 0]) << " ";
+                file << (int)(imageData[i * image->width * 4 + j * 4 + 1]) << " ";
+                file << (int)(imageData[i * image->width * 4 + j * 4 + 2]) << " ";
+                file << "\n";
+            }
         }
     }
 }

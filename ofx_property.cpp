@@ -6,7 +6,7 @@ OfxPropertySuiteV1* propertySuiteV1 = NULL;
 
 char* copyString(OfxPropertySetHandle property, const char* str) {
     int len = strlen(str);
-    char* newPointer = new char[len];
+    char* newPointer = new char[len + 1];
     strcpy(newPointer, str);
     property->stringToClean.push_back(newPointer);
     return newPointer;
@@ -15,7 +15,7 @@ char* copyString(OfxPropertySetHandle property, const char* str) {
 OfxStatus propGetDoubleN(OfxPropertySetHandle properties, const char *property, int count, double *value) {
     std::cout << "propGetDoubleN" << std::endl;
 
-    auto val = properties->integers[std::string(property)];
+    auto val = properties->doubles[std::string(property)];
 
     if (val.size() < count) {
         std::cout << "[!ERROR!] - No handle " << property << std::endl;
@@ -90,7 +90,7 @@ OfxStatus propGetDimension(OfxPropertySetHandle properties, const char *property
 }
 
 OfxStatus propSetPointer(OfxPropertySetHandle properties, const char *property, int index, void *value) {
-    std::cout << "propSetPointer" << std::endl;
+    std::cout << "propSetPointer " << property << " " << value << std::endl;
     std::string sproperty(property);
     if (properties->pointers[sproperty].size() <= index) {
         properties->pointers[sproperty].resize(index + 1);
@@ -111,7 +111,7 @@ OfxStatus propSetString(OfxPropertySetHandle properties, const char *property, i
 }
 
 OfxStatus propSetDouble(OfxPropertySetHandle properties, const char *property, int index, double value) {
-    std::cout << "propSetDouble" << std::endl;
+    std::cout << "propSetDouble " << property << std::endl;
     std::string sproperty(property);
     if (properties->doubles[sproperty].size() <= index) {
         properties->doubles[sproperty].resize(index + 1);
@@ -197,6 +197,7 @@ OfxStatus propGetPointer(OfxPropertySetHandle properties, const char *property, 
 
     if (index < result.size()) {
         *value = result.at(index);
+        std::cout << "    Returning " << *value << std::endl;
         return kOfxStatOK;
     } else {
         std::cout << "[!ERROR!] - No handle " << property << std::endl;

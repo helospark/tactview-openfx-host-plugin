@@ -1,9 +1,9 @@
 
 struct Image {
     int width, height;
-    char* data;
+    void* data;
 
-    Image(int width2, int height2, char* data2) : width(width2), height(height2), data(data2) {}
+    Image(int width2, int height2, void* data2) : width(width2), height(height2), data(data2) {}
 
     ~Image() {
         delete[] data;
@@ -12,4 +12,4 @@ struct Image {
 
 Image* loadImage(const char* imageFileName);
 
-void writeImage(const char* imageFileName, Image* image);
+void writeImage(const char* imageFileName, Image* image, char* type);

@@ -6,7 +6,8 @@
 
 struct OfxImageClipStruct {
     OfxPropertySetHandle properties;
-    char* data = NULL;
+    void* data = NULL;
+    char* type;
 };
 
 struct OfxImageEffectStruct {

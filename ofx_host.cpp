@@ -11,6 +11,7 @@
 #include "multithread.h"
 #include "memorySuite.h"
 #include "messageSuite.h"
+#include <sstream>
 
 typedef int(*intFptr)();
 typedef OfxPlugin*(*getPluginFptr)(int);
@@ -37,19 +38,38 @@ const void *fetchSuite(OfxPropertySetHandle host, const char *suiteName, int sui
     return (void*)0;
 }
 
+OfxPlugin* plugin;
+
+void callEntryPoint(const char *action, const void *handle, OfxPropertySetHandle inArgs, OfxPropertySetHandle outArgs) {
+    std::cout << "Calling " << action << std::endl;
+    OfxStatus result = plugin->mainEntry(action, handle, inArgs, outArgs);   
+    std::cout << action << " done" << std::endl;
+    if (result != kOfxStatOK) {
+        std::cout << "Error, result is " << result << std::endl;
+    }
+
+    if (result == kOfxStatErrUnsupported) {
+        exit(1);
+    }
+}
+
 int main(int argc, char** argv)
 {
     void *handle;
 
     //handle = dlopen("/home/black/Desktop/Examples/Basic/Linux-64-debug/basic.ofx", RTLD_LAZY);
     //handle = dlopen("/usr/local/Neat Video v5 OFX/NeatVideo5.ofx.bundle/Contents/Linux-x86-64/NeatVideo5.ofx", RTLD_LAZY);
-    handle = dlopen("/home/black/Downloads/tuttle-v0.8-1-g9daa09f (2)/plugin/Ramp-2.0.ofx.bundle/Contents/Linux-x86-64/Ramp-2.0.ofx", RTLD_LAZY);
+    handle = dlopen("/home/black/Downloads/openfx-misc/Misc/Linux-64-debug/Misc.ofx", RTLD_LAZY);
     //handle = dlopen("/home/black/Downloads/tuttle-v0.8-1-g9daa09f (2)/plugin/ColorBars-2.0.ofx.bundle/Contents/Linux-x86-64/ColorBars-2.0.ofx", RTLD_LAZY);
 
     if (!handle) {
         /* fail to load the library */
         fprintf(stderr, "Error: %s\n", dlerror());
         return EXIT_FAILURE;
+    }
+    int k = 0;
+    if (argc > 1) {
+        k = atoi(argv[1]);
     }
 
     intFptr func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
@@ -62,10 +82,9 @@ int main(int argc, char** argv)
     int plugins = func_print_name();
     fprintf(stderr, "Loaded, number of plugins %d\n", plugins);
 
-
     getPluginFptr getPlugin = (getPluginFptr) dlsym(handle, "OfxGetPlugin");
 
-    OfxPlugin* plugin = getPlugin(0);
+    plugin = getPlugin(k);
 
     std::cout << "Api version = " << plugin->apiVersion << std::endl;
 
@@ -82,7 +101,7 @@ int main(int argc, char** argv)
     propSetInt(host->host, kOfxImageEffectPropSupportsTiles, 0, 0);
     propSetInt(host->host, kOfxImageEffectPropTemporalClipAccess, 0, 0);
 
-    const char* supportedComponents[] = {"kOfxImageComponentRGBA", "kOfxImageComponentAlpha"};
+    const char* supportedComponents[] = {kOfxImageComponentRGBA, kOfxImageComponentAlpha};
     propSetStringN(host->host, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
     
     const char* supportedContexts[] = {kOfxImageEffectContextGenerator, kOfxImageEffectContextFilter};
@@ -124,20 +143,28 @@ int main(int argc, char** argv)
     propSetString(effectHandle->properties, kOfxPropVersion, 0, "1");
     propSetString(effectHandle->properties, kOfxPropVersionLabel, 0, "1");
     propSetString(effectHandle->properties, kOfxPluginPropFilePath, 0, "/tmp");
-    propSetString(effectHandle->properties, kOfxImageEffectPropSupportedContexts, 0, kOfxImageEffectContextFilter);
+    propSetString(effectHandle->properties, kOfxImageEffectPropSupportedContexts, 0, kOfxImageEffectContextGeneral);
     propSetString(effectHandle->properties, kOfxImageEffectPropSupportedPixelDepths, 0, kOfxBitDepthByte);
 
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 0, 831);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 1, 530);
+
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 0, 831);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 1, 530);
+
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectOffset, 0, 0);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectOffset, 1, 0);
 
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
 
     std::cout << "Loading plugin" << std::endl;
-    plugin->mainEntry(kOfxActionLoad, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxActionLoad, effectHandle, inParam, outParam);
     
     std::cout << "Calling entrypoint" << std::endl;
 
-    plugin->mainEntry(kOfxActionDescribe, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxActionDescribe, effectHandle, inParam, outParam);
     
     std::cout << "Returning back" << std::endl;
 
@@ -146,22 +173,22 @@ int main(int argc, char** argv)
 
 
     
-    propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, kOfxImageEffectContextGenerator);
+    propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
     propSetString(effectHandle->properties, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGB);
     propSetString(inParam, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
 
     std::cout << "Calling describeInContext" << std::endl;
 
-    plugin->mainEntry(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, outParam);
 
     printAllProperties(effectHandle->properties);
-    printAllProperties(effectHandle->clips[kOfxImageEffectSimpleSourceClipName]->properties);
-    printAllProperties(effectHandle->clips[kOfxImageEffectOutputClipName]->properties);
+  //  printAllProperties(effectHandle->clips[kOfxImageEffectSimpleSourceClipName]->properties);
+  //  printAllProperties(effectHandle->clips[kOfxImageEffectOutputClipName]->properties);
     for (int i = 0; i < effectHandle->parameters->parameters.size(); ++i) {
         printAllProperties(effectHandle->parameters->parameters[i]->properties);
     }
 
-    plugin->mainEntry(kOfxActionCreateInstance, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxActionCreateInstance, effectHandle, inParam, outParam);
 
     fprintf(stderr, "Plugin apiVersion=%s version=%d, pluginIdentifier=%s, pluginVersionMajor=%d, pluginVersionMinor=%d\n", plugin->pluginApi, plugin->apiVersion, plugin->pluginIdentifier, plugin->pluginVersionMajor, plugin->pluginVersionMinor);
 
@@ -177,18 +204,27 @@ int main(int argc, char** argv)
     propSetDouble(inParam, kOfxImageEffectPropFrameRange, 1, 0);
     propSetDouble(inParam, kOfxImageEffectPropFrameStep, 0, 1);
 
-    plugin->mainEntry(kOfxImageEffectActionBeginSequenceRender, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxImageEffectActionBeginSequenceRender, effectHandle, inParam, outParam);
 
-    plugin->mainEntry(kOfxImageEffectActionRender, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxImageEffectActionRender, effectHandle, inParam, outParam);
 
-    plugin->mainEntry(kOfxImageEffectActionEndSequenceRender, effectHandle, inParam, outParam);
+    callEntryPoint(kOfxImageEffectActionEndSequenceRender, effectHandle, inParam, outParam);
 
-    char* imageData = effectHandle->clips[kOfxImageEffectOutputClipName]->data;
+    void* imageData = effectHandle->clips[kOfxImageEffectOutputClipName]->data;
+    char* type = effectHandle->clips[kOfxImageEffectOutputClipName]->properties->strings["CLIP_TYPE"][0];
 
+    bool containsByte = false;
 
-    Image result(831, 530, imageData);
-    writeImage("/home/black/Downloads/image3.ppm", &result);
-
+    if (imageData != NULL) {
+        std::cout << "Rendering result" << std::endl;
+        Image result(831, 530, imageData);
+        std::stringstream ss("");
+        char* label = new char[200];
+        propGetString(effectHandle->properties, kOfxPropLabel, 0, &label);
+        ss << "/home/black/Downloads/image_" << k << "_" << label << ".ppm";
+        std::cout << "Writing file " << ss.str().c_str() << std::endl;
+        writeImage(ss.str().c_str(), &result, type);
+    }
     dlclose(handle);
 
     return 0;
