@@ -59,8 +59,15 @@ int main(int argc, char** argv)
 
     //handle = dlopen("/home/black/Desktop/Examples/Basic/Linux-64-debug/basic.ofx", RTLD_LAZY);
     //handle = dlopen("/usr/local/Neat Video v5 OFX/NeatVideo5.ofx.bundle/Contents/Linux-x86-64/NeatVideo5.ofx", RTLD_LAZY);
-    handle = dlopen("/home/black/Downloads/openfx-misc/Misc/Linux-64-debug/Misc.ofx", RTLD_LAZY);
-    //handle = dlopen("/home/black/Downloads/tuttle-v0.8-1-g9daa09f (2)/plugin/ColorBars-2.0.ofx.bundle/Contents/Linux-x86-64/ColorBars-2.0.ofx", RTLD_LAZY);
+    //handle = dlopen("/home/black/Downloads/openfx-misc/Misc/Linux-64-debug/Misc.ofx", RTLD_LAZY);
+    
+    const char* file = "/home/black/Downloads/tuttle-v0.8-1-g9daa09f (2)/plugin/Ramp-2.0.ofx.bundle/Contents/Linux-x86-64/Ramp-2.0.ofx"; 
+    
+    if (argc > 1) {
+        file = argv[1];
+    }
+
+    handle = dlopen(file, RTLD_LAZY);
 
     if (!handle) {
         /* fail to load the library */
@@ -68,8 +75,8 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     int k = 0;
-    if (argc > 1) {
-        k = atoi(argv[1]);
+    if (argc > 2) {
+        k = atoi(argv[2]);
     }
 
     intFptr func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");

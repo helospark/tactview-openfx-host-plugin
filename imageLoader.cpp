@@ -63,6 +63,16 @@ int charToUnsignedInt(char data) {
     }
 }
 
+int clamp(int v, int min, int max) {
+    if (v < min) {
+        return min;
+    }
+    if (v > max) {
+        return max;
+    }
+    return v;
+}
+
 void writeImage(const char* fileName, Image* image, char* type) {
     std::ofstream file(fileName);
 
@@ -83,9 +93,9 @@ void writeImage(const char* fileName, Image* image, char* type) {
         float* imageData = (float*)image->data;
         for (int i = 0; i < image->height; ++i) {
             for (int j = 0; j < image->width; ++j) {
-                file << (int)(imageData[i * image->width * 4 + j * 4 + 0]) << " ";
-                file << (int)(imageData[i * image->width * 4 + j * 4 + 1]) << " ";
-                file << (int)(imageData[i * image->width * 4 + j * 4 + 2]) << " ";
+                file << clamp((int)(imageData[i * image->width * 4 + j * 4 + 0] * 255.0f), 0, 255) << " ";
+                file << clamp((int)(imageData[i * image->width * 4 + j * 4 + 1] * 255.0f), 0, 255) << " ";
+                file << clamp((int)(imageData[i * image->width * 4 + j * 4 + 2] * 255.0f), 0, 255) << " ";
                 file << "\n";
             }
         }
