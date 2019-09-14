@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dlfcn.h>
-#include <ofxCore.h>
+#include "openfx/include/ofxCore.h"
 #include <iostream>
 #include "imageEffectStruct.h"
 #include "ofx_property.h"
@@ -12,6 +11,12 @@
 #include "memorySuite.h"
 #include "messageSuite.h"
 #include <sstream>
+
+#ifdef __linux__ 
+#include <dlfcn.h>
+#elif _WIN32 || __CYGWIN__
+#include <windows.h>
+#endif
 
 typedef int(*intFptr)();
 typedef OfxPlugin*(*getPluginFptr)(int);
@@ -33,7 +38,7 @@ const void *fetchSuite(OfxPropertySetHandle host, const char *suiteName, int sui
         return getMessageSuite();
     }
 
-    std::cout << " :( missing feature" << std::endl;
+    std::cout << " :( [ERROR] missing feature" << std::endl;
 
     return (void*)0;
 }
@@ -61,39 +66,69 @@ int main(int argc, char** argv)
     //handle = dlopen("/usr/local/Neat Video v5 OFX/NeatVideo5.ofx.bundle/Contents/Linux-x86-64/NeatVideo5.ofx", RTLD_LAZY);
     //handle = dlopen("/home/black/Downloads/openfx-misc/Misc/Linux-64-debug/Misc.ofx", RTLD_LAZY);
     
-    const char* file = "/home/black/Downloads/tuttle-v0.8-1-g9daa09f (2)/plugin/Ramp-2.0.ofx.bundle/Contents/Linux-x86-64/Ramp-2.0.ofx"; 
-    
+    const char* file = "C:\\Program Files\\Genifect OpenFX\\GenifectOfx.ofx.bundle\\Contents\\Win64\\GenifectOfx.ofx"; 
+ /**   
     if (argc > 1) {
         file = argv[1];
     }
+*/
+    #ifdef _linux_
+        handle = dlopen(file, RTLD_LAZY);
+        if (!handle) {
+            /* fail to load the library */
+            fprintf(stderr, "Error: %s\n", dlerror());
+            return EXIT_FAILURE;
+        }
+    #elif _WIN32 || __CYGWIN__
+    //handle = LoadLibrary(TEXT("C:\\Program Files\\Common Files\\OFX\\Plugins\\IgniteCore.ofx.bundle\\Contents\\Win64\\IgniteCore.ofx")); 
+        handle = LoadLibraryA(file); 
+        if (!handle) {
+            fprintf(stderr, "Error: %d\n", GetLastError());
+            return EXIT_FAILURE;
+        }
+    #endif
 
-    handle = dlopen(file, RTLD_LAZY);
 
-    if (!handle) {
-        /* fail to load the library */
-        fprintf(stderr, "Error: %s\n", dlerror());
-        return EXIT_FAILURE;
-    }
+
+
     int k = 0;
     if (argc > 2) {
         k = atoi(argv[2]);
     }
 
-    intFptr func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
-    if (!func_print_name) {
-        /* no such symbol */
-        fprintf(stderr, "Error: %s\n", dlerror());
-        dlclose(handle);
-        return EXIT_FAILURE;
-    }
+    intFptr func_print_name = NULL;
+
+    #ifdef _linux_
+        func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
+        if (!func_print_name) {
+            /* no such symbol */
+            fprintf(stderr, "Error: %s\n", dlerror());
+            dlclose(handle);
+            return EXIT_FAILURE;
+        }
+    #elif _WIN32 || __CYGWIN__
+        func_print_name = (intFptr) GetProcAddress((HINSTANCE)handle, "OfxGetNumberOfPlugins");
+        if (!func_print_name) {
+            /* no such symbol */
+            fprintf(stderr, "Error: ???\n");
+            //dlclose(handle);
+            return EXIT_FAILURE;
+        }
+    #endif
     int plugins = func_print_name();
     fprintf(stderr, "Loaded, number of plugins %d\n", plugins);
 
-    getPluginFptr getPlugin = (getPluginFptr) dlsym(handle, "OfxGetPlugin");
+    getPluginFptr getPlugin = NULL;
+    #ifdef _linux_
+        getPlugin = (getPluginFptr) dlsym(handle, "OfxGetPlugin");
+    #elif _WIN32 || __CYGWIN__
+        getPlugin = (getPluginFptr) GetProcAddress((HINSTANCE)handle, "OfxGetPlugin");
+    #endif
+
 
     plugin = getPlugin(k);
 
-    std::cout << "Api version = " << plugin->apiVersion << std::endl;
+    std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << k << std::endl;
 
     OfxHost* host = new OfxHost();
     host->fetchSuite = &fetchSuite;
@@ -106,7 +141,7 @@ int main(int argc, char** argv)
     propSetInt(host->host, kOfxImageEffectPropSupportsOverlays, 0, 0);
     propSetInt(host->host, kOfxImageEffectPropSupportsMultiResolution, 0, 1);
     propSetInt(host->host, kOfxImageEffectPropSupportsTiles, 0, 0);
-    propSetInt(host->host, kOfxImageEffectPropTemporalClipAccess, 0, 0);
+    propSetInt(host->host, kOfxImageEffectPropTemporalClipAccess, 0, 1);
 
     const char* supportedComponents[] = {kOfxImageComponentRGBA, kOfxImageComponentAlpha};
     propSetStringN(host->host, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
@@ -149,7 +184,7 @@ int main(int argc, char** argv)
     propSetString(effectHandle->properties, kOfxPropLongLabel, 0, "label");
     propSetString(effectHandle->properties, kOfxPropVersion, 0, "1");
     propSetString(effectHandle->properties, kOfxPropVersionLabel, 0, "1");
-    propSetString(effectHandle->properties, kOfxPluginPropFilePath, 0, "/tmp");
+    propSetString(effectHandle->properties, kOfxPluginPropFilePath, 0, file);
     propSetString(effectHandle->properties, kOfxImageEffectPropSupportedContexts, 0, kOfxImageEffectContextGeneral);
     propSetString(effectHandle->properties, kOfxImageEffectPropSupportedPixelDepths, 0, kOfxBitDepthByte);
 
@@ -228,11 +263,15 @@ int main(int argc, char** argv)
         std::stringstream ss("");
         char* label = new char[200];
         propGetString(effectHandle->properties, kOfxPropLabel, 0, &label);
-        ss << "/home/black/Downloads/image_" << k << "_" << label << ".ppm";
+        ss << "C:\\Users\\black\\Downloads\\image_" << k << "_" << label << ".ppm";
         std::cout << "Writing file " << ss.str().c_str() << std::endl;
         writeImage(ss.str().c_str(), &result, type);
     }
-    dlclose(handle);
+    #ifdef _linux_
+        dlclose(handle);
+    #elif _WIN32 || __CYGWIN__
+        FreeLibrary((HINSTANCE)handle); 
+    #endif
 
     return 0;
 }

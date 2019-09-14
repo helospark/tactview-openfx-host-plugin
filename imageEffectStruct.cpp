@@ -48,8 +48,8 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                 char* typeToUse = NULL;
 
                 for (auto& a : actualSupportedFormats) {
-                    if (strcmp(a, kOfxBitDepthFloat) == 0) {
-                        typeToUse = kOfxBitDepthFloat;
+                    if (strcmp(a, kOfxBitDepthByte) == 0) {
+                        typeToUse = kOfxBitDepthByte;
                         break;
                     }
                 }
@@ -208,7 +208,11 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
 
             Image* image = NULL;
             if (strcmp(clipName, kOfxImageEffectOutputClipName) != 0 && strcmp(clipName, "Mask") != 0) {
-                image = loadImage("/home/black/Downloads/image.ppm");
+                #ifdef _linux_
+                    image = loadImage("/home/black/Downloads/image.ppm");
+                #else
+                    image = loadImage("C:\\Users\\black\\Downloads\\image.ppm");
+                #endif
             }
 
             char* type = clip->properties->strings[kOfxImageEffectPropPixelDepth][0];
