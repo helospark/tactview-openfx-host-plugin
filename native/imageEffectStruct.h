@@ -1,7 +1,7 @@
 #ifndef IMAGE_EFFECT_STRUCT
 #define IMAGE_EFFECT_STRUCT
-#include "openfx/include/ofxCore.h"
-#include "openfx/include/ofxParam.h"
+#include "../openfx/include/ofxCore.h"
+#include "../openfx/include/ofxParam.h"
 #include "ofx_property.h"
 
 struct OfxImageClipStruct {
@@ -18,7 +18,7 @@ struct OfxImageEffectStruct {
     OfxImageEffectStruct();
 };
 
-#include "openfx/include/ofxImageEffect.h"
+#include "../openfx/include/ofxImageEffect.h"
 
 OfxStatus getPropertySet(OfxImageEffectHandle imageEffect,
                 OfxPropertySetHandle *propHandle);

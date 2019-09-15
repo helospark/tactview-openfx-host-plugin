@@ -1,0 +1,1312 @@
+********************************************************************************
+START mainEntry (OfxActionLoad)
+    WARNING : Could not fetch the optional suite 'OfxProgressSuite' version 1.
+    WARNING : Could not fetch the optional suite 'OfxProgressSuite' version 2.
+    WARNING : Could not fetch the optional suite 'OfxTimeLineSuite' version 1.
+    WARNING : Could not fetch the optional suite 'OfxParametricParameterSuite' version 1.
+    WARNING : Could not fetch the optional suite 'OfxImageEffectOpenGLRenderSuite' version 1.
+    WARNING : Could not fetch the optional suite 'NukeOfxCameraSuite' version 1.
+    WARNING : Could not fetch the optional suite 'uk.co.thefoundry.FnOfxImageEffectPlaneSuite' version 1.
+    WARNING : Could not fetch the optional suite 'uk.co.thefoundry.FnOfxImageEffectPlaneSuite' version 2.
+    WARNING : Could not fetch the optional suite 'OfxVegasProgressSuite' version 1.
+    WARNING : Could not fetch the optional suite 'OfxVegasStereoscopicImageEffectSuite' version 1.
+    WARNING : Could not fetch the optional suite 'OfxVegasKeyframeSuite' version 1.
+    ERROR : Failed on getting int property OfxPropAPIVersion[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxPropAPIVersion[0], was given 0.
+    ERROR : Failed on getting int property OfxPropAPIVersion[1], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxPropAPIVersion[1], was given 0.
+    Retrieved string property OfxPropName[0], was given com.helospark.tactview.
+    Retrieved string property OfxPropLabel[0], was given Tactview.
+    ERROR : Failed on getting int property OfxPropVersion[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxPropVersion[0], was given 0.
+    ERROR : Failed on getting int property OfxPropVersion[1], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxPropVersion[1], was given 0.
+    ERROR : Failed on getting int property OfxPropVersion[2], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxPropVersion[2], was given 0.
+    Retrieved string property OfxPropVersionLabel[0], was given 1.0.
+    Retrieved int property OfxImageEffectHostPropIsBackground[0], was given 0.
+    Retrieved int property OfxImageEffectPropSupportsOverlays[0], was given 0.
+    Retrieved int property OfxImageEffectPropSupportsMultiResolution[0], was given 1.
+    Retrieved int property OfxImageEffectPropSupportsTiles[0], was given 0.
+    Retrieved int property OfxImageEffectPropTemporalClipAccess[0], was given 1.
+    Retrieved int property OfxImageEffectPropMultipleClipDepths[0], was given 0.
+    Retrieved int property OfxImageEffectPropSupportsMultipleClipPARs[0], was given 0.
+    Retrieved int property OfxImageEffectPropSetableFrameRate[0], was given 0.
+    Retrieved int property OfxImageEffectPropSetableFielding[0], was given 0.
+    Retrieved int property OfxImageEffectInstancePropSequentialRender[0], was given 0.
+    Retrieved int property OfxParamHostPropSupportsStringAnimation[0], was given 1.
+    Retrieved int property OfxParamHostPropSupportsCustomInteract[0], was given 0.
+    Retrieved int property OfxParamHostPropSupportsChoiceAnimation[0], was given 1.
+    Retrieved int property OfxParamHostPropSupportsBooleanAnimation[0], was given 1.
+    Retrieved int property OfxParamHostPropSupportsCustomAnimation[0], was given 0.
+    Retrieved pointer property OfxPropHostOSHandle[0], was given (nil).
+    ERROR : Failed on getting int property OfxParamHostPropSupportsParametricAnimation[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxParamHostPropSupportsParametricAnimation[0], was given 0.
+    Retrieved int property OfxImageEffectPropRenderQualityDraft[0], was given 1.
+    ERROR : Failed on getting string property OfxImageEffectHostPropNativeOrigin[0], host returned status kOfxStatErrBadHandle;
+    Retrieved string property OfxImageEffectHostPropNativeOrigin[0], was given (null).
+    ERROR : Failed on getting int property FnOfxImageEffectCanTransform[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property FnOfxImageEffectCanTransform[0], was given 0.
+    ERROR : Failed on getting int property uk.co.thefoundry.OfxImageEffectPropMultiPlanar[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property uk.co.thefoundry.OfxImageEffectPropMultiPlanar[0], was given 0.
+    Retrieved int property OfxParamHostPropMaxParameters[0], was given 100.
+    Retrieved int property OfxParamHostPropMaxPages[0], was given 10.
+    Retrieved int property OfxParamHostPropPageRowColumnCount[0], was given 10.
+    Retrieved int property OfxParamHostPropPageRowColumnCount[1], was given 1.
+    ERROR : Failed on getting int property NatronOfxHostIsNatron[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property NatronOfxHostIsNatron[0], was given 0.
+    ERROR : Failed on getting int property NatronOfxParamHostPropSupportsDynamicChoices[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property NatronOfxParamHostPropSupportsDynamicChoices[0], was given 0.
+    ERROR : Failed on getting int property NatronOfxParamPropChoiceCascading[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property NatronOfxParamPropChoiceCascading[0], was given 0.
+    ERROR : Failed on getting string property NatronOfxImageEffectPropChannelSelector[0], host returned status kOfxStatErrBadHandle;
+    Retrieved string property NatronOfxImageEffectPropChannelSelector[0], was given (null).
+    ERROR : Failed on getting int property OfxImageEffectPropCanDistort[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropCanDistort[0], was given 0.
+    Fetched dimension of property NatronOfxPropNativeOverlays, returned 0.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 2.
+    Retrieved string property OfxImageEffectPropSupportedComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropSupportedComponents[1], was given OfxImageComponentAlpha.
+    Fetched dimension of property OfxImageEffectPropSupportedContexts, returned 2.
+    Retrieved string property OfxImageEffectPropSupportedContexts[0], was given OfxImageEffectContextGenerator.
+    Retrieved string property OfxImageEffectPropSupportedContexts[1], was given OfxImageEffectContextFilter.
+    Fetched dimension of property OfxImageEffectPropSupportedPixelDepths, returned 1.
+    Retrieved string property OfxImageEffectPropSupportedPixelDepths[0], was given OfxBitDepthByte.
+    START validating properties of Host Property.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+    STOP property validation of Host Property.
+STOP mainEntry (OfxActionLoad)
+
+********************************************************************************
+START mainEntry (OfxActionDescribe)
+    WARNING : 'inArgs' Handle passed to 'OfxActionDescribe' is not null.
+    WARNING : 'outArgs' Handle passed to 'OfxActionDescribe' is not null.
+    START validating properties of Plugin Descriptor.
+        ERROR : Host reports property 'OfxImageEffectPluginPropGrouping' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPluginRenderThreadSafety' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginRenderThreadSafety' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropSingleInstance' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropSingleInstance' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropHostFrameThreading' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropHostFrameThreading' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsMultiResolution' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsMultiResolution' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsTiles' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsTiles' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropTemporalClipAccess' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropFieldRenderTwiceAlways' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropFieldRenderTwiceAlways' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropMultipleClipDepths' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropMultipleClipDepths' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsMultipleClipPARs' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsMultipleClipPARs' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropOverlayInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropOverlayInteractV1' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Plugin Descriptor.
+    START validating properties of Plugin Descriptor.
+        ERROR : Host reports property 'OfxImageEffectPluginPropGrouping' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPluginRenderThreadSafety' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginRenderThreadSafety' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropSingleInstance' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropSingleInstance' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropHostFrameThreading' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropHostFrameThreading' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsMultiResolution' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsMultiResolution' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsTiles' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsTiles' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropTemporalClipAccess' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropFieldRenderTwiceAlways' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropFieldRenderTwiceAlways' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropMultipleClipDepths' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropMultipleClipDepths' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsMultipleClipPARs' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsMultipleClipPARs' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropOverlayInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropOverlayInteractV1' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Plugin Descriptor.
+    Set string property OfxPropLabel[0] to be AddOFX.
+    Set string property OfxImageEffectPluginPropGrouping[0] to be Color/Math.
+    Set string property OfxPropPluginDescription[0] to be Add a constant to the selected channels.
+See also: http://opticalenquiry.com/nuke/index.php?title=Add.
+    Fetched dimension of property OfxImageEffectPropSupportedContexts, returned 1.
+    Set string property OfxImageEffectPropSupportedContexts[1] to be OfxImageEffectContextFilter.
+    Fetched dimension of property OfxImageEffectPropSupportedContexts, returned 2.
+    Set string property OfxImageEffectPropSupportedContexts[2] to be OfxImageEffectContextGeneral.
+    Fetched dimension of property OfxImageEffectPropSupportedContexts, returned 3.
+    Set string property OfxImageEffectPropSupportedContexts[3] to be OfxImageEffectContextPaint.
+    Fetched dimension of property OfxImageEffectPropSupportedPixelDepths, returned 1.
+    Set string property OfxImageEffectPropSupportedPixelDepths[1] to be OfxBitDepthByte.
+    Fetched dimension of property OfxImageEffectPropSupportedPixelDepths, returned 2.
+    Set string property OfxImageEffectPropSupportedPixelDepths[2] to be OfxBitDepthShort.
+    Fetched dimension of property OfxImageEffectPropSupportedPixelDepths, returned 3.
+    Set string property OfxImageEffectPropSupportedPixelDepths[3] to be OfxBitDepthFloat.
+    Set int property OfxImageEffectPluginPropSingleInstance[0] to be 0.
+    Set int property OfxImageEffectPluginPropHostFrameThreading[0] to be 0.
+    Set int property OfxImageEffectPropSupportsMultiResolution[0] to be 1.
+    Set int property OfxImageEffectPropSupportsTiles[0] to be 1.
+    Set int property OfxImageEffectPropTemporalClipAccess[0] to be 0.
+    Set int property OfxImageEffectPluginPropFieldRenderTwiceAlways[0] to be 0.
+    Set int property OfxImageEffectPropSupportsMultipleClipPARs[0] to be 0.
+    Set int property OfxImageEffectPropMultipleClipDepths[0] to be 0.
+    Set string property OfxImageEffectPluginRenderThreadSafety[0] to be OfxImageEffectRenderFullySafe.
+STOP mainEntry (OfxActionDescribe)
+
+********************************************************************************
+START mainEntry (OfxImageEffectActionDescribeInContext)
+    WARNING : 'outArgs' Handle passed to 'OfxImageEffectActionDescribeInContext' is not null.
+    START validating properties of OfxImageEffectActionDescribeInContext in argument.
+    STOP property validation of OfxImageEffectActionDescribeInContext in argument.
+    START validating properties of Plugin Descriptor.
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Default value of OfxImageEffectPluginPropFieldRenderTwiceAlways[0] = 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropOverlayInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropOverlayInteractV1' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Plugin Descriptor.
+    Retrieved string property OfxImageEffectPropContext[0], was given OfxImageEffectContextFilter.
+    START validating properties of Plugin Descriptor.
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Default value of OfxImageEffectPluginPropFieldRenderTwiceAlways[0] = 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPluginPropOverlayInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPluginPropOverlayInteractV1' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Plugin Descriptor.
+    START validating properties of Clip Descriptor.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropFieldExtraction' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropTemporalClipAccess' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropOptional' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropOptional' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropIsMask' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropIsMask' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsTiles' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsTiles' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Clip Descriptor.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 2.
+    Set string property OfxImageEffectPropSupportedComponents[2] to be OfxImageComponentRGBA.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 3.
+    Set string property OfxImageEffectPropSupportedComponents[3] to be OfxImageComponentRGB.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 4.
+    Set string property OfxImageEffectPropSupportedComponents[4] to be OfxImageComponentAlpha.
+    Set int property OfxImageEffectPropTemporalClipAccess[0] to be 0.
+    Set int property OfxImageEffectPropSupportsTiles[0] to be 1.
+    Set int property OfxImageClipPropIsMask[0] to be 0.
+    START validating properties of Clip Descriptor.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropFieldExtraction' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropTemporalClipAccess' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropOptional' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropOptional' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropIsMask' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropIsMask' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsTiles' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsTiles' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Clip Descriptor.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 2.
+    Set string property OfxImageEffectPropSupportedComponents[2] to be OfxImageComponentRGBA.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 3.
+    Set string property OfxImageEffectPropSupportedComponents[3] to be OfxImageComponentRGB.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 4.
+    Set string property OfxImageEffectPropSupportedComponents[4] to be OfxImageComponentAlpha.
+    Set int property OfxImageEffectPropSupportsTiles[0] to be 1.
+    START validating properties of Clip Descriptor.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropFieldExtraction' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropTemporalClipAccess' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropOptional' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropOptional' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageClipPropIsMask' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageClipPropIsMask' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxImageEffectPropSupportsTiles' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectPropSupportsTiles' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Clip Descriptor.
+    Fetched dimension of property OfxImageEffectPropSupportedComponents, returned 2.
+    Set string property OfxImageEffectPropSupportedComponents[2] to be OfxImageComponentAlpha.
+    Set int property OfxImageEffectPropTemporalClipAccess[0] to be 0.
+    Set int property OfxImageClipPropOptional[0] to be 1.
+    Set int property OfxImageEffectPropSupportsTiles[0] to be 1.
+    Set int property OfxImageClipPropIsMask[0] to be 1.
+    START validating properties of Page Parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Page Parameter.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be R.
+    Set string property OfxParamPropHint[0] to be Process red component..
+    Set int property OfxParamPropDefault[0] to be 1.
+    Set int property OfxParamPropLayoutHint[0] to be 2.
+    Set int property OfxParamPropLayoutPadWidth[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 0.
+    Set string property OfxParamPropPageChild[0] to be NatronOfxParamProcessR.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be G.
+    Set string property OfxParamPropHint[0] to be Process green component..
+    Set int property OfxParamPropDefault[0] to be 1.
+    Set int property OfxParamPropLayoutHint[0] to be 2.
+    Set int property OfxParamPropLayoutPadWidth[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 1.
+    Set string property OfxParamPropPageChild[1] to be NatronOfxParamProcessG.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be B.
+    Set string property OfxParamPropHint[0] to be Process blue component..
+    Set int property OfxParamPropDefault[0] to be 1.
+    Set int property OfxParamPropLayoutHint[0] to be 2.
+    Set int property OfxParamPropLayoutPadWidth[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 2.
+    Set string property OfxParamPropPageChild[2] to be NatronOfxParamProcessB.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be A.
+    Set string property OfxParamPropHint[0] to be Process alpha component..
+    Set int property OfxParamPropDefault[0] to be 0.
+    Fetched dimension of property OfxParamPropPageChild, returned 3.
+    Set string property OfxParamPropPageChild[3] to be NatronOfxParamProcessA.
+    START validating properties of RGB Colour parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 4;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropMin' has dimension 0, it should be 4;
+        ERROR : Host reports default dimension of 'OfxParamPropMin' as 0, which is different to the default dimension size of 4;
+        ERROR : Host reports property 'OfxParamPropMax' has dimension 0, it should be 4;
+        ERROR : Host reports default dimension of 'OfxParamPropMax' as 0, which is different to the default dimension size of 4;
+        ERROR : Host reports property 'OfxParamPropDisplayMin' has dimension 0, it should be 4;
+        ERROR : Host reports default dimension of 'OfxParamPropDisplayMin' as 0, which is different to the default dimension size of 4;
+        ERROR : Host reports property 'OfxParamPropDisplayMax' has dimension 0, it should be 4;
+        ERROR : Host reports default dimension of 'OfxParamPropDisplayMax' as 0, which is different to the default dimension size of 4;
+        ERROR : Host reports property 'OfxParamPropDimensionLabel' has dimension 0, it should be 4;
+        ERROR : Host reports default dimension of 'OfxParamPropDimensionLabel' as 0, which is different to the default dimension size of 4;
+    STOP property validation of RGB Colour parameter.
+    Set string property OfxPropLabel[0] to be Value.
+    Set string property OfxParamPropHint[0] to be Constant to add to the selected channels..
+    Set double property OfxParamPropDefault[0..3].
+    Set double property OfxParamPropMin[0..3].
+    Set double property OfxParamPropMax[0..3].
+    Set double property OfxParamPropDisplayMin[0..3].
+    Set double property OfxParamPropDisplayMax[0..3].
+    Set int property OfxParamPropAnimates[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 4.
+    Set string property OfxParamPropPageChild[4] to be value.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be (Un)premult.
+    Set string property OfxParamPropHint[0] to be Divide the image by the alpha channel before processing, and re-multiply it afterwards. Use if the input images are premultiplied..
+    Set int property OfxParamPropLayoutHint[0] to be 2.
+    Set int property OfxParamPropLayoutPadWidth[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 5.
+    Set string property OfxParamPropPageChild[5] to be premult.
+    START validating properties of Choice parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Choice parameter.
+    Set string property OfxPropLabel[0] to be By.
+    Set string property OfxParamPropHint[0] to be The channel to use for (un)premult..
+    Fetched dimension of property OfxParamPropChoiceOption, returned 0.
+    Fetched dimension of property OfxParamPropChoiceLabelOption, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceLabelOption[0] to be R channel from input.
+    Fetched dimension of property OfxParamPropChoiceEnum, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceEnum[0] to be r.
+    Set string property OfxParamPropChoiceOption[0] to be R.
+    Fetched dimension of property OfxParamPropChoiceOption, returned 1.
+    Fetched dimension of property OfxParamPropChoiceLabelOption, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceLabelOption[1] to be G channel from input.
+    Fetched dimension of property OfxParamPropChoiceEnum, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceEnum[1] to be g.
+    Set string property OfxParamPropChoiceOption[1] to be G.
+    Fetched dimension of property OfxParamPropChoiceOption, returned 2.
+    Fetched dimension of property OfxParamPropChoiceLabelOption, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceLabelOption[2] to be B channel from input.
+    Fetched dimension of property OfxParamPropChoiceEnum, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceEnum[2] to be b.
+    Set string property OfxParamPropChoiceOption[2] to be B.
+    Fetched dimension of property OfxParamPropChoiceOption, returned 3.
+    Fetched dimension of property OfxParamPropChoiceLabelOption, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceLabelOption[3] to be A channel from input.
+    Fetched dimension of property OfxParamPropChoiceEnum, returned status kOfxStatOK.
+    Set string property OfxParamPropChoiceEnum[3] to be a.
+    Set string property OfxParamPropChoiceOption[3] to be A.
+    Set int property OfxParamPropDefault[0] to be 3.
+    Set int property OfxParamPropSecret[0] to be 1.
+    Fetched dimension of property OfxParamPropPageChild, returned 6.
+    Set string property OfxParamPropPageChild[6] to be premultChannel.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set string property OfxPropLabel[0] to be Invert Mask.
+    Set string property OfxParamPropHint[0] to be When checked, the effect is fully applied where the mask is 0..
+    Fetched dimension of property OfxParamPropPageChild, returned 7.
+    Set string property OfxParamPropPageChild[7] to be maskInvert.
+    START validating properties of 1D Double parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropIncrement' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDigits' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDoubleType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDoubleType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropMin' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropMax' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDisplayMin' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDisplayMax' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropShowTimeMarker' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropShowTimeMarker' as 0, which is different to the default dimension size of 1;
+    STOP property validation of 1D Double parameter.
+    Set string property OfxPropLabel[0] to be Mix.
+    Set string property OfxParamPropHint[0] to be Mix factor between the original and the transformed image..
+    Set double property OfxParamPropDefault[0] to be 1.000000.
+    Set double property OfxParamPropIncrement[0] to be 0.010000.
+    Set double property OfxParamPropMin[0] to be 0.000000.
+    Set double property OfxParamPropMax[0] to be 1.000000.
+    Set double property OfxParamPropDisplayMin[0] to be 0.000000.
+    Set double property OfxParamPropDisplayMax[0] to be 1.000000.
+    Fetched dimension of property OfxParamPropPageChild, returned 8.
+    Set string property OfxParamPropPageChild[8] to be mix.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropSecret' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEnabled' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropDataPtr' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractSizeAspect' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractMinimumSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports default dimension of 'OfxParamPropInteractPreferedSize' as 0, which is different to the default dimension size of 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPersistant' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropEvaluateOnChange' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropPluginMayWrite' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCacheInvalidation' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropCanUndo' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxParamPropAnimates' as 0, which is different to the default dimension size of 1;
+    STOP property validation of Boolean parameter.
+    Set int property OfxParamPropDefault[0] to be 0.
+    Set int property OfxParamPropEnabled[0] to be 0.
+    Set int property OfxParamPropSecret[0] to be 1.
+    Set int property OfxParamPropAnimates[0] to be 0.
+    Set int property OfxParamPropEvaluateOnChange[0] to be 0.
+    Fetched dimension of property OfxParamPropPageChild, returned 9.
+    Set string property OfxParamPropPageChild[9] to be premultChanged.
+STOP mainEntry (OfxImageEffectActionDescribeInContext)
+
+********************************************************************************
+START mainEntry (OfxActionCreateInstance)
+    WARNING : 'inArgs' Handle passed to 'OfxActionCreateInstance' is not null.
+    WARNING : 'outArgs' Handle passed to 'OfxActionCreateInstance' is not null.
+    Retrieved string property OfxImageEffectPropContext[0], was given OfxImageEffectContextFilter.
+    Set pointer property OfxPropInstanceData[0] to be 0x55cf00e238e0.
+    START validating properties of Plugin Instance.
+        ERROR : Default value of OfxPropType[0] = 'OfxTypeImageEffect', it should be 'OfxTypeImageEffectInstance';
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Default value of OfxPropInstanceData[0] = 0x55cf00e238e0, it should be (nil);
+        ERROR : Host reports property 'OfxImageEffectPropPluginHandle' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropIsInteractive' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropPixelAspectRatio' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectInstancePropEffectDuration' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRate' has dimension 0, it should be 1;
+    STOP property validation of Plugin Instance.
+    Retrieved string property OfxImageEffectPropContext[0], was given OfxImageEffectContextFilter.
+    START validating properties of Clip Instance.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedPixelDepth' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedComponents' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropPreMultiplication' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldOrder' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropTemporalClipAccess' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropOptional' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropIsMask' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropContinuousSamples' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImagePropPixelAspectRatio' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRange' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRange' has dimension 0, it should be 2;
+    STOP property validation of Clip Instance.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    START validating properties of Clip Instance.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedPixelDepth' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedComponents' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropPreMultiplication' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldOrder' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropOptional' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropContinuousSamples' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImagePropPixelAspectRatio' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRange' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRange' has dimension 0, it should be 2;
+    STOP property validation of Clip Instance.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    START validating properties of Clip Instance.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxPropType' as 0, which is different to the default dimension size of 1;
+        ERROR : Host reports property 'OfxPropName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldExtraction' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedPixelDepth' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropUnmappedComponents' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropPreMultiplication' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropFieldOrder' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageClipPropContinuousSamples' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImagePropPixelAspectRatio' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRange' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRate' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropUnmappedFrameRange' has dimension 0, it should be 2;
+    STOP property validation of Clip Instance.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentAlpha.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeRGBA.
+    START validating properties of RGB Colour parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDimensionLabel' has dimension 0, it should be 4;
+    STOP property validation of RGB Colour parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeChoice.
+    START validating properties of Choice parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Choice parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeDouble.
+    START validating properties of 1D Double parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDigits' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDoubleType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropShowTimeMarker' has dimension 0, it should be 1;
+    STOP property validation of 1D Double parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropSecret' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEnabled' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropEvaluateOnChange' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDefault' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropAnimates' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    Retrieved string property OfxParamPropType[0], was given OfxParamTypeBoolean.
+    START validating properties of Boolean parameter.
+        ERROR : Host reports property 'OfxPropType' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropShortLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropLongLabel' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropHint' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropScriptName' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropParent' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropDataPtr' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractV1' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractSizeAspect' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropInteractMinimumSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropInteractPreferedSize' has dimension 0, it should be 2;
+        ERROR : Host reports property 'OfxParamPropIsAnimating' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropIsAutoKeying' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPersistant' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropPluginMayWrite' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCacheInvalidation' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxParamPropCanUndo' has dimension 0, it should be 1;
+    STOP property validation of Boolean parameter.
+    START validating properties of Plugin Instance.
+        ERROR : Default value of OfxPropType[0] = 'OfxTypeImageEffect', it should be 'OfxTypeImageEffectInstance';
+        ERROR : Host reports property 'OfxImageEffectInstancePropSequentialRender' has dimension 0, it should be 1;
+        ERROR : Host reports default dimension of 'OfxImageEffectInstancePropSequentialRender' as 0, which is different to the default dimension size of 1;
+        ERROR : Default value of OfxPropInstanceData[0] = 0x55cf00e238e0, it should be (nil);
+        ERROR : Host reports property 'OfxImageEffectPropPluginHandle' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxPropIsInteractive' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropPixelAspectRatio' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectInstancePropEffectDuration' has dimension 0, it should be 1;
+        ERROR : Host reports property 'OfxImageEffectPropFrameRate' has dimension 0, it should be 1;
+    STOP property validation of Plugin Instance.
+STOP mainEntry (OfxActionCreateInstance)
+
+********************************************************************************
+START mainEntry (OfxImageEffectActionBeginSequenceRender)
+    WARNING : 'outArgs' Handle passed to 'OfxImageEffectActionBeginSequenceRender' is not null.
+    START validating properties of OfxImageEffectActionBeginSequenceRender in argument.
+    STOP property validation of OfxImageEffectActionBeginSequenceRender in argument.
+    Retrieved pointer property OfxPropInstanceData[0], was given 0x55cf00e238e0.
+    Retrieved doublex2 property OfxImageEffectPropFrameRange, was given 0 0.
+    Retrieved double property OfxImageEffectPropFrameStep[0], was given 1.000000.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    ERROR : Failed on getting int property OfxImageEffectPropOpenGLEnabled[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropOpenGLEnabled[0], was given 0.
+    Retrieved int property OfxPropIsInteractive[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropSequentialRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropSequentialRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropInteractiveRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropInteractiveRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropRenderQualityDraft[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropRenderQualityDraft[0], was given 0.
+    ERROR : Failed on getting int property uk.co.thefoundry.OfxImageEffectPropView[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property uk.co.thefoundry.OfxImageEffectPropView[0], was given 0.
+STOP mainEntry (OfxImageEffectActionBeginSequenceRender)
+
+********************************************************************************
+START mainEntry (OfxImageEffectActionRender)
+    WARNING : 'outArgs' Handle passed to 'OfxImageEffectActionRender' is not null.
+    START validating properties of OfxImageEffectActionRender in argument.
+    STOP property validation of OfxImageEffectActionRender in argument.
+    Retrieved pointer property OfxPropInstanceData[0], was given 0x55cf00e238e0.
+    Retrieved double property OfxPropTime[0], was given 0.000000.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    Retrieved intx4 property OfxImageEffectPropRenderWindow, was given 0 0 831 530.
+    ERROR : Failed on getting int property OfxImageEffectPropOpenGLEnabled[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropOpenGLEnabled[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropSequentialRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropSequentialRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropInteractiveRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropInteractiveRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropRenderQualityDraft[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropRenderQualityDraft[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropViewsToRender[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropViewsToRender[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropRenderView[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropRenderView[0], was given 0.
+    ERROR : Failed on getting int property uk.co.thefoundry.OfxImageEffectPropView[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property uk.co.thefoundry.OfxImageEffectPropView[0], was given 0.
+    Fetched dimension of property OfxImageEffectPropRenderPlanes, returned 0.
+    Retrieved string property OfxImageEffectPropFieldToRender[0], was given OfxFieldNone.
+    ERROR : Failed on getting string property OfxImageEffectPropRenderQuality[0], host returned status kOfxStatErrBadHandle;
+    Retrieved string property OfxImageEffectPropRenderQuality[0], was given (null).
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    ERROR : Failed on getting double property OfxImagePropPixelAspectRatio[0], host returned status kOfxStatErrBadHandle;
+    Retrieved double property OfxImagePropPixelAspectRatio[0], was given 0.000000.
+    ERROR : Failed on getting double property OfxImagePropPixelAspectRatio[0], host returned status kOfxStatErrBadHandle;
+    Retrieved double property OfxImagePropPixelAspectRatio[0], was given 0.000000.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    START validating properties of Image or Texture Instance.
+    STOP property validation of Image or Texture Instance.
+    Retrieved int property OfxImagePropRowBytes[0], was given 13296.
+    Retrieved double property OfxImagePropPixelAspectRatio[0], was given 1.000000.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropPreMultiplication[0], was given OfxImageOpaque.
+    Retrieved int property OfxImagePropRegionOfDefinition[0], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[1], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[2], was given 831.
+    Retrieved int property OfxImagePropRegionOfDefinition[3], was given 530.
+    Retrieved int property OfxImagePropBounds[0], was given 0.
+    Retrieved int property OfxImagePropBounds[1], was given 0.
+    Retrieved int property OfxImagePropBounds[2], was given 831.
+    Retrieved int property OfxImagePropBounds[3], was given 530.
+    Retrieved string property OfxImagePropField[0], was given OfxFieldNone.
+    Retrieved string property OfxImagePropUniqueIdentifier[0], was given 1.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunction[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunction[0], was given (nil).
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunctionData[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunctionData[0], was given (nil).
+    Fetched dimension of property OfxPropMatrix3x3, returned 0.
+    Fetched dimension of property FnOfxPropMatrix2D, returned 0.
+    START validating properties of Image Instance.
+    STOP property validation of Image Instance.
+    Retrieved pointer property OfxImagePropData[0], was given 0x7f97113eb010.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    START validating properties of Image or Texture Instance.
+    STOP property validation of Image or Texture Instance.
+    Retrieved int property OfxImagePropRowBytes[0], was given 13296.
+    Retrieved double property OfxImagePropPixelAspectRatio[0], was given 1.000000.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentRGBA.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropPreMultiplication[0], was given OfxImageOpaque.
+    Retrieved int property OfxImagePropRegionOfDefinition[0], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[1], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[2], was given 831.
+    Retrieved int property OfxImagePropRegionOfDefinition[3], was given 530.
+    Retrieved int property OfxImagePropBounds[0], was given 0.
+    Retrieved int property OfxImagePropBounds[1], was given 0.
+    Retrieved int property OfxImagePropBounds[2], was given 831.
+    Retrieved int property OfxImagePropBounds[3], was given 530.
+    Retrieved string property OfxImagePropField[0], was given OfxFieldNone.
+    Retrieved string property OfxImagePropUniqueIdentifier[0], was given 1.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunction[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunction[0], was given (nil).
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunctionData[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunctionData[0], was given (nil).
+    Fetched dimension of property OfxPropMatrix3x3, returned 0.
+    Fetched dimension of property FnOfxPropMatrix2D, returned 0.
+    START validating properties of Image Instance.
+    STOP property validation of Image Instance.
+    Retrieved pointer property OfxImagePropData[0], was given 0x7f9710d32010.
+    Retrieved int property OfxImageClipPropConnected[0], was given 1.
+    START validating properties of Image or Texture Instance.
+    STOP property validation of Image or Texture Instance.
+    Retrieved int property OfxImagePropRowBytes[0], was given 3324.
+    Retrieved double property OfxImagePropPixelAspectRatio[0], was given 1.000000.
+    Retrieved string property OfxImageEffectPropComponents[0], was given OfxImageComponentAlpha.
+    Retrieved string property OfxImageEffectPropPixelDepth[0], was given OfxBitDepthFloat.
+    Retrieved string property OfxImageEffectPropPreMultiplication[0], was given OfxImageOpaque.
+    Retrieved int property OfxImagePropRegionOfDefinition[0], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[1], was given 0.
+    Retrieved int property OfxImagePropRegionOfDefinition[2], was given 831.
+    Retrieved int property OfxImagePropRegionOfDefinition[3], was given 530.
+    Retrieved int property OfxImagePropBounds[0], was given 0.
+    Retrieved int property OfxImagePropBounds[1], was given 0.
+    Retrieved int property OfxImagePropBounds[2], was given 831.
+    Retrieved int property OfxImagePropBounds[3], was given 530.
+    Retrieved string property OfxImagePropField[0], was given OfxFieldNone.
+    Retrieved string property OfxImagePropUniqueIdentifier[0], was given 1.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunction[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunction[0], was given (nil).
+    ERROR : Failed on getting pointer property OfxPropInverseDistortionFunctionData[0], host returned status kOfxStatErrBadHandle;
+    Retrieved pointer property OfxPropInverseDistortionFunctionData[0], was given (nil).
+    Fetched dimension of property OfxPropMatrix3x3, returned 0.
+    Fetched dimension of property FnOfxPropMatrix2D, returned 0.
+    START validating properties of Image Instance.
+    STOP property validation of Image Instance.
+    Retrieved pointer property OfxImagePropData[0], was given 0x7f9710679010.
+STOP mainEntry (OfxImageEffectActionRender)
+
+********************************************************************************
+START mainEntry (OfxImageEffectActionEndSequenceRender)
+    WARNING : 'outArgs' Handle passed to 'OfxImageEffectActionEndSequenceRender' is not null.
+    START validating properties of OfxImageEffectActionEndSequenceRender in argument.
+    STOP property validation of OfxImageEffectActionEndSequenceRender in argument.
+    Retrieved pointer property OfxPropInstanceData[0], was given 0x55cf00e238e0.
+    Retrieved doublex2 property OfxImageEffectPropRenderScale, was given 1 1.
+    ERROR : Failed on getting int property OfxImageEffectPropOpenGLEnabled[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropOpenGLEnabled[0], was given 0.
+    Retrieved int property OfxPropIsInteractive[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropSequentialRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropSequentialRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropInteractiveRenderStatus[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropInteractiveRenderStatus[0], was given 0.
+    ERROR : Failed on getting int property OfxImageEffectPropRenderQualityDraft[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property OfxImageEffectPropRenderQualityDraft[0], was given 0.
+    ERROR : Failed on getting int property uk.co.thefoundry.OfxImageEffectPropView[0], host returned status kOfxStatErrBadHandle;
+    Retrieved int property uk.co.thefoundry.OfxImageEffectPropView[0], was given 0.
+STOP mainEntry (OfxImageEffectActionEndSequenceRender)
+

@@ -1,7 +1,7 @@
 #ifndef PARAM_SET_H
 #define PARAM_SET_H
 #include <vector>
-#include "openfx/include/ofxProperty.h"
+#include "../openfx/include/ofxProperty.h"
 
 struct OfxParamStruct {
     const char* name;
@@ -15,7 +15,7 @@ struct OfxParamSetStruct {
     std::vector<OfxParamStruct*> parameters;
 };
 
-#include "openfx/include/ofxParam.h"
+#include "../openfx/include/ofxParam.h"
 
 OfxStatus paramDefine(OfxParamSetHandle paramSet,
             const char *paramType,

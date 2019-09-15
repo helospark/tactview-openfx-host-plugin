@@ -1,5 +1,5 @@
-#include "openfx/include/ofxCore.h"
-#include "openfx/include/ofxMemory.h"
+#include "../openfx/include/ofxCore.h"
+#include "../openfx/include/ofxMemory.h"
 
 OfxStatus memoryAlloc(void *handle, 
             size_t nBytes,

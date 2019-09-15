@@ -2,7 +2,7 @@ struct OfxMutex {
 
 };
 
-#include "openfx/include/ofxMultiThread.h"
+#include "../openfx/include/ofxMultiThread.h"
 
 OfxStatus multiThread(OfxThreadFunctionV1 func, unsigned int nThreads, void *customArg);
 OfxStatus multiThreadNumCPUs(unsigned int *nCPUs);

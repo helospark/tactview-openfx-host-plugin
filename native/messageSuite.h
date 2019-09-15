@@ -1,4 +1,4 @@
-#include "openfx/include/ofxMessage.h"
+#include "../openfx/include/ofxMessage.h"
 
 OfxStatus message(void *handle,
             const char *messageType,

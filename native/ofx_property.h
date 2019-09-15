@@ -1,7 +1,7 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H
 #include "ofxPropertySet.h"
-#include "openfx/include/ofxProperty.h"
+#include "../openfx/include/ofxProperty.h"
 
     OfxStatus propGetDoubleN(OfxPropertySetHandle properties, const char *property, int count, double *value);
     OfxStatus propGetIntN(OfxPropertySetHandle properties, const char *property, int count, int *value);

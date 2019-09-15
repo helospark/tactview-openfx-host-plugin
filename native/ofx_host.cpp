@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "openfx/include/ofxCore.h"
+#include "../openfx/include/ofxCore.h"
 #include <iostream>
 #include "imageEffectStruct.h"
 #include "ofx_property.h"
@@ -11,6 +11,7 @@
 #include "memorySuite.h"
 #include "messageSuite.h"
 #include <sstream>
+#include <map>
 
 #ifdef __linux__ 
 #include <dlfcn.h>
@@ -58,78 +59,29 @@ void callEntryPoint(const char *action, const void *handle, OfxPropertySetHandle
     }
 }
 
-int main(int argc, char** argv)
-{
-    void *handle;
+struct PluginDefinition {
+    OfxImageEffectHandle effectHandle;
+    void* handle;
+    int pluginIndex;
+};
 
-    //handle = dlopen("/home/black/Desktop/Examples/Basic/Linux-64-debug/basic.ofx", RTLD_LAZY);
-    //handle = dlopen("/usr/local/Neat Video v5 OFX/NeatVideo5.ofx.bundle/Contents/Linux-x86-64/NeatVideo5.ofx", RTLD_LAZY);
-    //handle = dlopen("/home/black/Downloads/openfx-misc/Misc/Linux-64-debug/Misc.ofx", RTLD_LAZY);
-    
-    const char* file = "C:\\Program Files\\Genifect OpenFX\\GenifectOfx.ofx.bundle\\Contents\\Win64\\GenifectOfx.ofx"; 
- /**   
-    if (argc > 1) {
-        file = argv[1];
-    }
-*/
-    #ifdef _linux_
-        handle = dlopen(file, RTLD_LAZY);
-        if (!handle) {
-            /* fail to load the library */
-            fprintf(stderr, "Error: %s\n", dlerror());
-            return EXIT_FAILURE;
-        }
-    #elif _WIN32 || __CYGWIN__
-    //handle = LoadLibrary(TEXT("C:\\Program Files\\Common Files\\OFX\\Plugins\\IgniteCore.ofx.bundle\\Contents\\Win64\\IgniteCore.ofx")); 
-        handle = LoadLibraryA(file); 
-        if (!handle) {
-            fprintf(stderr, "Error: %d\n", GetLastError());
-            return EXIT_FAILURE;
-        }
-    #endif
+std::map<int, PluginDefinition*> loadedPlugins;
+int pluginIndex = 0;
+std::map<std::string, void*> handles;
 
+std::vector<PluginDefinition> loadDefinitions() {
 
+}
 
+struct LoadPluginRequest {
+    int width;
+    int height;
+    OfxHost* host;
+};
 
-    int k = 0;
-    if (argc > 2) {
-        k = atoi(argv[2]);
-    }
+OfxHost* globalHost = NULL;
 
-    intFptr func_print_name = NULL;
-
-    #ifdef _linux_
-        func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
-        if (!func_print_name) {
-            /* no such symbol */
-            fprintf(stderr, "Error: %s\n", dlerror());
-            dlclose(handle);
-            return EXIT_FAILURE;
-        }
-    #elif _WIN32 || __CYGWIN__
-        func_print_name = (intFptr) GetProcAddress((HINSTANCE)handle, "OfxGetNumberOfPlugins");
-        if (!func_print_name) {
-            /* no such symbol */
-            fprintf(stderr, "Error: ???\n");
-            //dlclose(handle);
-            return EXIT_FAILURE;
-        }
-    #endif
-    int plugins = func_print_name();
-    fprintf(stderr, "Loaded, number of plugins %d\n", plugins);
-
-    getPluginFptr getPlugin = NULL;
-    #ifdef _linux_
-        getPlugin = (getPluginFptr) dlsym(handle, "OfxGetPlugin");
-    #elif _WIN32 || __CYGWIN__
-        getPlugin = (getPluginFptr) GetProcAddress((HINSTANCE)handle, "OfxGetPlugin");
-    #endif
-
-
-    plugin = getPlugin(k);
-
-    std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << k << std::endl;
-
+OfxHost* createGlobalHost() {
     OfxHost* host = new OfxHost();
     host->fetchSuite = &fetchSuite;
     host->host = new OfxPropertySetStruct();
@@ -160,22 +112,75 @@ int main(int argc, char** argv)
     propSetInt(host->host, kOfxParamHostPropSupportsCustomAnimation, 0, 0);
     propSetInt(host->host, kOfxParamHostPropMaxParameters, 0, 100);
     propSetInt(host->host, kOfxParamHostPropMaxPages, 0, 10);
-    const char* supportedPixelDepths[] = {kOfxBitDepthByte};
+    const char* supportedPixelDepths[] = {kOfxBitDepthByte, kOfxBitDepthFloat};
     propSetStringN(host->host, kOfxImageEffectPropSupportedPixelDepths, 1, supportedPixelDepths);
-    int rowColumnCount[2] = {10,1};
+    int rowColumnCount[2] = {10, 1};
     propSetIntN(host->host, kOfxParamHostPropPageRowColumnCount, 2, rowColumnCount);
     propSetPointer(host->host, kOfxPropHostOSHandle, 0, NULL);
     propSetInt(host->host, kOfxImageEffectInstancePropSequentialRender, 0, 0);
-    //propSetInt(host->host, kOfxImageEffectPropOpenGLRenderSupported, 0, 0);
     propSetInt(host->host, kOfxImageEffectPropRenderQualityDraft, 0, 1);
-    //propSetString(host->host, kOfxImageEffectHostPropNativeOrigin, 0, kOfxImageEffectHostPropNativeOriginTopLeft);
-    
     propSetString(host->host, kOfxPropVersion, 0, "1.0");
+
+    return host;
+}
+
+int loadPlugin(LoadPluginRequest* loadPluginRequest) {
+
+    void *handle;
     
+    const char* file = "/home/black/tmp/openfx-misc/Misc/Linux-64-debug/Misc.ofx"; 
+
+    #ifdef __linux__
+        handle = dlopen(file, RTLD_LAZY);
+        if (!handle) {
+            fprintf(stderr, "Error: %s\n", dlerror());
+            return EXIT_FAILURE;
+        }
+    #elif _WIN32 || __CYGWIN__
+        handle = LoadLibraryA(file); 
+        if (!handle) {
+            fprintf(stderr, "Error: %d\n", GetLastError());
+            return EXIT_FAILURE;
+        }
+    #endif
+
+    int k = 2;
+
+    intFptr func_print_name = NULL;
+
+    #ifdef __linux__
+        func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
+        if (!func_print_name) {
+            /* no such symbol */
+            fprintf(stderr, "Error: %s\n", dlerror());
+            dlclose(handle);
+            return EXIT_FAILURE;
+        }
+    #elif _WIN32 || __CYGWIN__
+        func_print_name = (intFptr) GetProcAddress((HINSTANCE)handle, "OfxGetNumberOfPlugins");
+        if (!func_print_name) {
+            /* no such symbol */
+            fprintf(stderr, "Error: ???\n");
+            //dlclose(handle);
+            return EXIT_FAILURE;
+        }
+    #endif
+    int plugins = func_print_name();
+    fprintf(stderr, "Loaded, number of plugins %d\n", plugins);
+
+    getPluginFptr getPlugin = NULL;
+    #ifdef __linux__
+        getPlugin = (getPluginFptr) dlsym(handle, "OfxGetPlugin");
+    #elif _WIN32 || __CYGWIN__
+        getPlugin = (getPluginFptr) GetProcAddress((HINSTANCE)handle, "OfxGetPlugin");
+    #endif
 
 
+    plugin = getPlugin(k);
 
-    plugin->setHost(host);
+    std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << k << std::endl;
+
+    plugin->setHost(loadPluginRequest->host);
 
     OfxImageEffectHandle effectHandle = new OfxImageEffectStruct();
     propSetString(effectHandle->properties, kOfxPropType, 0, kOfxTypeImageEffect);
@@ -188,11 +193,11 @@ int main(int argc, char** argv)
     propSetString(effectHandle->properties, kOfxImageEffectPropSupportedContexts, 0, kOfxImageEffectContextGeneral);
     propSetString(effectHandle->properties, kOfxImageEffectPropSupportedPixelDepths, 0, kOfxBitDepthByte);
 
-    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 0, 831);
-    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 1, 530);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 0, loadPluginRequest->width);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectExtent, 1, loadPluginRequest->height);
 
-    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 0, 831);
-    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 1, 530);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 0, loadPluginRequest->width);
+    propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectSize, 1, loadPluginRequest->height);
 
     propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectOffset, 0, 0);
     propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectOffset, 1, 0);
@@ -201,10 +206,41 @@ int main(int argc, char** argv)
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
 
-    std::cout << "Loading plugin" << std::endl;
     callEntryPoint(kOfxActionLoad, effectHandle, inParam, outParam);
+
+    std::cout << "Load outParam params:" << std::endl;
+    printAllProperties(outParam);
     
+    PluginDefinition* pluginDefinition = new PluginDefinition();
+    pluginDefinition->effectHandle = effectHandle;
+    pluginDefinition->handle = handle;
+    pluginDefinition->pluginIndex = k;
+
+    pluginIndex++;
+    loadedPlugins[pluginIndex] = pluginDefinition;
+
+    delete inParam;
+    delete outParam;
+
+    return pluginIndex;
+}
+
+struct RenderImageRequest {
+    int width;
+    int height;
+    int pluginIndex;
+    double time;
+};
+
+int renderImage(RenderImageRequest* imageRequest)
+{
+    PluginDefinition* pluginDefinition = loadedPlugins[pluginIndex];
+    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
     std::cout << "Calling entrypoint" << std::endl;
+
+
+    OfxPropertySetHandle inParam = new OfxPropertySetStruct();
+    OfxPropertySetHandle outParam = new OfxPropertySetStruct();
 
     callEntryPoint(kOfxActionDescribe, effectHandle, inParam, outParam);
     
@@ -234,8 +270,8 @@ int main(int argc, char** argv)
 
     fprintf(stderr, "Plugin apiVersion=%s version=%d, pluginIdentifier=%s, pluginVersionMajor=%d, pluginVersionMinor=%d\n", plugin->pluginApi, plugin->apiVersion, plugin->pluginIdentifier, plugin->pluginVersionMajor, plugin->pluginVersionMinor);
 
-    propSetDouble(inParam, kOfxPropTime, 0, 0.0);
-    int renderWindow[4] = {0, 0, 831, 530};
+    propSetDouble(inParam, kOfxPropTime, 0, imageRequest->time);
+    int renderWindow[4] = {0, 0, imageRequest->width, imageRequest->height};
     propSetIntN(inParam, kOfxImageEffectPropRenderWindow, 4, renderWindow);
     propSetString(inParam, kOfxImageEffectPropFieldToRender, 0, kOfxImageFieldNone);
     propSetDouble(inParam, kOfxImageEffectPropRenderScale, 0, 1.0);
@@ -259,19 +295,47 @@ int main(int argc, char** argv)
 
     if (imageData != NULL) {
         std::cout << "Rendering result" << std::endl;
-        Image result(831, 530, imageData);
+        Image result(imageRequest->width, imageRequest->height, imageData);
         std::stringstream ss("");
         char* label = new char[200];
         propGetString(effectHandle->properties, kOfxPropLabel, 0, &label);
-        ss << "C:\\Users\\black\\Downloads\\image_" << k << "_" << label << ".ppm";
+        ss << "/tmp/image_" << pluginDefinition->pluginIndex << "_" << label << ".ppm";
         std::cout << "Writing file " << ss.str().c_str() << std::endl;
         writeImage(ss.str().c_str(), &result, type);
     }
-    #ifdef _linux_
-        dlclose(handle);
-    #elif _WIN32 || __CYGWIN__
-        FreeLibrary((HINSTANCE)handle); 
-    #endif
 
     return 0;
+}
+
+void closePlugin(int pluginIndex) {
+    PluginDefinition* pluginDefinition = loadedPlugins[pluginIndex];
+    #ifdef __linux__
+        dlclose(pluginDefinition->handle);
+    #elif _WIN32 || __CYGWIN__
+        FreeLibrary((HINSTANCE)pluginDefinition->handle); 
+    #endif
+    loadedPlugins.erase(pluginIndex);
+}
+
+int main(int argc, char** argv) {
+    if (globalHost == NULL) {
+        globalHost = createGlobalHost();
+    }
+
+    LoadPluginRequest* request = new LoadPluginRequest();
+    request->width = 831;
+    request->height = 530;
+    request->host = globalHost;
+    
+    int pluginIndex = loadPlugin(request);
+
+    RenderImageRequest* renderImageRequest = new RenderImageRequest();
+    renderImageRequest->width = request->width;
+    renderImageRequest->height = request->height;
+    renderImageRequest->time = 0.0;
+    renderImageRequest->pluginIndex = pluginIndex;
+
+    renderImage(renderImageRequest);
+
+    closePlugin(pluginIndex);
 }
