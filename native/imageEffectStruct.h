@@ -4,10 +4,13 @@
 #include "../openfx/include/ofxParam.h"
 #include "ofx_property.h"
 
+typedef struct OfxImageEffectStruct *OfxImageEffectHandle;
+
 struct OfxImageClipStruct {
     OfxPropertySetHandle properties;
     void* data = NULL;
     char* type;
+    OfxImageEffectHandle imageEffect;
 };
 
 struct OfxImageEffectStruct {

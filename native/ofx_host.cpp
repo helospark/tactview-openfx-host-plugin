@@ -12,6 +12,7 @@
 #include "messageSuite.h"
 #include <sstream>
 #include <map>
+#include "globalCallbackFunctions.h"
 
 #ifdef __linux__ 
 #include <dlfcn.h>
@@ -76,7 +77,6 @@ std::vector<PluginDefinition> loadDefinitions() {
 struct LoadPluginRequest {
     int width;
     int height;
-    OfxHost* host;
 };
 
 OfxHost* globalHost = NULL;
@@ -122,6 +122,19 @@ OfxHost* createGlobalHost() {
     propSetString(host->host, kOfxPropVersion, 0, "1.0");
 
     return host;
+}
+
+extern "C" {
+
+struct InitializeHostRequest {
+    LoadImageCallback loadImageCallback;
+};
+
+void initializeHost(InitializeHostRequest* request) {
+    globalHost = createGlobalHost();
+
+    globalFunctionPointers = new GlobalFunctions();
+    globalFunctionPointers->loadImageCallback = request->loadImageCallback;
 }
 
 int loadPlugin(LoadPluginRequest* loadPluginRequest) {
@@ -180,7 +193,7 @@ int loadPlugin(LoadPluginRequest* loadPluginRequest) {
 
     std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << k << std::endl;
 
-    plugin->setHost(loadPluginRequest->host);
+    plugin->setHost(globalHost);
 
     OfxImageEffectHandle effectHandle = new OfxImageEffectStruct();
     propSetString(effectHandle->properties, kOfxPropType, 0, kOfxTypeImageEffect);
@@ -316,16 +329,25 @@ void closePlugin(int pluginIndex) {
     #endif
     loadedPlugins.erase(pluginIndex);
 }
+}
+
+void loadImageCallbackMock(LoadImageRequest* request) {
+    Image* image = loadImage("/home/black/Downloads/image.ppm");
+
+    request->data = (char*) image->data;
+    request->width = image->width;
+    request->height = image->height;
+}
 
 int main(int argc, char** argv) {
-    if (globalHost == NULL) {
-        globalHost = createGlobalHost();
-    }
+    InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
+    initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
+
+    initializeHost(initializeHostRequest);
 
     LoadPluginRequest* request = new LoadPluginRequest();
     request->width = 831;
     request->height = 530;
-    request->host = globalHost;
     
     int pluginIndex = loadPlugin(request);
 

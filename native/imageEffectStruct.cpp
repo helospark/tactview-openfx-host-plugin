@@ -3,6 +3,7 @@
 #include "paramSet.h"
 #include "imageLoader.h"
 #include <cstring>
+#include "globalCallbackFunctions.h"
 
 OfxImageEffectSuiteV1* effectSuite = NULL;
 
@@ -83,6 +84,7 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
 
                 OfxImageClipStruct* clipStruct = new OfxImageClipStruct();
                 clipStruct->properties = clip;
+                clipStruct->imageEffect = imageEffect;
 
                 imageEffect->clips[std::string(name)] = clipStruct;
 
@@ -206,13 +208,23 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 return kOfxStatOK;
             }
 
+
             Image* image = NULL;
-            if (strcmp(clipName, kOfxImageEffectOutputClipName) != 0 && strcmp(clipName, "Mask") != 0) {
-                #ifdef __linux__
-                    image = loadImage("/home/black/Downloads/image.ppm");
-                #else
-                    image = loadImage("C:\\Users\\black\\Downloads\\image.ppm");
-                #endif
+
+            if (strcmp(clipName, kOfxImageEffectSimpleSourceClipName) == 0) {
+                LoadImageRequest loadImageRequest;
+                loadImageRequest.time = time;
+                loadImageRequest.data = NULL;
+
+                std::cout << "About to call Java" << std::endl;
+
+
+                globalFunctionPointers->loadImageCallback(&loadImageRequest);
+
+                std::cout << "Source image loaded " << std::endl;
+                std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
+
+                image = new Image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data);
             }
 
             char* type = clip->properties->strings[kOfxImageEffectPropPixelDepth][0];
