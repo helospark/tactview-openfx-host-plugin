@@ -49,8 +49,8 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                 char* typeToUse = NULL;
 
                 for (auto& a : actualSupportedFormats) {
-                    if (strcmp(a, kOfxBitDepthFloat) == 0) {
-                        typeToUse = kOfxBitDepthFloat;
+                    if (strcmp(a, kOfxBitDepthByte) == 0) {
+                        typeToUse = kOfxBitDepthByte;
                         break;
                     }
                 }
@@ -172,18 +172,20 @@ void createMask(OfxImageClipHandle clip,
             *imageHandle = clipImage;
 }
 
-void* convertImage(Image* image, char* type) {
+void* convertImage(Image* image, char* type, int* outputSize) {
     if (image == NULL) {
         return NULL;
     }
     if (strcmp(type, kOfxBitDepthByte) == 0) {
+        *outputSize = image->width * image->height * sizeof(char);
         return image->data;
     } else if (strcmp(type, kOfxBitDepthFloat) == 0) {
 
-        float* newData = new float[image->width * image->height * 4];
+        float* newData = new float[image->width * image->height * sizeof(float)];
         for (int i = 0; i < image->width * image->height * 4; ++i) {
             newData[i] = (((unsigned char*)image->data)[i]) / 255.0f;
         }
+        *outputSize = image->width * image->height * sizeof(float);
         delete[] image->data;
         return newData;
     } else {
@@ -201,7 +203,6 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             char* clipName;
             propGetString(clip->properties, "CLIP_NAME", 0, &clipName);
 
-
             if (strcmp(clipName, "Mask") == 0) {
                 std::cout << "Creating white mask" << std::endl;
                 createMask(clip, time, region, imageHandle);
@@ -211,9 +212,25 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
 
             Image* image = NULL;
 
+
+            char* type = clip->properties->strings[kOfxImageEffectPropPixelDepth][0];
+            int sizePerComponent = 1;
+            if (strcmp(type, kOfxBitDepthByte) == 0) {
+                sizePerComponent = 1;
+            } else {
+                sizePerComponent = 4;
+            }
+
+
+            int width = clip->imageEffect->currentRenderRequest->width;
+            int height = clip->imageEffect->currentRenderRequest->height;
+            void* data;
+            int dataSize;
             if (strcmp(clipName, kOfxImageEffectSimpleSourceClipName) == 0) {
                 LoadImageRequest loadImageRequest;
                 loadImageRequest.time = time;
+                loadImageRequest.width = width;
+                loadImageRequest.height = height;
                 loadImageRequest.data = NULL;
 
                 std::cout << "About to call Java" << std::endl;
@@ -225,17 +242,19 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
 
                 image = new Image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data);
+
+                data = convertImage(image, type, &dataSize);
+            } else if (strcmp(clipName, kOfxImageEffectOutputClipName) == 0) {
+                dataSize = width * height * sizePerComponent * 4;
+                if (clip->dataSize != dataSize) {
+                    delete[] clip->data;
+                    data = new char[dataSize];
+                }
             }
 
-            char* type = clip->properties->strings[kOfxImageEffectPropPixelDepth][0];
-            void* imageData = convertImage(image, type);
 
-            int sizePerComponent = 1;
-            if (strcmp(type, kOfxBitDepthByte) == 0) {
-                sizePerComponent = 1;
-            } else {
-                sizePerComponent = 4;
-            }
+            clip->data = data;
+            clip->dataSize = dataSize;
 
             OfxPropertySetHandle clipImage = new OfxPropertySetStruct();
             propSetString(clipImage, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGBA);
@@ -244,16 +263,9 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             propSetDouble(clipImage, kOfxImageEffectPropRenderScale, 1, 1.0);
             propSetDouble(clipImage, kOfxImagePropPixelAspectRatio, 0, 1.0);
 
-            int dimension[4] = {0, 0, 831, 530};
+            int dimension[4] = {0, 0, width, height};
 
-            if (image != NULL) {
-                propSetPointer(clipImage, kOfxImagePropData, 0, imageData);
-            } else {
-                if (clip->data == NULL) {
-                    clip->data = new char[dimension[2] * dimension[3] * sizePerComponent * 4];
-                }
-                propSetPointer(clipImage, kOfxImagePropData, 0, clip->data);
-            }
+            propSetPointer(clipImage, kOfxImagePropData, 0, data);
             propSetIntN(clipImage, kOfxImagePropBounds, 4, dimension);
             propSetIntN(clipImage, kOfxImagePropRegionOfDefinition, 4, dimension);
             propSetInt(clipImage, kOfxImagePropRowBytes, 0, sizePerComponent * 4 * dimension[2]);
@@ -280,8 +292,8 @@ OfxStatus clipGetRegionOfDefinition(OfxImageClipHandle clip,
 
                 bounds->x1 = 0;
                 bounds->y1 = 0;
-                bounds->x2 = 831;
-                bounds->y2 = 530;
+                bounds->x2 = clip->imageEffect->currentRenderRequest->width;
+                bounds->y2 = clip->imageEffect->currentRenderRequest->height;
 
 
                 return kOfxStatOK;

@@ -6,9 +6,15 @@
 
 typedef struct OfxImageEffectStruct *OfxImageEffectHandle;
 
+struct CurrentRenderRequest {
+    int width;
+    int height;
+};
+
 struct OfxImageClipStruct {
     OfxPropertySetHandle properties;
     void* data = NULL;
+    int dataSize = 0;
     char* type;
     OfxImageEffectHandle imageEffect;
 };
@@ -17,6 +23,10 @@ struct OfxImageEffectStruct {
     OfxPropertySetHandle properties;
     std::map<std::string, OfxImageClipStruct*> clips;
     OfxParamSetHandle parameters;
+
+    // getClipImage does not get current inParams, so we have to store this state here
+    // making parallelization impossible :(
+    CurrentRenderRequest* currentRenderRequest;
     
     OfxImageEffectStruct();
 };

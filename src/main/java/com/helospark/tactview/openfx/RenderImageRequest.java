@@ -1,5 +1,6 @@
 package com.helospark.tactview.openfx;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,9 +11,10 @@ public class RenderImageRequest extends Structure implements Structure.ByReferen
     public int height;
     public int pluginIndex;
     public double time;
+    public ByteBuffer returnValue;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("width", "height", "pluginIndex", "time");
+        return Arrays.asList("width", "height", "pluginIndex", "time", "returnValue");
     }
 }

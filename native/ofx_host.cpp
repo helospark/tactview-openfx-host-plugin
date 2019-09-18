@@ -243,12 +243,41 @@ struct RenderImageRequest {
     int height;
     int pluginIndex;
     double time;
+    char* returnValue;
 };
+
+
+int charToUnsignedInt(char data) {
+    int iData = (int)data;
+    if (data < 0) {
+        return iData + 256;
+    } else {
+        return iData;
+    }
+}
+
+int clamp(int v, int min, int max) {
+    if (v < min) {
+        return min;
+    }
+    if (v > max) {
+        return max;
+    }
+    return v;
+}
 
 int renderImage(RenderImageRequest* imageRequest)
 {
     PluginDefinition* pluginDefinition = loadedPlugins[pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
+
+    CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
+    renderRequest->width = imageRequest->width;
+    renderRequest->height = imageRequest->height;
+
+    effectHandle->currentRenderRequest = renderRequest;
+
+
     std::cout << "Calling entrypoint" << std::endl;
 
 
@@ -307,15 +336,34 @@ int renderImage(RenderImageRequest* imageRequest)
     bool containsByte = false;
 
     if (imageData != NULL) {
-        std::cout << "Rendering result" << std::endl;
-        Image result(imageRequest->width, imageRequest->height, imageData);
-        std::stringstream ss("");
-        char* label = new char[200];
-        propGetString(effectHandle->properties, kOfxPropLabel, 0, &label);
-        ss << "/tmp/image_" << pluginDefinition->pluginIndex << "_" << label << ".ppm";
-        std::cout << "Writing file " << ss.str().c_str() << std::endl;
-        writeImage(ss.str().c_str(), &result, type);
+        int index = 0;
+        char* resultImage = imageRequest->returnValue;
+
+        if (strcmp(type, kOfxBitDepthByte) == 0) {
+            char* d = (char*)imageData;
+            for (int i = 0; i < imageRequest->height; ++i) {
+                for (int j = 0; j < imageRequest->width; ++j) {
+                    resultImage[index++] = d[i * imageRequest->width * 4 + j * 4 + 0];
+                    resultImage[index++] = d[i * imageRequest->width * 4 + j * 4 + 1];
+                    resultImage[index++] = d[i * imageRequest->width * 4 + j * 4 + 2];
+                    resultImage[index++] = 255;
+                }
+            }
+        } else {
+            float* d = (float*)imageData;
+            for (int i = 0; i < imageRequest->height; ++i) {
+                for (int j = 0; j < imageRequest->width; ++j) {
+                    resultImage[index++] = clamp((int)(d[i * imageRequest->width * 4 + j * 4 + 0] * 255.0f), 0, 255);
+                    resultImage[index++] = clamp((int)(d[i * imageRequest->width * 4 + j * 4 + 1] * 255.0f), 0, 255);
+                    resultImage[index++] = clamp((int)(d[i * imageRequest->width * 4 + j * 4 + 2] * 255.0f), 0, 255);
+                    resultImage[index++] = 255;
+                }
+            }
+        }
     }
+
+    delete[] effectHandle->currentRenderRequest;
+    effectHandle->currentRenderRequest = NULL;
 
     return 0;
 }
@@ -356,8 +404,13 @@ int main(int argc, char** argv) {
     renderImageRequest->height = request->height;
     renderImageRequest->time = 0.0;
     renderImageRequest->pluginIndex = pluginIndex;
+    renderImageRequest->returnValue = new char[request->width * request->height * 4];
 
     renderImage(renderImageRequest);
+
+    Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
+
+    writeImage("/tmp/result_native.ppm", image, "OfxBitDepthByte");
 
     closePlugin(pluginIndex);
 }

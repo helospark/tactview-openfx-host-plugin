@@ -67,7 +67,7 @@ public class PluginHandler {
     }
 
     public static void main(String[] args) throws IOException {
-        img = ImageIO.read(new File("/home/black/Downloads/image_j.jpg"));
+        img = ImageIO.read(new File("/home/black/Downloads/image_jhalf.jpg"));
 
         imageData = java.nio.ByteBuffer.allocateDirect(img.getWidth() * img.getHeight() * 4);
         imageData.order(ByteOrder.nativeOrder());
@@ -81,6 +81,7 @@ public class PluginHandler {
                 imageData.put((byte) 255);
             }
         }
+        ByteBuffer returnValue = ByteBuffer.allocateDirect(img.getWidth() * img.getHeight() * 4);
 
         InitializeHostRequest initializeHostRequest = new InitializeHostRequest();
         initializeHostRequest.loadImageCallback = new LoadImageImplementation();
@@ -98,10 +99,33 @@ public class PluginHandler {
         renderImageRequest.height = request.height;
         renderImageRequest.time = 0.0;
         renderImageRequest.pluginIndex = pluginIndex;
+        renderImageRequest.returnValue = returnValue;
 
         CLibrary.INSTANCE.renderImage(renderImageRequest);
 
         CLibrary.INSTANCE.closePlugin(pluginIndex);
+
+        BufferedImage writableImage = new BufferedImage(request.width, request.height, BufferedImage.TYPE_4BYTE_ABGR);
+
+        for (int i = 0; i < img.getHeight(); ++i) {
+            for (int j = 0; j < img.getWidth(); ++j) {
+                int r = charToUnsignedInt(renderImageRequest.returnValue.get(i * img.getWidth() * 4 + j * 4 + 1));
+                int g = charToUnsignedInt(renderImageRequest.returnValue.get(i * img.getWidth() * 4 + j * 4 + 2));
+                int b = charToUnsignedInt(renderImageRequest.returnValue.get(i * img.getWidth() * 4 + j * 4 + 0));
+                int a = 255;// charToUnsignedInt(renderImageRequest.returnValue.get(i * img.getWidth() * 4 + j * 4 + 3));
+                writableImage.setRGB(j, i, new Color(r, g, b, a).getRGB());
+            }
+        }
+        ImageIO.write(writableImage, "png", new File("/tmp/result.png"));
+    }
+
+    static int charToUnsignedInt(byte data) {
+        int iData = data;
+        if (data < 0) {
+            return iData + 256;
+        } else {
+            return iData;
+        }
     }
 
 }
