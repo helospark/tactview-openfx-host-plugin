@@ -27,6 +27,9 @@ struct OfxImageEffectStruct {
     // getClipImage does not get current inParams, so we have to store this state here
     // making parallelization impossible :(
     CurrentRenderRequest* currentRenderRequest;
+
+    // TODO: pointer type
+    void* describeInContextList;
     
     OfxImageEffectStruct();
 };

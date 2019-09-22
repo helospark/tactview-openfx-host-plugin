@@ -249,6 +249,8 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 if (clip->dataSize != dataSize) {
                     delete[] clip->data;
                     data = new char[dataSize];
+                } else {
+                    data = clip->data;
                 }
             }
 
@@ -298,10 +300,13 @@ OfxStatus clipGetRegionOfDefinition(OfxImageClipHandle clip,
 
                 return kOfxStatOK;
 }
-int abort(OfxImageEffectHandle imageEffect){
-                //std::cout << "abort" << std::endl;
-                return kOfxStatOK;
+
+
+int abortInternal(OfxImageEffectHandle imageEffect){
+    std::cout << "abort" << std::endl;
+    return kOfxStatOK;
 }
+
 OfxStatus imageMemoryAlloc(OfxImageEffectHandle instanceHandle, 
             size_t nBytes,
             OfxImageMemoryHandle *memoryHandle){
@@ -327,8 +332,8 @@ OfxImageEffectSuiteV1* getOfxImageEffectSuiteV1() {
     if (effectSuite != NULL) {
         return effectSuite;
     } else {
-        OfxImageEffectSuiteV1* effectSuite = new OfxImageEffectSuiteV1();
-        effectSuite->abort = &abort;
+        effectSuite = new OfxImageEffectSuiteV1();
+        effectSuite->abort = &abortInternal;
         effectSuite->clipDefine = &clipDefine;
         effectSuite->clipGetHandle = &clipGetHandle;
         effectSuite->clipGetImage = &clipGetImage;

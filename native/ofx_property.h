@@ -34,4 +34,6 @@
 
     void printAllProperties(OfxPropertySetHandle properties);
 
+    std::map<std::string, std::vector<char*>>* getParametersAsMap(OfxPropertySetHandle properties);
+
 #endif

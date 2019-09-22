@@ -1,6 +1,8 @@
 #include <cstring>
 #include <iostream>
 #include "ofx_property.h"
+#include "string_operations.h"
+#include <sstream>
 
 OfxPropertySuiteV1* propertySuiteV1 = NULL;
 
@@ -367,4 +369,54 @@ void printAllProperties(OfxPropertySetHandle properties) {
     printMap(properties->strings);
     std::cout << "//Values" << std::endl;
 }
+
+std::map<std::string, std::vector<char*>>* getParametersAsMap(OfxPropertySetHandle properties) {
+    std::map<std::string, std::vector<char*>>* resultPointer = new std::map<std::string, std::vector<char*>>();
+
+    std::map<std::string, std::vector<char*>>& result = *resultPointer;
+
+    for (auto& t : properties->strings) {
+        std::vector<char*> elementLine;
+
+        for (auto e : t.second) {
+            elementLine.push_back(duplicateString(e));
+        }
+
+        result[t.first] = elementLine;
+    }
+    for (auto& t : properties->integers) {
+        std::vector<char*> elementLine;
+
+        for (auto e : t.second) {
+            std::string out_string;
+            std::stringstream ss;
+            ss << e;
+            out_string = ss.str();
+
+            elementLine.push_back(duplicateString(ss.str().c_str()));
+        }
+
+        result[t.first] = elementLine;
+    }
+    for (auto& t : properties->doubles) {
+        std::vector<char*> elementLine;
+
+        for (auto e : t.second) {
+            std::string out_string;
+            std::stringstream ss;
+            ss << e;
+            out_string = ss.str();
+
+            elementLine.push_back(duplicateString(ss.str().c_str()));
+        }
+
+        result[t.first] = elementLine;
+    }
+    for (auto& t : properties->pointers) {
+        std::cout << "ERROR pointer cannot be serialized" << std::endl;
+    }
+
+    return resultPointer;
+}
+
 
