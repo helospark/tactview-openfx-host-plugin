@@ -281,6 +281,7 @@ struct RenderImageRequest {
     int pluginIndex;
     double time;
     char* returnValue;
+    char* inputImage;
 };
 
 
@@ -448,11 +449,12 @@ int renderImage(RenderImageRequest* imageRequest)
     PluginDefinition* pluginDefinition = loadedPlugins[pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
 
-
+    Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
 
     CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
     renderRequest->width = imageRequest->width;
     renderRequest->height = imageRequest->height;
+    renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
     effectHandle->currentRenderRequest = renderRequest;
 
 
@@ -509,6 +511,7 @@ int renderImage(RenderImageRequest* imageRequest)
 
     }
 
+    // delete effectHandle->currentRenderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName];
     effectHandle->currentRenderRequest = NULL;
     delete inParam;
     delete outParam;
@@ -560,7 +563,7 @@ int main(int argc, char** argv) {
     request->width = 831;
     request->height = 530;
     request->libraryDescriptor = libraryIndex;
-    request->pluginIndex = 2;
+    request->pluginIndex = 75;
     
     int pluginIndex = loadPlugin(request);
 
@@ -578,21 +581,25 @@ int main(int argc, char** argv) {
 
     createInstance(&createInstanceRequest);
 
+    Image* sourceImage = loadImage("/home/black/Downloads/image.ppm");
+
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
-    renderImageRequest->width = request->width;
-    renderImageRequest->height = request->height;
+    renderImageRequest->width = sourceImage->width;
+    renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 0.0;
     renderImageRequest->pluginIndex = pluginIndex;
     renderImageRequest->returnValue = new char[request->width * request->height * 4];
+    renderImageRequest->inputImage = (char*)sourceImage->data;
 
     renderImage(renderImageRequest);
 
     renderImageRequest = new RenderImageRequest();
-    renderImageRequest->width = request->width;
-    renderImageRequest->height = request->height;
+    renderImageRequest->width = sourceImage->width;
+    renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 1.0;
     renderImageRequest->pluginIndex = pluginIndex;
     renderImageRequest->returnValue = new char[request->width * request->height * 4];
+    renderImageRequest->inputImage = (char*)sourceImage->data;
     
     renderImage(renderImageRequest);
     Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);

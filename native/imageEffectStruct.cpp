@@ -227,23 +227,29 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             void* data;
             int dataSize;
             if (strcmp(clipName, kOfxImageEffectSimpleSourceClipName) == 0) {
-                LoadImageRequest loadImageRequest;
-                loadImageRequest.time = time;
-                loadImageRequest.width = width;
-                loadImageRequest.height = height;
-                loadImageRequest.data = NULL;
+                auto source = clip->imageEffect->currentRenderRequest->sourceClips.find(kOfxImageEffectSimpleSourceClipName);
 
-                std::cout << "About to call Java" << std::endl;
+                if (source != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
+                    data = convertImage(source->second, type, &dataSize);
+                } else {
+                    LoadImageRequest loadImageRequest;
+                    loadImageRequest.time = time;
+                    loadImageRequest.width = width;
+                    loadImageRequest.height = height;
+                    loadImageRequest.data = NULL;
+
+                    std::cout << "About to call Java" << std::endl;
+
+                    globalFunctionPointers->loadImageCallback(&loadImageRequest);
+
+                    std::cout << "Source image loaded " << std::endl;
+                    std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
+
+                    image = new Image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data);
+                    data = convertImage(image, type, &dataSize);
+                }
 
 
-                globalFunctionPointers->loadImageCallback(&loadImageRequest);
-
-                std::cout << "Source image loaded " << std::endl;
-                std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
-
-                image = new Image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data);
-
-                data = convertImage(image, type, &dataSize);
             } else if (strcmp(clipName, kOfxImageEffectOutputClipName) == 0) {
                 dataSize = width * height * sizePerComponent * 4;
                 if (clip->dataSize != dataSize) {
@@ -252,6 +258,9 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 } else {
                     data = clip->data;
                 }
+            } else {
+                imageHandle = NULL;
+                return kOfxStatFailed;
             }
 
 

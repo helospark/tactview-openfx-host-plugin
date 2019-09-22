@@ -3,12 +3,14 @@
 #include "../openfx/include/ofxCore.h"
 #include "../openfx/include/ofxParam.h"
 #include "ofx_property.h"
+#include "imageLoader.h"
 
 typedef struct OfxImageEffectStruct *OfxImageEffectHandle;
 
 struct CurrentRenderRequest {
     int width;
     int height;
+    std::map<std::string, Image*> sourceClips;
 };
 
 struct OfxImageClipStruct {
@@ -57,7 +59,7 @@ OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle);
 OfxStatus clipGetRegionOfDefinition(OfxImageClipHandle clip,
                     OfxTime time,
                     OfxRectD *bounds);
-int abort(OfxImageEffectHandle imageEffect);
+int abortInternal(OfxImageEffectHandle imageEffect);
 OfxStatus imageMemoryAlloc(OfxImageEffectHandle instanceHandle, 
             size_t nBytes,
             OfxImageMemoryHandle *memoryHandle);

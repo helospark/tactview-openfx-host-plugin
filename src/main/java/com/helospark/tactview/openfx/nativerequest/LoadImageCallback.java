@@ -1,6 +1,5 @@
-package com.helospark.tactview.openfx;
+package com.helospark.tactview.openfx.nativerequest;
 
-import com.helospark.tactview.openfx.PluginHandler.LoadImageRequest;
 import com.sun.jna.Callback;
 
 public interface LoadImageCallback extends Callback {

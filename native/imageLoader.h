@@ -1,3 +1,6 @@
+#ifndef IMAGE_LOADER_H
+#define IMAGE_LOADER_H
+
 
 struct Image {
     int width, height;
@@ -13,3 +16,5 @@ struct Image {
 Image* loadImage(const char* imageFileName);
 
 void writeImage(const char* imageFileName, Image* image, char* type);
+
+#endif
