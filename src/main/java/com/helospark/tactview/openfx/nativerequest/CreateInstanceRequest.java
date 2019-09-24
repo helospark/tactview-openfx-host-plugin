@@ -8,9 +8,10 @@ import com.sun.jna.Structure;
 public class CreateInstanceRequest extends Structure implements Structure.ByReference {
     public int width;
     public int height;
+    public String effectId;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("width", "height");
+        return Arrays.asList("width", "height", "effectId");
     }
 }

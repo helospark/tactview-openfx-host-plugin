@@ -4,6 +4,7 @@
 #include "../openfx/include/ofxProperty.h"
 
 struct OfxParamStruct {
+    int paramId;
     const char* name;
     const char* type;
     OfxPropertySetHandle properties;

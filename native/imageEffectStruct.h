@@ -25,6 +25,7 @@ struct OfxImageEffectStruct {
     OfxPropertySetHandle properties;
     std::map<std::string, OfxImageClipStruct*> clips;
     OfxParamSetHandle parameters;
+    char* effectId;
 
     // getClipImage does not get current inParams, so we have to store this state here
     // making parallelization impossible :(

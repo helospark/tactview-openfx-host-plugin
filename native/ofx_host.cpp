@@ -134,6 +134,7 @@ extern "C" {
 
 struct InitializeHostRequest {
     LoadImageCallback loadImageCallback;
+    ParameterValueProviderCallback parameterValueProviderCallback;
 };
 
 void initializeHost(InitializeHostRequest* request) {
@@ -141,6 +142,7 @@ void initializeHost(InitializeHostRequest* request) {
 
     globalFunctionPointers = new GlobalFunctions();
     globalFunctionPointers->loadImageCallback = request->loadImageCallback;
+    globalFunctionPointers->resolveParameterCallback = request->parameterValueProviderCallback;
 }
 
 struct LoadedLibraryDescriptor {
@@ -355,6 +357,7 @@ struct ParameterMap {
 struct Parameter {
     int numberOfEntries;
     ParameterMap* parameterMap;
+    int uniqueParameterId;
     const char* name;
     const char* type;
 };
@@ -403,6 +406,7 @@ void describeInContext(DescribeInContextRequest* describeInContextRequest) {
         parameter.parameterMap = new ParameterMap[parameter.numberOfEntries];
         parameter.type = duplicateString(parameterHandle->type);
         parameter.name = duplicateString(parameterHandle->name);
+        parameter.uniqueParameterId = parameterHandle->paramId;
 
         int j = 0;
         for (auto& e : parameterMap) {
@@ -423,6 +427,7 @@ void describeInContext(DescribeInContextRequest* describeInContextRequest) {
 struct CreateInstanceRequest {
     int width;
     int height;
+    char* effectId;
 };
 
 int createInstance(CreateInstanceRequest* createInstance) {
@@ -438,6 +443,8 @@ int createInstance(CreateInstanceRequest* createInstance) {
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
 
     callEntryPoint(kOfxActionCreateInstance, effectHandle, inParam, outParam);
+
+    effectHandle->effectId = duplicateString(createInstance->effectId);
 
     fprintf(stderr, "Plugin apiVersion=%s version=%d, pluginIdentifier=%s, pluginVersionMajor=%d, pluginVersionMinor=%d\n", plugin->pluginApi, plugin->apiVersion, plugin->pluginIdentifier, plugin->pluginVersionMajor, plugin->pluginVersionMinor);
     delete inParam;

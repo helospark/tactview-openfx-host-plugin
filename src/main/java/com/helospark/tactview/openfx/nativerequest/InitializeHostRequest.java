@@ -7,10 +7,11 @@ import com.sun.jna.Structure;
 
 public class InitializeHostRequest extends Structure implements Structure.ByReference {
     public LoadImageCallback loadImageCallback;
+    public ParameterValueProviderCallback parameterValueProviderCallback;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("loadImageCallback");
+        return Arrays.asList("loadImageCallback", "parameterValueProviderCallback");
     }
 
 }

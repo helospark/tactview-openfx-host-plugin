@@ -13,9 +13,10 @@ public class RenderImageRequest extends Structure implements Structure.ByReferen
     public double time;
     public ByteBuffer returnValue;
     public ByteBuffer inputImage;
+    public String effectId;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("width", "height", "pluginIndex", "time", "returnValue", "inputImage");
+        return Arrays.asList("width", "height", "pluginIndex", "time", "returnValue", "inputImage", "effectId");
     }
 }
