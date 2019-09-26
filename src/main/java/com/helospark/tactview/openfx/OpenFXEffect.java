@@ -2,6 +2,7 @@ package com.helospark.tactview.openfx;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,10 @@ import com.helospark.tactview.core.timeline.image.ClipImage;
 import com.helospark.tactview.core.timeline.image.ReadOnlyClipImage;
 import com.helospark.tactview.core.util.ReflectionUtil;
 import com.helospark.tactview.openfx.nativerequest.CreateInstanceRequest;
+import com.helospark.tactview.openfx.nativerequest.DescribeInContextRequest;
+import com.helospark.tactview.openfx.nativerequest.Parameter;
+import com.helospark.tactview.openfx.nativerequest.ParameterList;
+import com.helospark.tactview.openfx.nativerequest.ParameterMap;
 import com.helospark.tactview.openfx.nativerequest.RenderImageRequest;
 
 public class OpenFXEffect extends StatelessVideoEffect {
@@ -39,16 +44,41 @@ public class OpenFXEffect extends StatelessVideoEffect {
     private Map<Integer, KeyframeableEffect> providers = new HashMap<>();
     private List<ValueProviderDescriptor> descriptors = new ArrayList<>();
 
-    public OpenFXEffect(TimelineInterval interval, int pluginIndex, List<OpenfxParameter> parameters, ProjectRepository projectRepository) {
+    public OpenFXEffect(TimelineInterval interval, int pluginIndex, ProjectRepository projectRepository) {
         super(interval);
         this.pluginIndex = pluginIndex;
-        this.parameters = parameters;
+
+        DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
+        describeInContextRequest.pluginIndex = pluginIndex;
+        describeInContextRequest.list = new ParameterList();
+
+        OpenfxLibrary.INSTANCE.describeInContext(describeInContextRequest);
 
         CreateInstanceRequest createInstanceRequest = new CreateInstanceRequest();
+        createInstanceRequest.pluginIndex = pluginIndex;
         createInstanceRequest.width = projectRepository.getWidth();
         createInstanceRequest.height = projectRepository.getHeight();
         createInstanceRequest.effectId = getId();
         OpenfxLibrary.INSTANCE.createInstance(createInstanceRequest);
+
+        parameters = new ArrayList<>();
+        Parameter[] parameter = (Parameter[]) describeInContextRequest.list.parameter.toArray(describeInContextRequest.list.numberOfParameters);
+        for (int i = 0; i < describeInContextRequest.list.numberOfParameters; ++i) {
+            ParameterMap[] paramMap = (ParameterMap[]) parameter[i].parameterMap.toArray(parameter[i].numberOfEntries);
+
+            Map<String, List<String>> metadata = new HashMap<>();
+            for (int j = 0; j < parameter[i].numberOfEntries; ++j) {
+                String[] elements = paramMap[j].value.getStringArray(0, paramMap[j].numberOfValues);
+                metadata.put(paramMap[j].key, Arrays.asList(elements));
+            }
+
+            parameters.add(OpenfxParameter.builder()
+                    .withMetadata(metadata)
+                    .withUniqueParameterId(parameter[i].uniqueParameterId)
+                    .withName(parameter[i].name)
+                    .withType(parameter[i].type)
+                    .build());
+        }
     }
 
     public OpenFXEffect(OpenFXEffect openfxEffect, CloneRequestMetadata cloneRequestMetadata) {

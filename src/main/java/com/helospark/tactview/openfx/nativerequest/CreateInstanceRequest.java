@@ -6,12 +6,13 @@ import java.util.List;
 import com.sun.jna.Structure;
 
 public class CreateInstanceRequest extends Structure implements Structure.ByReference {
+    public int pluginIndex;
     public int width;
     public int height;
     public String effectId;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("width", "height", "effectId");
+        return Arrays.asList("pluginIndex", "width", "height", "effectId");
     }
 }
