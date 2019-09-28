@@ -6,14 +6,6 @@
 
 OfxPropertySuiteV1* propertySuiteV1 = NULL;
 
-char* copyString(OfxPropertySetHandle property, const char* str) {
-    int len = strlen(str);
-    char* newPointer = new char[len + 1];
-    strcpy(newPointer, str);
-    property->stringToClean.push_back(newPointer);
-    return newPointer;
-}
-
 OfxStatus propGetDoubleN(OfxPropertySetHandle properties, const char *property, int count, double *value) {
     std::cout << "propGetDoubleN" << std::endl;
 
@@ -107,7 +99,7 @@ OfxStatus propSetString(OfxPropertySetHandle properties, const char *property, i
     if (properties->strings[sproperty].size() <= index) {
         properties->strings[sproperty].resize(index + 1);
     }
-    properties->strings[sproperty].at(index) = copyString(properties, value);
+    properties->strings[sproperty].at(index) = duplicateString(value);
     std::cout << "Successfully appended" << std::endl;
     return kOfxStatOK;
 }
@@ -155,7 +147,7 @@ OfxStatus propSetStringN(OfxPropertySetHandle properties, const char *property, 
     properties->strings[sproperty].resize(count);
 
     for (int i = 0; i < count; ++i) {
-        properties->strings[sproperty].at(i) = copyString(properties, value[i]);
+        properties->strings[sproperty].at(i) = duplicateString(value[i]);
     }
     return kOfxStatOK;
 }
@@ -314,7 +306,7 @@ OfxStatus propGetStringN(OfxPropertySetHandle properties, const char *property, 
        return kOfxStatErrBadIndex;
     } else {
         for (int i = 0; i <count; ++i) {
-            value[i] = copyString(properties, result[i]);
+            value[i] = result[i];
         }
     }
     return kOfxStatOK;

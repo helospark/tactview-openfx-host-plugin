@@ -24,9 +24,9 @@ public interface OpenfxLibrary extends Library {
 
     public void describe(DescribeRequest describeRequest);
 
-    public void describeInContext(DescribeInContextRequest request);
+    public int describeInContext(DescribeInContextRequest request);
 
     int renderImage(RenderImageRequest imageRequest);
 
-    void closePlugin(int pluginIndex, int libraryIndex);
+    void deletePlugin(int instanceIndex);
 }

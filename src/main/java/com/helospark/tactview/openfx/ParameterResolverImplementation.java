@@ -1,5 +1,7 @@
 package com.helospark.tactview.openfx;
 
+import java.util.Optional;
+
 import com.helospark.lightdi.annotation.Component;
 import com.helospark.tactview.core.timeline.TimelinePosition;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
@@ -8,7 +10,7 @@ import com.helospark.tactview.core.timeline.effect.interpolation.provider.Boolea
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.DoubleProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.IntegerProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ValueListProvider;
-import com.helospark.tactview.openfx.OpenFXEffect.OpenfxValueListElement;
+import com.helospark.tactview.openfx.OpenFxToTactviewParameterMapper.OpenfxValueListElement;
 import com.helospark.tactview.openfx.nativerequest.ParameterValueProviderCallback;
 import com.helospark.tactview.openfx.nativerequest.ResolveValueRequest;
 
@@ -23,7 +25,13 @@ public class ParameterResolverImplementation implements ParameterValueProviderCa
     @Override
     public void resolveValue(ResolveValueRequest resolveValueRequest) {
 
-        KeyframeableEffect keyframeableEffect = openfxParameterRepository.findKeyframeableEffect(resolveValueRequest.uniqueId).get();
+        Optional<KeyframeableEffect> optionalParameter = openfxParameterRepository.findKeyframeableEffect(resolveValueRequest.uniqueId);
+
+        if (!optionalParameter.isPresent()) {
+            System.out.println("Asking for nonexistent parameter");
+            return;
+        }
+        KeyframeableEffect keyframeableEffect = optionalParameter.get();
 
         if (keyframeableEffect instanceof IntegerProvider) {
             resolveValueRequest.result.intValue1 = ((IntegerProvider) keyframeableEffect).getValueAt(new TimelinePosition(resolveValueRequest.time));

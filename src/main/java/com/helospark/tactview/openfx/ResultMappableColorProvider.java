@@ -1,15 +1,17 @@
 package com.helospark.tactview.openfx;
 
 import com.helospark.tactview.core.timeline.TimelinePosition;
+import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
 import com.helospark.tactview.core.timeline.effect.interpolation.interpolator.MultiKeyframeBasedDoubleInterpolator;
 import com.helospark.tactview.core.timeline.effect.interpolation.pojo.Color;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ColorProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.DoubleProvider;
+import com.helospark.tactview.core.util.DesSerFactory;
 import com.helospark.tactview.core.util.MathUtil;
 
 public class ResultMappableColorProvider extends ColorProvider {
-    private Color min;
-    private Color max;
+    Color min;
+    Color max;
 
     public ResultMappableColorProvider(DoubleProvider redProvider, DoubleProvider greenProvider, DoubleProvider blueProvider,
             Color min, Color max) {
@@ -48,4 +50,20 @@ public class ResultMappableColorProvider extends ColorProvider {
                 max);
     }
 
+    @Override
+    public Class<? extends DesSerFactory<? extends KeyframeableEffect>> generateSerializableContent() {
+        return ResultMappableColorProviderFactory.class;
+    }
+
+    DoubleProvider getRedProvider() {
+        return redProvider;
+    }
+
+    DoubleProvider getGreenProvider() {
+        return greenProvider;
+    }
+
+    DoubleProvider getBlueProvider() {
+        return blueProvider;
+    }
 }

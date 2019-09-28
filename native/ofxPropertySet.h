@@ -8,8 +8,6 @@ struct OfxPropertySetStruct {
     std::map<std::string, std::vector<char*>> strings;
     std::map<std::string, std::vector<void*>> pointers;
 
-    std::vector<char*> stringToClean;
-
     OfxPropertySetStruct() {
         std::cout << "Constructor" << std::endl;
         integers = std::map<std::string, std::vector<int>>();
@@ -18,8 +16,10 @@ struct OfxPropertySetStruct {
     }
 
     ~OfxPropertySetStruct() {
-        for (int i = 0; i < stringToClean.size(); ++i) {
-            delete[] stringToClean.at(i);
+        for (auto mapPair : strings) {
+            for (auto element : mapPair.second) {
+                delete[] element;
+            }
         }
     }
 };

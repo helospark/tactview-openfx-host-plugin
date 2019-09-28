@@ -46,17 +46,14 @@ const void *fetchSuite(OfxPropertySetHandle host, const char *suiteName, int sui
     return (void*)0;
 }
 
-void callEntryPoint(const char *action, const void *handle, OfxPropertySetHandle inArgs, OfxPropertySetHandle outArgs, OfxPlugin* plugin) {
+OfxStatus callEntryPoint(const char *action, const void *handle, OfxPropertySetHandle inArgs, OfxPropertySetHandle outArgs, OfxPlugin* plugin) {
     std::cout << "Calling " << action << std::endl;
     OfxStatus result = plugin->mainEntry(action, handle, inArgs, outArgs);   
     std::cout << action << " done" << std::endl;
     if (result != kOfxStatOK) {
         std::cout << "Error, result is " << result << std::endl;
     }
-
-    if (result == kOfxStatErrUnsupported) {
-        exit(1);
-    }
+    return result;
 }
 
 struct PluginDefinition {
@@ -379,7 +376,7 @@ struct DescribeInContextRequest {
     int pluginIndex;
 };
 
-void describeInContext(DescribeInContextRequest* describeInContextRequest) {
+int describeInContext(DescribeInContextRequest* describeInContextRequest) {
     LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeInContextRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
@@ -390,9 +387,16 @@ void describeInContext(DescribeInContextRequest* describeInContextRequest) {
     propSetString(inParam, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
 
 
-    callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, NULL, pluginDefinition->plugin);
+    OfxStatus status = callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, NULL, pluginDefinition->plugin);
 
     delete inParam;
+
+    bool returnStatus = 0;
+    if (status == kOfxStatErrUnsupported) {
+        returnStatus = -1;
+    }
+    
+    return returnStatus;
 }
 
 struct CreateInstanceRequest {
@@ -414,7 +418,7 @@ OfxImageClipHandle copyClip(OfxImageClipStruct* input, OfxImageEffectHandle newH
     clip->dataSize = 0;
 }
 
-OfxImageEffectHandle copyHandle(OfxImageEffectHandle from) {
+OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
     OfxImageEffectHandle actualHandle = new OfxImageEffectStruct();
 
     actualHandle->describeInContextList = NULL;
@@ -428,6 +432,8 @@ OfxImageEffectHandle copyHandle(OfxImageEffectHandle from) {
         copiedParameter->properties = element->properties;
         copiedParameter->paramId = globalParameterIndex++;
 
+        std::cout << "Creating new parameter " << copiedParameter->name << " " << globalParameterIndex << std::endl;
+
         actualHandle->parameters->parameters.push_back(copiedParameter);
     }
 
@@ -440,11 +446,22 @@ OfxImageEffectHandle copyHandle(OfxImageEffectHandle from) {
     return actualHandle;
 }
 
+void deleteImageEffectHandle(OfxImageEffectHandle toDelete) {
+    delete toDelete->properties;
+    for (auto element : toDelete->parameters->parameters) {
+        delete element;
+    }
+    for (auto element : toDelete->clips) {
+        delete element.second->properties;
+        delete element.second;
+    }
+}
+
 int createInstance(CreateInstanceRequest* request) {
     LoadedPluginDescriptor* pluginDescriptor = pluginDescriptors[request->pluginIndex];
     LoadedLibraryDescriptor* loadedLibraryDescriptor = loadedLibraries[pluginDescriptor->libraryDescriptor];
 
-    OfxImageEffectHandle instanceHandle = copyHandle(pluginDescriptor->effectDescriptor);
+    OfxImageEffectHandle instanceHandle = copyImageEffectHandle(pluginDescriptor->effectDescriptor);
     
     callEntryPoint(kOfxActionCreateInstance, instanceHandle, NULL, NULL, pluginDescriptor->plugin);
 
@@ -597,6 +614,17 @@ void loadImageCallbackMock(LoadImageRequest* request) {
     request->height = image->height;
 }
 
+void deletePlugin(int pluginIndex) {
+    PluginDefinition* pluginDefinition = createdPlugins[pluginIndex];
+    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
+
+    createdPlugins.erase(pluginIndex);
+
+    callEntryPoint(kOfxActionDestroyInstance, effectHandle, NULL, NULL, pluginDefinition->ofxPlugin);
+
+    deleteImageEffectHandle(effectHandle);
+}
+
 int main(int argc, char** argv) {
     InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
     initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
@@ -660,5 +688,5 @@ int main(int argc, char** argv) {
     writeImage("/tmp/result_native.ppm", image, "OfxBitDepthByte");
 
 
-    closePlugin(instanceIndex, libraryIndex);
+    deletePlugin(instanceIndex);
 }

@@ -19,8 +19,6 @@ char* copyString(const char* str) {
     return newPointer;
 }
 
-int globalUniqueParameterCounter = 0;
-
 OfxStatus paramDefine(OfxParamSetHandle paramSet,
             const char *paramType,
             const char *name,
@@ -31,7 +29,7 @@ OfxStatus paramDefine(OfxParamSetHandle paramSet,
 
                 propSetString(result->properties, kOfxParamPropType, 0, copyString(paramType));
                 propSetString(result->properties, kOfxPropName, 0, copyString(name));
-                result->paramId = ++globalUniqueParameterCounter;
+                result->paramId = -1; // set to real value during createInstance
 
                 paramSet->parameters.push_back(result);
 
