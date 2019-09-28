@@ -10,9 +10,10 @@ public class CreateInstanceRequest extends Structure implements Structure.ByRefe
     public int width;
     public int height;
     public String effectId;
+    public ParameterList list;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("pluginIndex", "width", "height", "effectId");
+        return Arrays.asList("pluginIndex", "width", "height", "effectId", "list");
     }
 }

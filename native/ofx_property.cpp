@@ -419,4 +419,36 @@ std::map<std::string, std::vector<char*>>* getParametersAsMap(OfxPropertySetHand
     return resultPointer;
 }
 
+OfxPropertySetHandle copyProperties(OfxPropertySetHandle from) {
+    OfxPropertySetHandle result = new OfxPropertySetStruct();
+    for (auto element : from->strings) {
+        std::vector<char*> list;
+        for (auto a : element.second) {
+            list.push_back(duplicateString(a));
+        }
+        result->strings[element.first] = list;
+    }
+    for (auto element : from->integers) {
+        std::vector<int> list;
+        for (auto a : element.second) {
+            list.push_back(a);
+        }
+        result->integers[element.first] = list;
+    }
+    for (auto element : from->doubles) {
+        std::vector<double> list;
+        for (auto a : element.second) {
+            list.push_back(a);
+        }
+        result->doubles[element.first] = list;
+    }
+    for (auto element : from->pointers) {
+        std::vector<void*> list;
+        for (auto a : element.second) {
+            list.push_back(a);
+        }
+        result->pointers[element.first] = list;
+    }
+    return result;
+}
 

@@ -23,6 +23,8 @@ import com.helospark.tactview.openfx.nativerequest.LoadPluginRequest;
 public class OpenFXEffectFactory {
     @Autowired
     private ParameterResolverImplementation parameterResolverImplementation;
+    //    @Autowired
+    //    private LoadPluginService loadPluginService;
 
     @Bean
     public List<StandardEffectFactory> openfxEffect(ProjectRepository projectRepository) {
@@ -43,20 +45,17 @@ public class OpenFXEffectFactory {
             loadPluginRequest.height = projectRepository.getHeight();
             loadPluginRequest.pluginIndex = i;
             loadPluginRequest.libraryDescriptor = libraryIndex;;
-
-            int pluginIndex = OpenfxLibrary.INSTANCE.loadPlugin(loadPluginRequest);
+            int loadedPluginIndex = OpenfxLibrary.INSTANCE.loadPlugin(loadPluginRequest);
 
             DescribeRequest describeRequest = new DescribeRequest();
-            describeRequest.pluginIndex = pluginIndex;
-
+            describeRequest.pluginIndex = loadedPluginIndex;
             OpenfxLibrary.INSTANCE.describe(describeRequest);
 
-            //            System.out.println("name=" + describeRequest.name + "\n description=" + describeRequest.description);
             List<String> supportedContexts = Arrays.asList(describeRequest.supportedContexts.getStringArray(0, describeRequest.supportedContextSize));
 
             if (supportedContexts.contains("OfxImageEffectContextFilter")) {
                 StandardEffectFactory effectFactory = StandardEffectFactory.builder()
-                        .withFactory(request -> new OpenFXEffect(new TimelineInterval(request.getPosition(), TimelineLength.ofMillis(5000)), pluginIndex, projectRepository))
+                        .withFactory(request -> new OpenFXEffect(new TimelineInterval(request.getPosition(), TimelineLength.ofMillis(5000)), loadedPluginIndex, projectRepository))
                         .withRestoreFactory((node, loadMetadata) -> new OpenFXEffect(node, loadMetadata))
                         .withName(describeRequest.name + "-openfx")
                         .withSupportedEffectId("openfx-" + describeRequest.name)

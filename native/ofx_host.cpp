@@ -66,10 +66,9 @@ struct PluginDefinition {
 
     char* pluginName;
     char* pluginDescription;
-    std::vector<char*> supportedContexts;
 };
 
-std::map<int, PluginDefinition*> loadedPlugins;
+std::map<int, PluginDefinition*> createdPlugins;
 std::map<std::string, void*> handles;
 
 std::vector<PluginDefinition> loadDefinitions() {
@@ -79,6 +78,7 @@ std::vector<PluginDefinition> loadDefinitions() {
 struct LoadPluginRequest {
     int libraryDescriptor;
     int pluginIndex;
+
     int width;
     int height;
 };
@@ -225,8 +225,21 @@ int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
 
 int globalUniquePluginIndex = 0;
 
-int loadPlugin(LoadPluginRequest* loadPluginRequest) {
+struct LoadedPluginDescriptor {
+    OfxPlugin* plugin;
+    int libraryDescriptor;
+    OfxImageEffectHandle effectDescriptor;
+    std::vector<char*> supportedContexts;
+    
 
+    char* name;
+};
+
+int globalUniqueLoadedPluginIndex = 0;
+
+std::map<int, LoadedPluginDescriptor*> pluginDescriptors;
+
+int loadPlugin(LoadPluginRequest* loadPluginRequest) {
     LoadedLibraryDescriptor* loadedLibraryDescriptor = loadedLibraries[loadPluginRequest->libraryDescriptor];
 
     OfxPlugin* plugin = loadedLibraryDescriptor->getPlugin(loadPluginRequest->pluginIndex);
@@ -234,6 +247,9 @@ int loadPlugin(LoadPluginRequest* loadPluginRequest) {
     std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << loadPluginRequest->pluginIndex << std::endl;
 
     plugin->setHost(globalHost);
+
+    callEntryPoint(kOfxActionLoad, NULL, NULL, NULL, plugin);
+
 
     OfxImageEffectHandle effectHandle = new OfxImageEffectStruct();
     propSetString(effectHandle->properties, kOfxPropType, 0, kOfxTypeImageEffect);
@@ -256,27 +272,23 @@ int loadPlugin(LoadPluginRequest* loadPluginRequest) {
     propSetDouble(effectHandle->properties, kOfxImageEffectPropProjectOffset, 1, 0);
 
 
-    OfxPropertySetHandle inParam = new OfxPropertySetStruct();
-    OfxPropertySetHandle outParam = new OfxPropertySetStruct();
+    LoadedPluginDescriptor* globalPluginDescriptor = new LoadedPluginDescriptor();
+    globalPluginDescriptor->plugin = plugin;
+    globalPluginDescriptor->libraryDescriptor = loadPluginRequest->libraryDescriptor;
+    globalPluginDescriptor->effectDescriptor = effectHandle;
 
-    callEntryPoint(kOfxActionLoad, effectHandle, inParam, outParam, plugin);
+    globalUniqueLoadedPluginIndex++;
+    pluginDescriptors[globalUniqueLoadedPluginIndex] = globalPluginDescriptor;
 
-    std::cout << "Load outParam params:" << std::endl;
-    printAllProperties(outParam);
-    
-    PluginDefinition* pluginDefinition = new PluginDefinition();
-    pluginDefinition->effectHandle = effectHandle;
-    pluginDefinition->pluginIndex = loadPluginRequest->pluginIndex;
-    pluginDefinition->ofxPlugin = plugin;
-
-    globalUniquePluginIndex++;
-    loadedPlugins[globalUniquePluginIndex] = pluginDefinition;
-
-    delete inParam;
-    delete outParam;
-
-    return globalUniquePluginIndex;
+    return globalUniqueLoadedPluginIndex;
 }
+
+struct CreatePluginInstanceRequest {
+    int width;
+    int height;
+
+    int loadedPluginIndex;
+};
 
 struct RenderImageRequest {
     int width;
@@ -317,24 +329,19 @@ struct DescribeRequest {
 };
 
 void describe(DescribeRequest* describeRequest) {
-    PluginDefinition* pluginDefinition = loadedPlugins[describeRequest->pluginIndex];
-    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
+    LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeRequest->pluginIndex];
+    OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
     std::cout << "Calling entrypoint" << std::endl;
 
-
-    OfxPropertySetHandle inParam = new OfxPropertySetStruct();
-    OfxPropertySetHandle outParam = new OfxPropertySetStruct();
-
-    callEntryPoint(kOfxActionDescribe, effectHandle, inParam, outParam, pluginDefinition->ofxPlugin);
+    callEntryPoint(kOfxActionDescribe, effectHandle, NULL, NULL, pluginDefinition->plugin);
     
     std::cout << "!DESCRIBE! Returning back" << std::endl;
 
-    printAllProperties(outParam);
     printAllProperties(effectHandle->properties);
 
-    propGetString(effectHandle->properties, kOfxPropLabel, 0, &pluginDefinition->pluginName);
-    propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
+    propGetString(effectHandle->properties, kOfxPropLabel, 0, &pluginDefinition->name);
+    //propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
 
     for (int i = 0; i < effectHandle->properties->strings[kOfxImageEffectPropSupportedContexts].size(); ++i) {
         char* pointer;
@@ -342,13 +349,10 @@ void describe(DescribeRequest* describeRequest) {
         pluginDefinition->supportedContexts.push_back(pointer);
     }
 
-    describeRequest->name = pluginDefinition->pluginName;
-    describeRequest->description = pluginDefinition->pluginDescription;
+    describeRequest->name = pluginDefinition->name;
+    describeRequest->description = "";// pluginDefinition->pluginDescription;
     describeRequest->supportedContexts = &pluginDefinition->supportedContexts[0];
     describeRequest->supportedContextSize = pluginDefinition->supportedContexts.size();
-
-    delete inParam;
-    delete outParam;
 }
 
 struct ParameterMap {
@@ -373,39 +377,101 @@ struct ParameterList {
 
 struct DescribeInContextRequest {
     int pluginIndex;
-
-    ParameterList* list;
 };
 
 void describeInContext(DescribeInContextRequest* describeInContextRequest) {
-    PluginDefinition* pluginDefinition = loadedPlugins[describeInContextRequest->pluginIndex];
-    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
+    LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeInContextRequest->pluginIndex];
+    OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
-    OfxPropertySetHandle outParam = new OfxPropertySetStruct();
 
     propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
     propSetString(effectHandle->properties, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGB);
     propSetString(inParam, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
 
 
-    callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, outParam, pluginDefinition->ofxPlugin);
-    
-    std::cout << "describeInContext" << std::endl;
+    callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, NULL, pluginDefinition->plugin);
 
-    //printAllProperties(effectHandle->properties);
-    int numberOfParameters = effectHandle->parameters->parameters.size();
-    describeInContextRequest->list = new ParameterList();
-    describeInContextRequest->list->numberOfParameters = numberOfParameters;
-    describeInContextRequest->list->parameter = new Parameter[numberOfParameters];
+    delete inParam;
+}
+
+struct CreateInstanceRequest {
+    int pluginIndex;
+    int width;
+    int height;
+    char* effectId;
+    ParameterList* list;
+};
+
+int globalParameterIndex = 0;
+
+OfxImageClipHandle copyClip(OfxImageClipStruct* input, OfxImageEffectHandle newHandle) {
+    OfxImageClipStruct* clip = new OfxImageClipStruct();
+    clip->type = input->type;
+    clip->properties = copyProperties(input->properties);
+    clip->imageEffect = newHandle;
+    clip->data = NULL;
+    clip->dataSize = 0;
+}
+
+OfxImageEffectHandle copyHandle(OfxImageEffectHandle from) {
+    OfxImageEffectHandle actualHandle = new OfxImageEffectStruct();
+
+    actualHandle->describeInContextList = NULL;
+    actualHandle->properties = copyProperties(from->properties);
+
+    // copy parameters
+    actualHandle->parameters = new OfxParamSetStruct();
+    OfxParamSetStruct* parameters = from->parameters;
+    for (auto element : parameters->parameters) {
+        OfxParamStruct* copiedParameter = new OfxParamStruct(element->name, element->type);
+        copiedParameter->properties = element->properties;
+        copiedParameter->paramId = globalParameterIndex++;
+
+        actualHandle->parameters->parameters.push_back(copiedParameter);
+    }
+
+    // copy clips
+    std::map<std::string, OfxImageClipStruct*> originalClips = from->clips;
+
+    for (auto element : originalClips) {
+        actualHandle->clips[element.first] = copyClip(element.second, actualHandle);
+    }
+    return actualHandle;
+}
+
+int createInstance(CreateInstanceRequest* request) {
+    LoadedPluginDescriptor* pluginDescriptor = pluginDescriptors[request->pluginIndex];
+    LoadedLibraryDescriptor* loadedLibraryDescriptor = loadedLibraries[pluginDescriptor->libraryDescriptor];
+
+    OfxImageEffectHandle instanceHandle = copyHandle(pluginDescriptor->effectDescriptor);
+    
+    callEntryPoint(kOfxActionCreateInstance, instanceHandle, NULL, NULL, pluginDescriptor->plugin);
+
+    pluginDescriptor->effectDescriptor->effectId = duplicateString(request->effectId);
+
+    PluginDefinition* pluginDefinition = new PluginDefinition();
+    pluginDefinition->effectHandle = instanceHandle;
+    pluginDefinition->pluginIndex = request->pluginIndex;
+    pluginDefinition->ofxPlugin = pluginDescriptor->plugin;
+
+    globalUniquePluginIndex++;
+    createdPlugins[globalUniquePluginIndex] = pluginDefinition;
+
+
+
+    int numberOfParameters = instanceHandle->parameters->parameters.size();
+    request->list = new ParameterList();
+    request->list->numberOfParameters = numberOfParameters;
+    request->list->parameter = new Parameter[numberOfParameters];
 
 
     for (int i = 0; i < numberOfParameters; ++i) {
-        OfxParamStruct* parameterHandle = effectHandle->parameters->parameters[i];
+        OfxParamStruct* parameterHandle = instanceHandle->parameters->parameters[i];
         std::map<std::string, std::vector<char*>>* parameterMapPointer = getParametersAsMap(parameterHandle->properties);
         std::map<std::string, std::vector<char*>>& parameterMap = *parameterMapPointer;
 
-        auto& parameter = describeInContextRequest->list->parameter[i];
+        auto& parameter = request->list->parameter[i];
         
         parameter.numberOfEntries = parameterMap.size();
         parameter.parameterMap = new ParameterMap[parameter.numberOfEntries];
@@ -420,45 +486,16 @@ void describeInContext(DescribeInContextRequest* describeInContextRequest) {
             parameter.parameterMap[j].numberOfValues = e.second.size();
             ++j;
         }
-     //   printAllProperties(effectHandle->parameters->parameters[i]->properties);
     }
 
-    effectHandle->describeInContextList = describeInContextRequest->list;
+    instanceHandle->describeInContextList = request->list;
 
-    delete inParam;
-    delete outParam;
-}
-
-struct CreateInstanceRequest {
-    int pluginIndex;
-    int width;
-    int height;
-    char* effectId;
-};
-
-int createInstance(CreateInstanceRequest* createInstance) {
-    PluginDefinition* pluginDefinition = loadedPlugins[createInstance->pluginIndex];
-    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
-
-    if (pluginDefinition == NULL || effectHandle == NULL) {
-        std::cout << "Non initialized properly" << std::endl;
-        return -1;
-    }
-
-    OfxPropertySetHandle inParam = new OfxPropertySetStruct();
-    OfxPropertySetHandle outParam = new OfxPropertySetStruct();
-
-    callEntryPoint(kOfxActionCreateInstance, effectHandle, inParam, outParam, pluginDefinition->ofxPlugin);
-
-    effectHandle->effectId = duplicateString(createInstance->effectId);
-
-    delete inParam;
-    delete outParam;
+    return globalUniquePluginIndex;
 }
 
 int renderImage(RenderImageRequest* imageRequest)
 {
-    PluginDefinition* pluginDefinition = loadedPlugins[imageRequest->pluginIndex];
+    PluginDefinition* pluginDefinition = createdPlugins[imageRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
 
     Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
@@ -532,7 +569,7 @@ int renderImage(RenderImageRequest* imageRequest)
 }
 
 void closePlugin(int pluginIndex, int libraryIndex) {
-    PluginDefinition* pluginDefinition = loadedPlugins[pluginIndex];
+    PluginDefinition* pluginDefinition = createdPlugins[pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
     callEntryPoint(kOfxActionUnload, effectHandle, NULL, NULL, pluginDefinition->ofxPlugin);
 
@@ -543,7 +580,7 @@ void closePlugin(int pluginIndex, int libraryIndex) {
     #elif _WIN32 || __CYGWIN__
         FreeLibrary((HINSTANCE)pluginDefinition->handle); 
     #endif
-    loadedPlugins.erase(pluginIndex);
+    createdPlugins.erase(pluginIndex);
     loadedLibraries.erase(libraryIndex);
 
     delete libraryDescriptor->file;
@@ -572,26 +609,31 @@ int main(int argc, char** argv) {
     int libraryIndex = loadLibrary(&loadLibraryRequest);
 
     LoadPluginRequest* request = new LoadPluginRequest();
-    request->width = 831;
-    request->height = 530;
     request->libraryDescriptor = libraryIndex;
     request->pluginIndex = 75;
+
+    int width = 831;
+    int height = 530;
     
-    int pluginIndex = loadPlugin(request);
+    int loadedPluginIndex = loadPlugin(request);
 
     DescribeRequest describeRequest;
+    describeRequest.pluginIndex = loadedPluginIndex;
 
     describe(&describeRequest);
 
     DescribeInContextRequest describeInContextRequest;
+    describeInContextRequest.pluginIndex = loadedPluginIndex;
 
     describeInContext(&describeInContextRequest);
 
     CreateInstanceRequest createInstanceRequest;
-    createInstanceRequest.width = request->width;
-    createInstanceRequest.height = request->height;
+    createInstanceRequest.width = width;
+    createInstanceRequest.height = height;
+    createInstanceRequest.effectId = "asd";
+    createInstanceRequest.pluginIndex = loadedPluginIndex;
+    int instanceIndex = createInstance(&createInstanceRequest);
 
-    createInstance(&createInstanceRequest);
 
     Image* sourceImage = loadImage("/home/black/Downloads/image.ppm");
 
@@ -599,8 +641,8 @@ int main(int argc, char** argv) {
     renderImageRequest->width = sourceImage->width;
     renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 0.0;
-    renderImageRequest->pluginIndex = pluginIndex;
-    renderImageRequest->returnValue = new char[request->width * request->height * 4];
+    renderImageRequest->pluginIndex = instanceIndex;
+    renderImageRequest->returnValue = new char[width * height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
 
     renderImage(renderImageRequest);
@@ -609,8 +651,8 @@ int main(int argc, char** argv) {
     renderImageRequest->width = sourceImage->width;
     renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 1.0;
-    renderImageRequest->pluginIndex = pluginIndex;
-    renderImageRequest->returnValue = new char[request->width * request->height * 4];
+    renderImageRequest->pluginIndex = instanceIndex;
+    renderImageRequest->returnValue = new char[width * height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
     
     renderImage(renderImageRequest);
@@ -618,5 +660,5 @@ int main(int argc, char** argv) {
     writeImage("/tmp/result_native.ppm", image, "OfxBitDepthByte");
 
 
-    closePlugin(pluginIndex, libraryIndex);
+    closePlugin(instanceIndex, libraryIndex);
 }

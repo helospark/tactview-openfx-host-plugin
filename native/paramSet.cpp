@@ -51,7 +51,7 @@ OfxStatus paramGetHandle(OfxParamSetHandle paramSet,
                 const char *name,
                 OfxParamHandle *param,
                 OfxPropertySetHandle *propertySet) {
-                    std::cout << "paramGetHandle " << name << " " << param << std::endl; 
+                    std::cout << "paramGetHandle " << name << " " << param << std::endl;
                     for (int i = 0; i < paramSet->parameters.size(); ++i) {
                         if (strcmp(paramSet->parameters[i]->name, name) == 0) {
                             *param = paramSet->parameters[i];

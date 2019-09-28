@@ -44,26 +44,25 @@ public class OpenFXEffect extends StatelessVideoEffect {
     private Map<Integer, KeyframeableEffect> providers = new HashMap<>();
     private List<ValueProviderDescriptor> descriptors = new ArrayList<>();
 
-    public OpenFXEffect(TimelineInterval interval, int pluginIndex, ProjectRepository projectRepository) {
+    public OpenFXEffect(TimelineInterval interval, int loadedPluginIndex, ProjectRepository projectRepository) {
         super(interval);
-        this.pluginIndex = pluginIndex;
 
         DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
-        describeInContextRequest.pluginIndex = pluginIndex;
-        describeInContextRequest.list = new ParameterList();
+        describeInContextRequest.pluginIndex = loadedPluginIndex;
 
         OpenfxLibrary.INSTANCE.describeInContext(describeInContextRequest);
 
         CreateInstanceRequest createInstanceRequest = new CreateInstanceRequest();
-        createInstanceRequest.pluginIndex = pluginIndex;
+        createInstanceRequest.pluginIndex = loadedPluginIndex;
         createInstanceRequest.width = projectRepository.getWidth();
         createInstanceRequest.height = projectRepository.getHeight();
         createInstanceRequest.effectId = getId();
-        OpenfxLibrary.INSTANCE.createInstance(createInstanceRequest);
+        createInstanceRequest.list = new ParameterList();
+        pluginIndex = OpenfxLibrary.INSTANCE.createInstance(createInstanceRequest);
 
         parameters = new ArrayList<>();
-        Parameter[] parameter = (Parameter[]) describeInContextRequest.list.parameter.toArray(describeInContextRequest.list.numberOfParameters);
-        for (int i = 0; i < describeInContextRequest.list.numberOfParameters; ++i) {
+        Parameter[] parameter = (Parameter[]) createInstanceRequest.list.parameter.toArray(createInstanceRequest.list.numberOfParameters);
+        for (int i = 0; i < createInstanceRequest.list.numberOfParameters; ++i) {
             ParameterMap[] paramMap = (ParameterMap[]) parameter[i].parameterMap.toArray(parameter[i].numberOfEntries);
 
             Map<String, List<String>> metadata = new HashMap<>();
