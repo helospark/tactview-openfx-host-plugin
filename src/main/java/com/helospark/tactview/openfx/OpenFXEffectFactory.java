@@ -1,5 +1,6 @@
 package com.helospark.tactview.openfx;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ public class OpenFXEffectFactory {
     private ProjectRepository projectRepository;
     @Autowired
     private OpenFxPluginInitializer openFxPluginInitializer;
+    @Autowired
+    private OpenFXPluginPathProvider openFXPluginPathProvider;
 
     private List<StandardEffectFactory> effectFactories;
     private List<ProceduralClipFactoryChainItem> proceduralClipFactories;
@@ -46,41 +49,43 @@ public class OpenFXEffectFactory {
 
     @PostConstruct
     public List<StandardEffectFactory> openfxEffect() {
+        effectFactories = new ArrayList<>();
+        proceduralClipFactories = new ArrayList<>();
+
         InitializeHostRequest initializeHostRequest = new InitializeHostRequest();
         initializeHostRequest.loadImageCallback = new LoadImageImplementation(831, 530, null); // DUMMY
         initializeHostRequest.parameterValueProviderCallback = parameterResolverImplementation;
         OpenfxLibrary.INSTANCE.initializeHost(initializeHostRequest);
 
-        LoadLibraryRequest loadLibraryRequest = new LoadLibraryRequest();
-        loadLibraryRequest.file = "/home/black/tmp/openfx-misc/Misc/Linux-64-debug/Misc.ofx";
-        int libraryIndex = OpenfxLibrary.INSTANCE.loadLibrary(loadLibraryRequest);
+        for (File bundle : openFXPluginPathProvider.getOpenFxBundles()) {
+            LoadLibraryRequest loadLibraryRequest = new LoadLibraryRequest();
+            loadLibraryRequest.file = bundle.getAbsolutePath();
+            int libraryIndex = OpenfxLibrary.INSTANCE.loadLibrary(loadLibraryRequest);
 
-        effectFactories = new ArrayList<>();
-        proceduralClipFactories = new ArrayList<>();
+            for (int i = 0; i < loadLibraryRequest.numberOfPlugins; ++i) {
+                LoadPluginRequest loadPluginRequest = new LoadPluginRequest();
+                loadPluginRequest.width = projectRepository.getWidth();
+                loadPluginRequest.height = projectRepository.getHeight();
+                loadPluginRequest.pluginIndex = i;
+                loadPluginRequest.libraryDescriptor = libraryIndex;
+                int loadedPluginIndex = OpenfxLibrary.INSTANCE.loadPlugin(loadPluginRequest);
 
-        for (int i = 0; i < loadLibraryRequest.numberOfPlugins; ++i) {
-            LoadPluginRequest loadPluginRequest = new LoadPluginRequest();
-            loadPluginRequest.width = projectRepository.getWidth();
-            loadPluginRequest.height = projectRepository.getHeight();
-            loadPluginRequest.pluginIndex = i;
-            loadPluginRequest.libraryDescriptor = libraryIndex;
-            int loadedPluginIndex = OpenfxLibrary.INSTANCE.loadPlugin(loadPluginRequest);
+                DescribeRequest describeRequest = new DescribeRequest();
+                describeRequest.pluginIndex = loadedPluginIndex;
+                OpenfxLibrary.INSTANCE.describe(describeRequest);
 
-            DescribeRequest describeRequest = new DescribeRequest();
-            describeRequest.pluginIndex = loadedPluginIndex;
-            OpenfxLibrary.INSTANCE.describe(describeRequest);
+                String pluginName = describeRequest.name;
+                pluginNameToLoadedPluginId.put(pluginName, loadedPluginIndex);
 
-            String pluginName = describeRequest.name;
-            pluginNameToLoadedPluginId.put(pluginName, loadedPluginIndex);
+                List<String> supportedContexts = Arrays.asList(describeRequest.supportedContexts.getStringArray(0, describeRequest.supportedContextSize));
 
-            List<String> supportedContexts = Arrays.asList(describeRequest.supportedContexts.getStringArray(0, describeRequest.supportedContextSize));
-
-            if (supportedContexts.contains(FILTER_CONTEXT)) {
-                createEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
-            } else if (supportedContexts.contains(GENERATOR_CONTEXT)) {
-                createProcuduralClipFactory(loadedPluginIndex, pluginName).ifPresent(proceduralClipFactories::add);
-            } else if (supportedContexts.contains(TRANSITION_CONTEXT)) {
-                createTransitionEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
+                if (supportedContexts.contains(FILTER_CONTEXT)) {
+                    createEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
+                } else if (supportedContexts.contains(GENERATOR_CONTEXT)) {
+                    createProcuduralClipFactory(loadedPluginIndex, pluginName).ifPresent(proceduralClipFactories::add);
+                } else if (supportedContexts.contains(TRANSITION_CONTEXT)) {
+                    createTransitionEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
+                }
             }
         }
         return effectFactories;
