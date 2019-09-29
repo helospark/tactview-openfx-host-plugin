@@ -45,7 +45,7 @@ public class ResultMappableColorProvider extends ColorProvider {
         return new ResultMappableColorProvider(
                 new DoubleProvider(new MultiKeyframeBasedDoubleInterpolator(mapComponent(defaultValue.red, min.red, max.red))),
                 new DoubleProvider(new MultiKeyframeBasedDoubleInterpolator(mapComponent(defaultValue.green, min.green, max.green))),
-                new DoubleProvider(new MultiKeyframeBasedDoubleInterpolator(mapComponent(defaultValue.red, min.blue, max.blue))),
+                new DoubleProvider(new MultiKeyframeBasedDoubleInterpolator(mapComponent(defaultValue.blue, min.blue, max.blue))),
                 min,
                 max);
     }

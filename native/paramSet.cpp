@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include "ofx_property.h"
 #include "globalCallbackFunctions.h"
+#include "imageEffectStruct.h"
 
 OfxParameterSuiteV1* parameterSuite = NULL;
 
@@ -81,11 +82,26 @@ OfxStatus paramGetPropertySet(OfxParamHandle param, OfxPropertySetHandle *propHa
     return kOfxStatOK;
 }
 
+bool isNormalized(OfxPropertySetHandle properties) {
+    auto stringIterator = properties->strings.find(kOfxParamPropDefaultCoordinateSystem);
+    if (stringIterator == properties->strings.end()) {
+        return false;
+    }
+    return !strcmp(stringIterator->second[0], kOfxParamCoordinatesNormalised);
+}
+
 OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     std::cout << "paramGetValue " << paramHandle->type << " " << paramHandle->name << std::endl;
     
     va_list ap;
     va_start(ap, paramHandle);
+
+    if (strcmp(paramHandle->name, kOfxImageEffectTransitionParamName) == 0) {
+        double* value = va_arg(ap, double*);
+        *value = paramHandle->imageEffectHandle->currentRenderRequest->transitionProgress;
+        std::cout << "TransitionProgress " << *value << std::endl;
+        return kOfxStatOK;
+    }
 
     ResolveValueRequest resolveValueRequest;
     resolveValueRequest.uniqueId = paramHandle->paramId;
@@ -119,6 +135,12 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
         double* value2 = va_arg(ap, double*);
         *value1 = resolveValueRequest.result->doubleValue1;
         *value2 = resolveValueRequest.result->doubleValue2;
+
+        if (isNormalized(paramHandle->properties)) {
+            *value1 *= paramHandle->imageEffectHandle->currentRenderRequest->width;
+            *value2 *= paramHandle->imageEffectHandle->currentRenderRequest->height;
+        }
+        std::cout << "Returned " << *value1 << " " << *value2 << std::endl;
     }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);
@@ -134,7 +156,7 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
         *value1 = resolveValueRequest.result->doubleValue1;
         *value2 = resolveValueRequest.result->doubleValue2;
         *value3 = resolveValueRequest.result->doubleValue3;
-        *value3 = resolveValueRequest.result->doubleValue4;
+        *value4 = resolveValueRequest.result->doubleValue4;
     } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);
@@ -158,6 +180,13 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
     std::cout << "paramGetValueAtTime " << paramHandle->name << std::endl;
     va_list ap;
     va_start(ap, time);
+
+    if (strcmp(paramHandle->name, kOfxImageEffectTransitionParamName) == 0) {
+        double* value = va_arg(ap, double*);
+        *value = paramHandle->imageEffectHandle->currentRenderRequest->transitionProgress;
+        std::cout << "TransitionProgress " << *value << std::endl;
+        return kOfxStatOK;
+    }
 
     ResolveValueRequest resolveValueRequest;
     resolveValueRequest.uniqueId = paramHandle->paramId;
@@ -191,6 +220,13 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
         double* value2 = va_arg(ap, double*);
         *value1 = resolveValueRequest.result->doubleValue1;
         *value2 = resolveValueRequest.result->doubleValue2;
+
+        if (isNormalized(paramHandle->properties)) {
+            *value1 *= paramHandle->imageEffectHandle->currentRenderRequest->width;
+            *value2 *= paramHandle->imageEffectHandle->currentRenderRequest->height;
+        }
+
+        std::cout << "returned " << *value1 << " " << *value2 << std::endl;
     }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);
@@ -206,7 +242,7 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
         *value1 = resolveValueRequest.result->doubleValue1;
         *value2 = resolveValueRequest.result->doubleValue2;
         *value3 = resolveValueRequest.result->doubleValue3;
-        *value3 = resolveValueRequest.result->doubleValue4;
+        *value4 = resolveValueRequest.result->doubleValue4;
     } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);

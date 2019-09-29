@@ -294,6 +294,11 @@ struct RenderImageRequest {
     double time;
     char* returnValue;
     char* inputImage;
+    char* effectId;
+
+    int isTransition;
+    double transitionProgress;
+    char* transitionInputImage;
 };
 
 
@@ -385,7 +390,7 @@ int describeInContext(DescribeInContextRequest* describeInContextRequest) {
 
     propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
     propSetString(effectHandle->properties, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGB);
-    propSetString(inParam, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
+    propSetString(inParam, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
 
 
     OfxStatus status = callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, NULL, pluginDefinition->plugin);
@@ -432,6 +437,7 @@ OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
         OfxParamStruct* copiedParameter = new OfxParamStruct(element->name, element->type);
         copiedParameter->properties = element->properties;
         copiedParameter->paramId = globalParameterIndex++;
+        copiedParameter->imageEffectHandle = actualHandle;
 
         std::cout << "Creating new parameter " << copiedParameter->name << " " << globalParameterIndex << std::endl;
 
@@ -516,15 +522,22 @@ int renderImage(RenderImageRequest* imageRequest)
     PluginDefinition* pluginDefinition = createdPlugins[imageRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
 
-    if (imageRequest->inputImage != NULL) {
-        Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
 
-        CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
-        renderRequest->width = imageRequest->width;
-        renderRequest->height = imageRequest->height;
+    CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
+    renderRequest->width = imageRequest->width;
+    renderRequest->height = imageRequest->height;
+
+    if (imageRequest->isTransition) {
+        Image* sourceFromImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
+        renderRequest->sourceClips[kOfxImageEffectTransitionSourceFromClipName] = sourceFromImage;
+        Image* sourceToImage = new Image(imageRequest->width, imageRequest->height, imageRequest->transitionInputImage);
+        renderRequest->sourceClips[kOfxImageEffectTransitionSourceToClipName] = sourceToImage;
+    } else if (imageRequest->inputImage != NULL) {
+        Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
         renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
-        effectHandle->currentRenderRequest = renderRequest;
     }
+    effectHandle->currentRenderRequest = renderRequest;
+        
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
@@ -535,6 +548,12 @@ int renderImage(RenderImageRequest* imageRequest)
     propSetDouble(inParam, kOfxImageEffectPropRenderScale, 0, 1.0);
     propSetDouble(inParam, kOfxImageEffectPropRenderScale, 1, 1.0);
     propSetInt(inParam, kOfxPropIsInteractive, 0, 0);
+
+    std::cout << "Transition " << imageRequest->isTransition << " " << imageRequest->transitionProgress << std::endl;
+    if (imageRequest->isTransition) {
+        propSetDouble(inParam, kOfxImageEffectTransitionParamName, 0, imageRequest->transitionProgress);
+        renderRequest->transitionProgress = imageRequest->transitionProgress;
+    }
 
     propSetDouble(inParam, kOfxImageEffectPropFrameRange, 0, 0);
     propSetDouble(inParam, kOfxImageEffectPropFrameRange, 1, 0);
@@ -640,7 +659,7 @@ int main(int argc, char** argv) {
 
     LoadPluginRequest* request = new LoadPluginRequest();
     request->libraryDescriptor = libraryIndex;
-    request->pluginIndex = 75;
+    request->pluginIndex = 54;
 
     int width = 831;
     int height = 530;
@@ -654,7 +673,7 @@ int main(int argc, char** argv) {
 
     DescribeInContextRequest describeInContextRequest;
     describeInContextRequest.pluginIndex = loadedPluginIndex;
-    describeInContextRequest.context = kOfxImageEffectContextFilter;
+    describeInContextRequest.context = kOfxImageEffectContextTransition;
 
     describeInContext(&describeInContextRequest);
 

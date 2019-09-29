@@ -32,6 +32,7 @@ import com.helospark.tactview.openfx.nativerequest.LoadPluginRequest;
 public class OpenFXEffectFactory {
     private static final String GENERATOR_CONTEXT = "OfxImageEffectContextGenerator";
     private static final String FILTER_CONTEXT = "OfxImageEffectContextFilter";
+    private static final String TRANSITION_CONTEXT = "OfxImageEffectContextTransition";
     @Autowired
     private ParameterResolverImplementation parameterResolverImplementation;
     @Autowired
@@ -78,6 +79,8 @@ public class OpenFXEffectFactory {
                 createEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
             } else if (supportedContexts.contains(GENERATOR_CONTEXT)) {
                 createProcuduralClipFactory(loadedPluginIndex, pluginName).ifPresent(proceduralClipFactories::add);
+            } else if (supportedContexts.contains(TRANSITION_CONTEXT)) {
+                createTransitionEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
             }
         }
         return effectFactories;
@@ -97,7 +100,7 @@ public class OpenFXEffectFactory {
                             pluginName))
                     .withRestoreFactory((node, loadMetadata) -> new OpenFXFilterEffect(node, loadMetadata, openFxPluginInitializer, pluginNameToLoadedPluginId))
                     .withName(pluginName + "-openfx")
-                    .withSupportedEffectId("openfx-" + pluginName)
+                    .withSupportedEffectId("openfx-filter-" + pluginName)
                     .withSupportedClipTypes(List.of(TimelineClipType.VIDEO, TimelineClipType.IMAGE))
                     .withEffectType(TimelineEffectType.VIDEO_EFFECT)
                     .build());
@@ -119,7 +122,7 @@ public class OpenFXEffectFactory {
                     .withLength(defaultLength)
                     .build();
 
-            ProceduralClipFactoryChainItem proceduralClipFactory = new StandardProceduralClipFactoryChainItem("openfx-" + pluginName, pluginName + "-openfx",
+            ProceduralClipFactoryChainItem proceduralClipFactory = new StandardProceduralClipFactoryChainItem("openfx-generator-" + pluginName, pluginName + "-openfx",
                     request -> {
                         return new OpenFXGeneratorProceduralClip(metadata, new TimelineInterval(request.getPosition(), defaultLength), loadedPluginIndex, openFxPluginInitializer,
                                 pluginName);
@@ -131,6 +134,27 @@ public class OpenFXEffectFactory {
         } else {
             return Optional.empty();
         }
+    }
+
+    private Optional<StandardEffectFactory> createTransitionEffectFactory(int loadedPluginIndex, String pluginName) {
+        Optional<StandardEffectFactory> effectFactory = Optional.empty();
+        DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
+        describeInContextRequest.pluginIndex = loadedPluginIndex;
+        describeInContextRequest.context = TRANSITION_CONTEXT;
+        int returnStatus = OpenfxLibrary.INSTANCE.describeInContext(describeInContextRequest);
+
+        if (returnStatus >= 0) {
+            effectFactory = Optional.of(StandardEffectFactory.builder()
+                    .withFactory(request -> new OpenFXTransitionEffect(new TimelineInterval(request.getPosition(), TimelineLength.ofMillis(2000)), loadedPluginIndex, openFxPluginInitializer,
+                            pluginName))
+                    .withRestoreFactory((node, loadMetadata) -> new OpenFXFilterEffect(node, loadMetadata, openFxPluginInitializer, pluginNameToLoadedPluginId))
+                    .withName(pluginName + "-openfx")
+                    .withSupportedEffectId("openfx-transition-" + pluginName)
+                    .withSupportedClipTypes(List.of(TimelineClipType.VIDEO, TimelineClipType.IMAGE))
+                    .withEffectType(TimelineEffectType.VIDEO_TRANSITION)
+                    .build());
+        }
+        return effectFactory;
     }
 
     @Bean

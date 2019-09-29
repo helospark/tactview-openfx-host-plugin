@@ -13,8 +13,8 @@ struct ResolvedParameterStructure {
     int intValue2;
     int intValue3;
     double doubleValue1;
-    double doubleValue3;
     double doubleValue2;
+    double doubleValue3;
     double doubleValue4;
 };
 

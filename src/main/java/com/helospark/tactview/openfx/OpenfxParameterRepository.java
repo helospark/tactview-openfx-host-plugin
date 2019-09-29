@@ -27,6 +27,11 @@ public class OpenfxParameterRepository {
                 parameterMap.putAll(((OpenFXFilterEffect) e.getEffect()).getProviders());
             }
         });
+        messagingService.register(EffectAddedMessage.class, e -> {
+            if (e.getEffect() instanceof OpenFXTransitionEffect) {
+                parameterMap.putAll(((OpenFXTransitionEffect) e.getEffect()).getProviders());
+            }
+        });
         messagingService.register(ClipAddedMessage.class, e -> {
             if (e.getClip() instanceof OpenFXGeneratorProceduralClip) {
                 parameterMap.putAll(((OpenFXGeneratorProceduralClip) e.getClip()).getProviders());

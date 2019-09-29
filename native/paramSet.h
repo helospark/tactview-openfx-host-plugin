@@ -2,12 +2,15 @@
 #define PARAM_SET_H
 #include <vector>
 #include "../openfx/include/ofxProperty.h"
+#include "../openfx/include/ofxImageEffect.h"
 
 struct OfxParamStruct {
     int paramId;
     const char* name;
     const char* type;
     OfxPropertySetHandle properties;
+    
+    OfxImageEffectHandle imageEffectHandle;
 
     OfxParamStruct(const char* name, const char* type);
 };

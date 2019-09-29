@@ -11,6 +11,9 @@ struct CurrentRenderRequest {
     int width;
     int height;
     std::map<std::string, Image*> sourceClips;
+
+    // only for transitions
+    double transitionProgress;
 };
 
 struct OfxImageClipStruct {

@@ -16,6 +16,7 @@ import com.helospark.tactview.core.timeline.effect.interpolation.provider.Boolea
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ColorProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.DoubleProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.IntegerProvider;
+import com.helospark.tactview.core.timeline.effect.interpolation.provider.PointProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ValueListElement;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ValueListProvider;
 
@@ -59,8 +60,7 @@ public class OpenFxToTactviewParameterMapper {
             } else {
                 if (type.equals("OfxParamTypeBoolean")) {
                     double defaultValue = getSingleMetadata(parameter, "OfxParamPropDefault")
-                            .map(a -> Boolean.valueOf(a))
-                            .map(a -> a ? 1.0 : 0.0)
+                            .map(a -> Double.parseDouble(a))
                             .orElse(0.0);
                     BooleanProvider booleanProvider = new BooleanProvider(new BezierDoubleInterpolator(defaultValue));
                     nameToEffect.put(parameter.getName(), booleanProvider);
@@ -92,12 +92,38 @@ public class OpenFxToTactviewParameterMapper {
                     ValueListProvider<ValueListElement> provider = new ValueListProvider<>(elements, new StepStringInterpolator(String.valueOf(defaultValue)));
                     nameToEffect.put(parameter.getName(), provider);
                 } else if (type.equals("OfxParamTypeRGB")) {
-                    Color color = getColorFrom(parameter, "OfxParamPropDefault");
-                    Color min = getColorFrom(parameter, "OfxParamPropMin");
-                    Color max = getColorFrom(parameter, "OfxParamPropMax");
+                    Color color = getColorFrom(parameter, "OfxParamPropDefault", Color.of(0.5, 0.5, 0.5));
+                    Color min = getColorFrom(parameter, "OfxParamPropDisplayMin", Color.of(0, 0, 0));
+                    Color max = getColorFrom(parameter, "OfxParamPropDisplayMax", Color.of(1, 1, 1));
 
                     ColorProvider provider = ResultMappableColorProvider.fromDefaultValueAndMinMax(color, min, max);
                     nameToEffect.put(parameter.getName(), provider);
+                } else if (type.equals("OfxParamTypeRGBA")) {
+                    Color color = getColorFrom(parameter, "OfxParamPropDefault", Color.of(0.5, 0.5, 0.5));
+                    Color min = getColorFrom(parameter, "OfxParamPropDisplayMin", Color.of(0, 0, 0));
+                    Color max = getColorFrom(parameter, "OfxParamPropDisplayMax", Color.of(1, 1, 1));
+
+                    ColorProvider provider = ResultMappableColorProvider.fromDefaultValueAndMinMax(color, min, max);
+                    nameToEffect.put(parameter.getName(), provider);
+                } else if (type.equals("OfxParamTypeDouble2D")) {
+                    double defaultValue1 = getSingleMetadata(parameter, "OfxParamPropDefault", 0)
+                            .map(a -> Integer.valueOf(a))
+                            .orElse(0);
+                    double defaultValue2 = getSingleMetadata(parameter, "OfxParamPropDefault", 1)
+                            .map(a -> Integer.valueOf(a))
+                            .orElse(0);
+
+                    Boolean isNormalized = getSingleMetadata(parameter, "OfxParamPropDefaultCoordinateSystem")
+                            .map(a -> a.equals("OfxParamCoordinatesNormalised"))
+                            .orElse(false);
+
+                    PointProvider pointProvider;
+                    if (isNormalized) {
+                        pointProvider = PointProvider.ofNormalizedImagePosition(defaultValue1, defaultValue2);
+                    } else {
+                        pointProvider = PointProvider.of(defaultValue1, defaultValue2);
+                    }
+                    nameToEffect.put(parameter.getName(), pointProvider);
                 }
             }
         }
@@ -115,18 +141,18 @@ public class OpenFxToTactviewParameterMapper {
 
     }
 
-    private Color getColorFrom(OpenfxParameter parameter, String string) {
+    private Color getColorFrom(OpenfxParameter parameter, String string, Color defaultValue) {
         parameter.getMetadata().get(string);
 
         double r = getSingleMetadata(parameter, string, 0)
                 .map(a -> Double.valueOf(a))
-                .orElse(0.0);
-        double g = getSingleMetadata(parameter, string, 0)
+                .orElse(defaultValue.red);
+        double g = getSingleMetadata(parameter, string, 1)
                 .map(a -> Double.valueOf(a))
-                .orElse(0.0);
-        double b = getSingleMetadata(parameter, string, 0)
+                .orElse(defaultValue.green);
+        double b = getSingleMetadata(parameter, string, 2)
                 .map(a -> Double.valueOf(a))
-                .orElse(0.0);
+                .orElse(defaultValue.blue);
 
         return new Color(r, g, b);
     }

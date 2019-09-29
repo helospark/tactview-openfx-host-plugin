@@ -224,10 +224,20 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
 
             int width = clip->imageEffect->currentRenderRequest->width;
             int height = clip->imageEffect->currentRenderRequest->height;
+
             void* data;
             int dataSize;
-            if (strcmp(clipName, kOfxImageEffectSimpleSourceClipName) == 0) {
-                auto source = clip->imageEffect->currentRenderRequest->sourceClips.find(kOfxImageEffectSimpleSourceClipName);
+            
+            if (strcmp(clipName, kOfxImageEffectOutputClipName) == 0) {
+                dataSize = width * height * sizePerComponent * 4;
+                if (clip->dataSize != dataSize) {
+                    delete[] clip->data;
+                    data = new char[dataSize];
+                } else {
+                    data = clip->data;
+                }
+            } else {
+                auto source = clip->imageEffect->currentRenderRequest->sourceClips.find(clipName);
 
                 if (source != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
                     data = convertImage(source->second, type, &dataSize);
@@ -250,17 +260,6 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 }
 
 
-            } else if (strcmp(clipName, kOfxImageEffectOutputClipName) == 0) {
-                dataSize = width * height * sizePerComponent * 4;
-                if (clip->dataSize != dataSize) {
-                    delete[] clip->data;
-                    data = new char[dataSize];
-                } else {
-                    data = clip->data;
-                }
-            } else {
-                imageHandle = NULL;
-                return kOfxStatFailed;
             }
 
 
