@@ -7,9 +7,10 @@ import com.sun.jna.Structure;
 
 public class DescribeInContextRequest extends Structure implements Structure.ByReference {
     public int pluginIndex;
+    public String context;
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("pluginIndex");
+        return Arrays.asList("pluginIndex", "context");
     }
 }

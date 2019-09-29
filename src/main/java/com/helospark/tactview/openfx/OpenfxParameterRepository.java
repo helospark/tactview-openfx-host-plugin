@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import com.helospark.lightdi.annotation.Component;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
+import com.helospark.tactview.core.timeline.message.ClipAddedMessage;
 import com.helospark.tactview.core.timeline.message.EffectAddedMessage;
 import com.helospark.tactview.core.util.messaging.MessagingService;
 
@@ -22,13 +23,23 @@ public class OpenfxParameterRepository {
     @PostConstruct
     public void init() {
         messagingService.register(EffectAddedMessage.class, e -> {
-            if (e.getEffect() instanceof OpenFXEffect) {
-                parameterMap.putAll(((OpenFXEffect) e.getEffect()).getProviders());
+            if (e.getEffect() instanceof OpenFXFilterEffect) {
+                parameterMap.putAll(((OpenFXFilterEffect) e.getEffect()).getProviders());
             }
         });
+        messagingService.register(ClipAddedMessage.class, e -> {
+            if (e.getClip() instanceof OpenFXGeneratorProceduralClip) {
+                parameterMap.putAll(((OpenFXGeneratorProceduralClip) e.getClip()).getProviders());
+            }
+        });
+        //        messagingService.register(ClipRemovedMessage.class, e -> {
+        //            if (e.getClip() instanceof OpenFXGeneratorProceduralClip) {
+        //                parameterMap.removeAll(((OpenFXGeneratorProceduralClip) e.getClip()).getProviders());
+        //            }
+        //        });
         //        messagingService.register(EffectRemovedMessage.class, e -> {
         //            if (e.() instanceof OpenFXEffect) {
-        //                parameterMap.putAll(((OpenFXEffect) e.getEffect()).getProviders());
+        //                parameterMap.removeAll(((OpenFXEffect) e.getEffect()).getProviders());
         //            }
         //        });
     }

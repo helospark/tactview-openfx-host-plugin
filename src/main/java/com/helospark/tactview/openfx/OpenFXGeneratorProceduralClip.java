@@ -7,20 +7,22 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.helospark.tactview.core.clone.CloneRequestMetadata;
+import com.helospark.tactview.core.decoder.ImageMetadata;
+import com.helospark.tactview.core.decoder.VisualMediaMetadata;
 import com.helospark.tactview.core.save.LoadMetadata;
-import com.helospark.tactview.core.timeline.StatelessEffect;
-import com.helospark.tactview.core.timeline.StatelessVideoEffect;
+import com.helospark.tactview.core.timeline.GetFrameRequest;
+import com.helospark.tactview.core.timeline.TimelineClip;
 import com.helospark.tactview.core.timeline.TimelineInterval;
-import com.helospark.tactview.core.timeline.effect.StatelessEffectRequest;
+import com.helospark.tactview.core.timeline.TimelinePosition;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
 import com.helospark.tactview.core.timeline.effect.interpolation.ValueProviderDescriptor;
 import com.helospark.tactview.core.timeline.image.ClipImage;
 import com.helospark.tactview.core.timeline.image.ReadOnlyClipImage;
+import com.helospark.tactview.core.timeline.proceduralclip.ProceduralVisualClip;
 import com.helospark.tactview.openfx.nativerequest.RenderImageRequest;
 
-public class OpenFXEffect extends StatelessVideoEffect {
+public class OpenFXGeneratorProceduralClip extends ProceduralVisualClip {
     private static final String PARAMETERS_KEY = "parameters";
-
     private static final String PLUGIN_NAME_KEY = "pluginName";
 
     private OpenFxPluginInitializerResult initializedPluginData;
@@ -29,14 +31,15 @@ public class OpenFXEffect extends StatelessVideoEffect {
 
     private OpenFxPluginInitializer openFxPluginInitializer;
 
-    public OpenFXEffect(TimelineInterval interval, int loadedPluginIndex, OpenFxPluginInitializer openFxPluginInitializer, String pluginName) {
-        super(interval);
+    public OpenFXGeneratorProceduralClip(VisualMediaMetadata visualMediaMetadata, TimelineInterval interval, int loadedPluginIndex, OpenFxPluginInitializer openFxPluginInitializer,
+            String pluginName) {
+        super(visualMediaMetadata, interval);
         initializedPluginData = openFxPluginInitializer.initialize(loadedPluginIndex, getId(), Collections.emptyMap());
         this.loadedPluginIndex = loadedPluginIndex;
         this.pluginName = pluginName;
     }
 
-    public OpenFXEffect(OpenFXEffect openfxEffect, CloneRequestMetadata cloneRequestMetadata) {
+    public OpenFXGeneratorProceduralClip(OpenFXGeneratorProceduralClip openfxEffect, CloneRequestMetadata cloneRequestMetadata) {
         super(openfxEffect, cloneRequestMetadata);
         this.openFxPluginInitializer = openfxEffect.openFxPluginInitializer;
         this.loadedPluginIndex = openfxEffect.loadedPluginIndex;
@@ -51,9 +54,9 @@ public class OpenFXEffect extends StatelessVideoEffect {
 
     }
 
-    public OpenFXEffect(JsonNode node, LoadMetadata loadMetadata, OpenFxPluginInitializer openFxPluginInitializer,
+    public OpenFXGeneratorProceduralClip(ImageMetadata metadata, JsonNode node, LoadMetadata loadMetadata, OpenFxPluginInitializer openFxPluginInitializer,
             Map<String, Integer> pluginNameToLoadedPluginId) {
-        super(node, loadMetadata);
+        super(metadata, node, loadMetadata);
 
         this.pluginName = node.get(PLUGIN_NAME_KEY).asText();
         Integer index = pluginNameToLoadedPluginId.get(pluginName); // hopefully name is unique :)
@@ -82,40 +85,39 @@ public class OpenFXEffect extends StatelessVideoEffect {
     }
 
     @Override
-    public ReadOnlyClipImage createFrame(StatelessEffectRequest request) {
+    public ReadOnlyClipImage createProceduralFrame(GetFrameRequest request, TimelinePosition relativePosition) {
         synchronized (this) {
-            int width = request.getCurrentFrame().getWidth();
-            int height = request.getCurrentFrame().getHeight();
+            int width = request.getExpectedWidth();
+            int height = request.getExpectedHeight();
 
-            ClipImage result = ClipImage.sameSizeAs(request.getCurrentFrame());
+            ClipImage result = ClipImage.fromSize(width, height);
 
             RenderImageRequest renderImageRequest = new RenderImageRequest();
             renderImageRequest.width = width;
             renderImageRequest.height = height;
-            renderImageRequest.time = request.getEffectPosition().getSeconds().doubleValue();
+            renderImageRequest.time = relativePosition.getSeconds().doubleValue();
             renderImageRequest.pluginIndex = initializedPluginData.createdInstanceIndex;
             renderImageRequest.returnValue = result.getBuffer();
-            renderImageRequest.inputImage = request.getCurrentFrame().getBuffer();
+            renderImageRequest.inputImage = null;
             renderImageRequest.effectId = getId();
 
             OpenfxLibrary.INSTANCE.renderImage(renderImageRequest);
 
             return result;
         }
+
     }
 
     @Override
-    public void initializeValueProvider() {
+    public List<ValueProviderDescriptor> getDescriptorsInternal() {
+        List<ValueProviderDescriptor> descriptors = super.getDescriptorsInternal();
+        descriptors.addAll(initializedPluginData.descriptors);
+        return descriptors;
     }
 
     @Override
-    public List<ValueProviderDescriptor> getValueProviders() {
-        return initializedPluginData.descriptors;
-    }
-
-    @Override
-    public StatelessEffect cloneEffect(CloneRequestMetadata cloneRequestMetadata) {
-        return new OpenFXEffect(this, cloneRequestMetadata);
+    public TimelineClip cloneClip(CloneRequestMetadata cloneRequestMetadata) {
+        return new OpenFXGeneratorProceduralClip(this, cloneRequestMetadata);
     }
 
     public Map<Integer, KeyframeableEffect> getProviders() {

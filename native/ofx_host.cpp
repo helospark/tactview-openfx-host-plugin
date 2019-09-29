@@ -374,6 +374,7 @@ struct ParameterList {
 
 struct DescribeInContextRequest {
     int pluginIndex;
+    char* context;
 };
 
 int describeInContext(DescribeInContextRequest* describeInContextRequest) {
@@ -382,7 +383,7 @@ int describeInContext(DescribeInContextRequest* describeInContextRequest) {
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
 
-    propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
+    propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
     propSetString(effectHandle->properties, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGB);
     propSetString(inParam, kOfxImageEffectPropContext, 0, kOfxImageEffectContextFilter);
 
@@ -515,14 +516,15 @@ int renderImage(RenderImageRequest* imageRequest)
     PluginDefinition* pluginDefinition = createdPlugins[imageRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
 
-    Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
+    if (imageRequest->inputImage != NULL) {
+        Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
 
-    CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
-    renderRequest->width = imageRequest->width;
-    renderRequest->height = imageRequest->height;
-    renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
-    effectHandle->currentRenderRequest = renderRequest;
-
+        CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
+        renderRequest->width = imageRequest->width;
+        renderRequest->height = imageRequest->height;
+        renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
+        effectHandle->currentRenderRequest = renderRequest;
+    }
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
@@ -652,6 +654,7 @@ int main(int argc, char** argv) {
 
     DescribeInContextRequest describeInContextRequest;
     describeInContextRequest.pluginIndex = loadedPluginIndex;
+    describeInContextRequest.context = kOfxImageEffectContextFilter;
 
     describeInContext(&describeInContextRequest);
 
