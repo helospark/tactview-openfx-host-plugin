@@ -541,6 +541,8 @@ int renderImage(RenderImageRequest* imageRequest)
 
     OfxPropertySetHandle inParam = new OfxPropertySetStruct();
     OfxPropertySetHandle outParam = new OfxPropertySetStruct();
+
+
     propSetDouble(inParam, kOfxPropTime, 0, imageRequest->time);
     int renderWindow[4] = {0, 0, imageRequest->width, imageRequest->height};
     propSetIntN(inParam, kOfxImageEffectPropRenderWindow, 4, renderWindow);
@@ -548,6 +550,11 @@ int renderImage(RenderImageRequest* imageRequest)
     propSetDouble(inParam, kOfxImageEffectPropRenderScale, 0, 1.0);
     propSetDouble(inParam, kOfxImageEffectPropRenderScale, 1, 1.0);
     propSetInt(inParam, kOfxPropIsInteractive, 0, 0);
+    
+    //double rod[] = {0,0,imageRequest->width, imageRequest->height};
+    //propSetDoubleN(inParam, kOfxImageEffectPropRegionOfDefinition, 4, rod);
+   // callEntryPoint(kOfxImageEffectActionGetRegionOfDefinition, effectHandle, inParam, outParam, pluginDefinition->ofxPlugin);
+
 
     std::cout << "Transition " << imageRequest->isTransition << " " << imageRequest->transitionProgress << std::endl;
     if (imageRequest->isTransition) {
@@ -650,6 +657,12 @@ int main(int argc, char** argv) {
     InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
     initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
 
+    int pluginToLoad = 20;
+
+    if (argc > 1) {
+        pluginToLoad = atoi(argv[1]);
+    }
+
     initializeHost(initializeHostRequest);
 
     LoadLibraryRequest loadLibraryRequest;
@@ -659,10 +672,10 @@ int main(int argc, char** argv) {
 
     LoadPluginRequest* request = new LoadPluginRequest();
     request->libraryDescriptor = libraryIndex;
-    request->pluginIndex = 54;
+    request->pluginIndex = pluginToLoad;
 
-    int width = 831;
-    int height = 530;
+    int width = 300;
+    int height = 200;
     
     int loadedPluginIndex = loadPlugin(request);
 
@@ -673,7 +686,7 @@ int main(int argc, char** argv) {
 
     DescribeInContextRequest describeInContextRequest;
     describeInContextRequest.pluginIndex = loadedPluginIndex;
-    describeInContextRequest.context = kOfxImageEffectContextTransition;
+    describeInContextRequest.context = kOfxImageEffectContextFilter;
 
     describeInContext(&describeInContextRequest);
 
@@ -685,29 +698,43 @@ int main(int argc, char** argv) {
     int instanceIndex = createInstance(&createInstanceRequest);
 
 
-    Image* sourceImage = loadImage("/home/black/Downloads/image.ppm");
+    Image* sourceImage = loadImage("/home/black/Downloads/image_jhalf.ppm");
 
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
     renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 0.0;
     renderImageRequest->pluginIndex = instanceIndex;
-    renderImageRequest->returnValue = new char[width * height * 4];
+    renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
 
     renderImage(renderImageRequest);
+    Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
+    
+    std::stringstream ss;
+    ss << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_1" << ".ppm";
+
+    writeImage(ss.str().c_str(), image, "OfxBitDepthByte");
+
+
+    sourceImage = loadImage("/home/black/Downloads/image_f.ppm");
 
     renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
     renderImageRequest->height = sourceImage->height;
     renderImageRequest->time = 1.0;
     renderImageRequest->pluginIndex = instanceIndex;
-    renderImageRequest->returnValue = new char[width * height * 4];
+    renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
     
     renderImage(renderImageRequest);
-    Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
-    writeImage("/tmp/result_native.ppm", image, "OfxBitDepthByte");
+    image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
+
+    std::stringstream ss2;
+    ss2 << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_2" << ".ppm";
+
+
+    writeImage(ss2.str().c_str(), image, "OfxBitDepthByte");
 
 
     deletePlugin(instanceIndex);

@@ -107,11 +107,11 @@ public class OpenFxToTactviewParameterMapper {
                     nameToEffect.put(parameter.getName(), provider);
                 } else if (type.equals("OfxParamTypeDouble2D")) {
                     double defaultValue1 = getSingleMetadata(parameter, "OfxParamPropDefault", 0)
-                            .map(a -> Integer.valueOf(a))
-                            .orElse(0);
+                            .map(a -> Double.valueOf(a))
+                            .orElse(0.0);
                     double defaultValue2 = getSingleMetadata(parameter, "OfxParamPropDefault", 1)
-                            .map(a -> Integer.valueOf(a))
-                            .orElse(0);
+                            .map(a -> Double.valueOf(a))
+                            .orElse(0.0);
 
                     Boolean isNormalized = getSingleMetadata(parameter, "OfxParamPropDefaultCoordinateSystem")
                             .map(a -> a.equals("OfxParamCoordinatesNormalised"))

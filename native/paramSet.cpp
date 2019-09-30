@@ -93,6 +93,74 @@ bool isNormalized(OfxPropertySetHandle properties) {
 OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     std::cout << "paramGetValue " << paramHandle->type << " " << paramHandle->name << std::endl;
     
+#ifdef DEBUG
+    std::cout << "paramGetValue " << paramHandle->type << " " << paramHandle->name << std::endl;
+    
+    va_list ap;
+    va_start(ap, paramHandle);
+
+    if (strcmp(paramHandle->type, kOfxParamTypeInteger) == 0) {
+        int* value = va_arg(ap, int*);
+        *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
+        std::cout << " returned " << *value << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeDouble) == 0) {
+        double* value = va_arg(ap, double*);
+        *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
+        std::cout << " returned " << *value << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
+        int* value = va_arg(ap, int*);
+        if (paramHandle->properties->integers.find(kOfxParamPropDefault) != paramHandle->properties->integers.end()) {
+            *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
+        } else {
+            *value = 0;
+        }
+        //*value = 1;
+        std::cout << " returned " << *value << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeInteger2D)== 0) {
+        int* value = va_arg(ap, int*);
+        *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
+        int* value2 = va_arg(ap, int*);
+        *value2 = paramHandle->properties->integers[kOfxParamPropDefault][1];
+        std::cout << "Integer2D returned " << *value << " " << *value2 << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeDouble2D) == 0) {
+        double* value = va_arg(ap, double*);
+        *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
+        double* value2 = va_arg(ap, double*);
+        *value2 = paramHandle->properties->doubles[kOfxParamPropDefault][1];
+        std::cout << "Double2D returned " << *value << " " << *value2 << std::endl;
+    }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
+        for (int i = 0; i < 3; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
+            std::cout << "double3d[" << i << "] = " << *value << std::endl;
+        }
+    }  else if (strcmp(paramHandle->type, kOfxParamTypeRGBA) == 0) {
+        for (int i = 0; i < 4; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
+            std::cout << "RGBA[" << i << "] = " << *value << std::endl;
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
+        for (int i = 0; i < 3; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
+            std::cout << "RGB[" << i << "] = " << *value << std::endl;
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
+        int* value = va_arg(ap, int*);
+        auto val = paramHandle->properties->integers[kOfxParamPropDefault];
+        if (val.size() > 0) {
+            *value = val[0];
+        } else {
+            *value = 0;
+        }
+        std::cout << " returned " << *value << std::endl;
+    } else {
+        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+    }
+    return kOfxStatOK;
+#else
+
     va_list ap;
     va_start(ap, paramHandle);
 
@@ -174,9 +242,67 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     delete resolveValueRequest.result;
 
     return kOfxStatOK;
+#endif
 }
 
 OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
+
+#ifdef DEBUG
+    va_list ap;
+    va_start(ap, time);
+
+    if (strcmp(paramHandle->type, kOfxParamTypeInteger) == 0) {
+        int* value = va_arg(ap, int*);
+        if (paramHandle->properties->integers.find(kOfxParamPropDefault) != paramHandle->properties->integers.end()) {
+            *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
+        } else {
+            *value = paramHandle->properties->integers[kOfxParamPropDisplayMin][0];
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeDouble) == 0) {
+        double* value = va_arg(ap, double*);
+        *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
+    } else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
+        for (int i = 0; i < 3; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
+            std::cout << "double3d[" << i << "] = " << *value << std::endl;
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
+        int* value = va_arg(ap, int*);
+        *value = strstr(paramHandle->name, "NatronOfxParamProcess") != 0;
+        std::cout << "   returns " << *value << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeRGBA) == 0) {
+        for (int i = 0; i < 4; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
+            std::cout << "RGBA[" << i << "] = " << *value << std::endl;
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
+        for (int i = 0; i < 3; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
+            std::cout << "RGB[" << i << "] = " << *value << std::endl;
+        }
+    } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
+        int* value = va_arg(ap, int*);
+        auto val = paramHandle->properties->integers[kOfxParamPropDefault];
+        if (val.size() > 0) {
+            *value = val[0];
+        } else {
+            *value = 0;
+        }
+        std::cout << " returned " << *value << std::endl;
+    } else if (strcmp(paramHandle->type, kOfxParamTypeDouble2D) == 0) {
+        for (int i = 0; i < 2; ++i) {
+            double* value = va_arg(ap, double*);
+            *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
+            std::cout << "double2d[" << i << "] = " << *value << std::endl;
+        }
+    } else {
+        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+    }
+    return kOfxStatOK;
+#else
     std::cout << "paramGetValueAtTime " << paramHandle->name << std::endl;
     va_list ap;
     va_start(ap, time);
@@ -261,6 +387,7 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
     delete resolveValueRequest.result;
 
     return kOfxStatOK;
+#endif
 }
 
 OfxStatus paramGetDerivative(OfxParamHandle  paramHandle, OfxTime time, ...) {

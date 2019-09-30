@@ -135,33 +135,42 @@ void createMask(OfxImageClipHandle clip,
             propSetDouble(clipImage, kOfxImagePropPixelAspectRatio, 0, 1.0);
             propSetString(clipImage, kOfxImageEffectPropPixelDepth, 0, clip->properties->strings["CLIP_TYPE"][0]);
 
-            int dataSize;
-            int dimension[4] = {0, 0, 831, 530};
+            int width = clip->imageEffect->currentRenderRequest->width;
+            int height = clip->imageEffect->currentRenderRequest->height;
+
+            int typeSize;
+            int dimension[4] = {0, 0, width, height};
             if (strcmp(clip->properties->strings["CLIP_TYPE"][0], kOfxBitDepthByte) == 0) {
-                dataSize = 1;
-                if (clip->data == NULL) {
-                    int size = dimension[2] * dimension[3] * dataSize;
+                typeSize = sizeof(char);
+                int dataSize =  dimension[2] * dimension[3] * typeSize;
+                if (clip->data == NULL || clip->dataSize != dataSize) {
+                    delete[] clip->data;
+                    int size = dimension[2] * dimension[3];
                     char* clipData = new char[size];
                     for (int i = 0; i < size; ++i) {
                         clipData[i] = (char)255;
                     }
                     clip->data = clipData;
+                    clip->dataSize = dataSize;
                 }
             } else if (strcmp(clip->properties->strings["CLIP_TYPE"][0], kOfxBitDepthFloat) == 0) {
-                dataSize = 4;
-                    if (clip->data == NULL) {
-                        int size = dimension[2] * dimension[3] * sizeof(float);
+                    typeSize = sizeof(float);
+                    int dataSize = dimension[2] * dimension[3] * typeSize;
+                    if (clip->data == NULL || clip->dataSize != dataSize) {
+                        delete[] clip->data;
+                        int size = dimension[2] * dimension[3];
                         float* clipData = new float[size];
                         for (int i = 0; i < size; ++i) {
                             clipData[i] = 1.0;
                         }
-                        clip->data = clipData;
+                        clip->data = (void*)clipData;
+                        clip->dataSize = dataSize;
                     }
             } else {
                 std::cout << "[!Error!] No conversion to image type" << std::endl;
             }
 
-            propSetInt(clipImage, kOfxImagePropRowBytes, 0, dataSize * dimension[2]);
+            propSetInt(clipImage, kOfxImagePropRowBytes, 0, typeSize * dimension[2]);
             propSetPointer(clipImage, kOfxImagePropData, 0, clip->data);
             propSetIntN(clipImage, kOfxImagePropBounds, 4, dimension);
             propSetIntN(clipImage, kOfxImagePropRegionOfDefinition, 4, dimension);
