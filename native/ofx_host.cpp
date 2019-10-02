@@ -287,6 +287,13 @@ struct CreatePluginInstanceRequest {
     int loadedPluginIndex;
 };
 
+struct RenderImageClip {
+    int width;
+    int height;
+    char* name;
+    char* data;
+};
+
 struct RenderImageRequest {
     int width;
     int height;
@@ -299,6 +306,9 @@ struct RenderImageRequest {
     int isTransition;
     double transitionProgress;
     char* transitionInputImage;
+
+    int numberOfAdditionalClips;
+    RenderImageClip* clips;
 };
 
 
@@ -405,12 +415,23 @@ int describeInContext(DescribeInContextRequest* describeInContextRequest) {
     return returnStatus;
 }
 
+struct ClipInformation {
+    char* name;
+    int isMask;
+};
+
+struct ClipList {
+    int numberOfEntries;
+    ClipInformation* clip;
+};
+
 struct CreateInstanceRequest {
     int pluginIndex;
     int width;
     int height;
     char* effectId;
     ParameterList* list;
+    ClipList* clips;
 };
 
 int globalParameterIndex = 0;
@@ -512,7 +533,32 @@ int createInstance(CreateInstanceRequest* request) {
         }
     }
 
+    ClipInformation* clipInformations = new ClipInformation[instanceHandle->clips.size()];
+
+    int index = 0;
+    for (auto entry : instanceHandle->clips) {
+        if (strcmp(entry.first.c_str(), kOfxImageEffectSimpleSourceClipName) == 0 
+                || strcmp(entry.first.c_str(), kOfxImageEffectOutputClipName) == 0
+                || strcmp(entry.first.c_str(), kOfxImageEffectTransitionSourceToClipName) == 0
+                || strcmp(entry.first.c_str(), kOfxImageEffectTransitionSourceFromClipName) == 0) {
+            continue;
+        }
+        ClipInformation* info = new ClipInformation();
+
+        clipInformations[index].name = duplicateString(entry.first.c_str());
+        auto maskArray = entry.second->properties->integers[kOfxImageClipPropIsMask];
+        clipInformations[index].isMask = maskArray.size() > 0 ? maskArray[0] : 0;
+        ++index;
+    }
+
+    ClipList* clipList = new ClipList();
+    clipList->numberOfEntries = index;
+    clipList->clip = clipInformations;
+
+    request->clips = clipList;
+
     instanceHandle->describeInContextList = request->list;
+    instanceHandle->clipList = clipList;
 
     return globalUniquePluginIndex;
 }
@@ -536,6 +582,14 @@ int renderImage(RenderImageRequest* imageRequest)
         Image* sourceImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
         renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
     }
+
+    if (imageRequest->clips != NULL) {
+        for (int i = 0; i < imageRequest->numberOfAdditionalClips; ++i) {
+            Image* image = new Image(imageRequest->clips[i].width, imageRequest->clips[i].height, imageRequest->clips[i].data);
+            renderRequest->sourceClips[imageRequest->clips[i].name] = image;
+        }
+    }
+
     effectHandle->currentRenderRequest = renderRequest;
         
 
@@ -605,6 +659,7 @@ int renderImage(RenderImageRequest* imageRequest)
 
     }
 
+    // TODO: delete clips
     // delete effectHandle->currentRenderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName];
     effectHandle->currentRenderRequest = NULL;
     delete inParam;
@@ -628,6 +683,8 @@ void closePlugin(int pluginIndex, int libraryIndex) {
     createdPlugins.erase(pluginIndex);
     loadedLibraries.erase(libraryIndex);
 
+    delete[] effectHandle->clipList;
+    delete effectHandle->describeInContextList; // more deletion probably required
     delete libraryDescriptor->file;
     delete libraryDescriptor;
     delete pluginDefinition;
@@ -698,6 +755,10 @@ int main(int argc, char** argv) {
     int instanceIndex = createInstance(&createInstanceRequest);
 
 
+    for (int i = 0; i < createInstanceRequest.clips->numberOfEntries; ++i) {
+        std::cout << createInstanceRequest.clips->clip[i].name << std::endl;
+    }
+
     Image* sourceImage = loadImage("/home/black/Downloads/image_jhalf.ppm");
 
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
@@ -719,6 +780,22 @@ int main(int argc, char** argv) {
 
     sourceImage = loadImage("/home/black/Downloads/image_f.ppm");
 
+    RenderImageClip clip;
+    clip.width = createInstanceRequest.width;
+    clip.height = createInstanceRequest.height;
+    clip.name = "Mask";
+
+    clip.data = new char[clip.width * clip.height * 4];
+    for (int i = 0; i < clip.height; ++i) {
+        for (int j = 0; j < clip.width; ++j) {
+            char d = ((i / 10) % 2 == 0) * 255;
+            clip.data[i * clip.width * 4 + j * 4 + 0] =d;
+            clip.data[i * clip.width * 4 + j * 4 + 1] =d;
+            clip.data[i * clip.width * 4 + j * 4 + 2] =d;
+            clip.data[i * clip.width * 4 + j * 4 + 3] =d;
+        }
+    }
+
     renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
     renderImageRequest->height = sourceImage->height;
@@ -726,6 +803,8 @@ int main(int argc, char** argv) {
     renderImageRequest->pluginIndex = instanceIndex;
     renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
+    renderImageRequest->numberOfAdditionalClips = 1;
+    renderImageRequest->clips = &clip;
     
     renderImage(renderImageRequest);
     image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);

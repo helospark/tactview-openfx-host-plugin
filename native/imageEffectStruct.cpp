@@ -138,6 +138,8 @@ void createMask(OfxImageClipHandle clip,
             int width = clip->imageEffect->currentRenderRequest->width;
             int height = clip->imageEffect->currentRenderRequest->height;
 
+            auto maskIterator = clip->imageEffect->currentRenderRequest->sourceClips.find("Mask");
+
             int typeSize;
             int dimension[4] = {0, 0, width, height};
             if (strcmp(clip->properties->strings["CLIP_TYPE"][0], kOfxBitDepthByte) == 0) {
@@ -168,6 +170,20 @@ void createMask(OfxImageClipHandle clip,
                     }
             } else {
                 std::cout << "[!Error!] No conversion to image type" << std::endl;
+            }
+
+            if (maskIterator != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
+                Image* image = (*maskIterator).second;
+                std::cout << "Mask found " << image->width << " " << image->height << std::endl;
+
+                for (int i = 0; i < height; ++i) {
+                    for (int j = 0; j < width; ++j) {
+                        if (j < image->width && i < image->height) {
+                            ((char*)clip->data)[i * width + j] = ((char*)image->data)[i * image->width * 4 + j * 4 + 0];
+                        }
+                    }
+                }
+                
             }
 
             propSetInt(clipImage, kOfxImagePropRowBytes, 0, typeSize * dimension[2]);

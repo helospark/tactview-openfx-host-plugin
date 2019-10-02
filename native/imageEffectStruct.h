@@ -36,6 +36,7 @@ struct OfxImageEffectStruct {
 
     // TODO: pointer type
     void* describeInContextList;
+    void* clipList;
     
     OfxImageEffectStruct();
 };

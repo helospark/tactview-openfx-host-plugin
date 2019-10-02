@@ -14,6 +14,7 @@ import com.helospark.tactview.core.timeline.effect.interpolation.interpolator.be
 import com.helospark.tactview.core.timeline.effect.interpolation.pojo.Color;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.BooleanProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ColorProvider;
+import com.helospark.tactview.core.timeline.effect.interpolation.provider.DependentClipProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.DoubleProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.IntegerProvider;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.PointProvider;
@@ -48,7 +49,7 @@ class ParameterMapperResult {
 @Component
 public class OpenFxToTactviewParameterMapper {
 
-    public Map<String, KeyframeableEffect> createKeyframeableEffects(Map<String, OpenfxParameter> parameters, Map<String, KeyframeableEffect> previousValues) {
+    public Map<String, KeyframeableEffect> createKeyframeableEffects(Map<String, OpenfxParameter> parameters, List<OpenfxClip> clips, Map<String, KeyframeableEffect> previousValues) {
         Map<String, KeyframeableEffect> nameToEffect = new LinkedHashMap<>();
         for (var parameterEntry : parameters.entrySet()) {
             var parameter = parameterEntry.getValue();
@@ -128,6 +129,11 @@ public class OpenFxToTactviewParameterMapper {
             }
         }
 
+        for (var element : clips) {
+            DependentClipProvider stringProvider = new DependentClipProvider(new StepStringInterpolator());
+            nameToEffect.put(element.getName(), stringProvider);
+        }
+
         return nameToEffect;
     }
 
@@ -179,13 +185,20 @@ public class OpenFxToTactviewParameterMapper {
         Map<Integer, KeyframeableEffect> providers = new LinkedHashMap<>();
         List<ValueProviderDescriptor> descriptors = new ArrayList<>();
         for (var entry : mergedParameters.entrySet()) {
-            OpenfxParameter parameter = parameters.get(entry.getKey());
-            int uniqueParameterId = parameter.getUniqueParameterId();
-            providers.put(uniqueParameterId, entry.getValue());
-            descriptors.add(ValueProviderDescriptor.builder()
-                    .withKeyframeableEffect(entry.getValue())
-                    .withName(parameter.getName())
-                    .build());
+            if (entry.getValue() instanceof DependentClipProvider) {
+                descriptors.add(ValueProviderDescriptor.builder()
+                        .withKeyframeableEffect(entry.getValue())
+                        .withName(entry.getKey())
+                        .build());
+            } else {
+                OpenfxParameter parameter = parameters.get(entry.getKey());
+                int uniqueParameterId = parameter.getUniqueParameterId();
+                providers.put(uniqueParameterId, entry.getValue());
+                descriptors.add(ValueProviderDescriptor.builder()
+                        .withKeyframeableEffect(entry.getValue())
+                        .withName(parameter.getName())
+                        .build());
+            }
         }
         return new ParameterMapperResult(providers, descriptors, mergedParameters);
     }

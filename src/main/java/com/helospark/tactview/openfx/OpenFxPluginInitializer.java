@@ -15,6 +15,8 @@ import com.helospark.tactview.core.save.LoadMetadata;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
 import com.helospark.tactview.core.timeline.effect.interpolation.ValueProviderDescriptor;
 import com.helospark.tactview.core.util.ReflectionUtil;
+import com.helospark.tactview.openfx.nativerequest.ClipInformation;
+import com.helospark.tactview.openfx.nativerequest.ClipList;
 import com.helospark.tactview.openfx.nativerequest.CreateInstanceRequest;
 import com.helospark.tactview.openfx.nativerequest.Parameter;
 import com.helospark.tactview.openfx.nativerequest.ParameterList;
@@ -25,13 +27,15 @@ class OpenFxPluginInitializerResult {
     List<ValueProviderDescriptor> descriptors = new ArrayList<>();
     Map<String, KeyframeableEffect> nameToParameter;
     int createdInstanceIndex;
+    private List<OpenfxClip> clips;
 
     public OpenFxPluginInitializerResult(Map<Integer, KeyframeableEffect> providers, List<ValueProviderDescriptor> descriptors, int createdInstanceIndex,
-            Map<String, KeyframeableEffect> nameToParameter) {
+            Map<String, KeyframeableEffect> nameToParameter, List<OpenfxClip> clips) {
         this.providers = providers;
         this.descriptors = descriptors;
         this.createdInstanceIndex = createdInstanceIndex;
         this.nameToParameter = nameToParameter;
+        this.clips = clips;
     }
 
 }
@@ -51,12 +55,22 @@ public class OpenFxPluginInitializer {
         int createdInstanceIndex = OpenfxLibrary.INSTANCE.createInstance(createInstanceRequest);
 
         Map<String, OpenfxParameter> parameters = mapParameters(createInstanceRequest);
+        List<OpenfxClip> clips = mapClips(createInstanceRequest);
 
-        Map<String, KeyframeableEffect> parameterNameToEffect = parameterMapper.createKeyframeableEffects(parameters, previousValues);
+        Map<String, KeyframeableEffect> parameterNameToEffect = parameterMapper.createKeyframeableEffects(parameters, clips, previousValues);
 
         var parameterMapperResult = parameterMapper.createDescriptors(parameterNameToEffect, parameters);
 
-        return new OpenFxPluginInitializerResult(parameterMapperResult.getProviders(), parameterMapperResult.getDescriptors(), createdInstanceIndex, parameterMapperResult.getNameToEffect());
+        return new OpenFxPluginInitializerResult(parameterMapperResult.getProviders(), parameterMapperResult.getDescriptors(), createdInstanceIndex, parameterMapperResult.getNameToEffect(), clips);
+    }
+
+    private List<OpenfxClip> mapClips(CreateInstanceRequest createInstanceRequest) {
+        List<OpenfxClip> resultClips = new ArrayList<>();
+        ClipInformation[] clips = (ClipInformation[]) createInstanceRequest.clips.clip.toArray(createInstanceRequest.clips.numberOfEntries);
+        for (var element : clips) {
+            resultClips.add(new OpenfxClip(element.name, element.isMask > 0));
+        }
+        return resultClips;
     }
 
     public OpenFxPluginInitializerResult initializePluginAfterLoad(int loadedPluginIndex, String pluginId, JsonNode parametersNode, LoadMetadata loadMetadata) {
@@ -64,8 +78,9 @@ public class OpenFxPluginInitializer {
         int createdInstanceIndex = OpenfxLibrary.INSTANCE.createInstance(createInstanceRequest);
 
         Map<String, OpenfxParameter> parameters = mapParameters(createInstanceRequest);
+        List<OpenfxClip> clips = mapClips(createInstanceRequest);
 
-        Map<String, KeyframeableEffect> parameterNameToEffect = parameterMapper.createKeyframeableEffects(parameters, Collections.emptyMap());
+        Map<String, KeyframeableEffect> parameterNameToEffect = parameterMapper.createKeyframeableEffects(parameters, clips, Collections.emptyMap());
 
         Map<String, KeyframeableEffect> mergedParameters = new LinkedHashMap<>();
 
@@ -88,7 +103,7 @@ public class OpenFxPluginInitializer {
 
         var parameterMapperResult = parameterMapper.createDescriptors(mergedParameters, parameters);
 
-        return new OpenFxPluginInitializerResult(parameterMapperResult.getProviders(), parameterMapperResult.getDescriptors(), createdInstanceIndex, parameterMapperResult.getNameToEffect());
+        return new OpenFxPluginInitializerResult(parameterMapperResult.getProviders(), parameterMapperResult.getDescriptors(), createdInstanceIndex, parameterMapperResult.getNameToEffect(), clips);
     }
 
     private CreateInstanceRequest createRequest(int loadedPluginIndex, String pluginId) {
@@ -98,6 +113,7 @@ public class OpenFxPluginInitializer {
         createInstanceRequest.height = projectRepository.getHeight();
         createInstanceRequest.effectId = pluginId;
         createInstanceRequest.list = new ParameterList();
+        createInstanceRequest.clips = new ClipList();
         return createInstanceRequest;
     }
 

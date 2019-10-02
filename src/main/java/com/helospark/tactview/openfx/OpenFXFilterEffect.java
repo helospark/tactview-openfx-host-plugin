@@ -11,11 +11,14 @@ import com.helospark.tactview.core.save.LoadMetadata;
 import com.helospark.tactview.core.timeline.StatelessEffect;
 import com.helospark.tactview.core.timeline.StatelessVideoEffect;
 import com.helospark.tactview.core.timeline.TimelineInterval;
+import com.helospark.tactview.core.timeline.TimelinePosition;
 import com.helospark.tactview.core.timeline.effect.StatelessEffectRequest;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
 import com.helospark.tactview.core.timeline.effect.interpolation.ValueProviderDescriptor;
+import com.helospark.tactview.core.timeline.effect.interpolation.provider.DependentClipProvider;
 import com.helospark.tactview.core.timeline.image.ClipImage;
 import com.helospark.tactview.core.timeline.image.ReadOnlyClipImage;
+import com.helospark.tactview.openfx.nativerequest.RenderImageClip;
 import com.helospark.tactview.openfx.nativerequest.RenderImageRequest;
 
 public class OpenFXFilterEffect extends StatelessVideoEffect {
@@ -87,6 +90,19 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
             int width = request.getCurrentFrame().getWidth();
             int height = request.getCurrentFrame().getHeight();
 
+            Map<String, ReadOnlyClipImage> requestedClips = request.getRequestedClips();
+
+            Map<String, ReadOnlyClipImage> clipNameToClipImage = new HashMap<>();
+
+            for (var entry : initializedPluginData.nameToParameter.entrySet()) {
+                if (entry.getValue() instanceof DependentClipProvider) {
+                    ReadOnlyClipImage clipImage = requestedClips.get(((DependentClipProvider) entry.getValue()).getValueAt(request.getEffectPosition()));
+                    if (clipImage != null) {
+                        clipNameToClipImage.put(entry.getKey(), clipImage);
+                    }
+                }
+            }
+
             ClipImage result = ClipImage.sameSizeAs(request.getCurrentFrame());
 
             RenderImageRequest renderImageRequest = new RenderImageRequest();
@@ -97,6 +113,20 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
             renderImageRequest.returnValue = result.getBuffer();
             renderImageRequest.inputImage = request.getCurrentFrame().getBuffer();
             renderImageRequest.effectId = getId();
+            renderImageRequest.numberOfAdditionalClips = clipNameToClipImage.size();
+
+            if (renderImageRequest.numberOfAdditionalClips > 0) {
+                renderImageRequest.clips = new RenderImageClip();
+                RenderImageClip[] elements = (RenderImageClip[]) renderImageRequest.clips.toArray(renderImageRequest.numberOfAdditionalClips);
+                int i = 0;
+                for (var entry : clipNameToClipImage.entrySet()) {
+                    elements[i].width = entry.getValue().getWidth();
+                    elements[i].height = entry.getValue().getHeight();
+                    elements[i].data = entry.getValue().getBuffer();
+                    elements[i].name = entry.getKey();
+                    ++i;
+                }
+            }
 
             OpenfxLibrary.INSTANCE.renderImage(renderImageRequest);
 
@@ -122,4 +152,16 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
         return initializedPluginData.providers;
     }
 
+    @Override
+    public List<String> getClipDependency(TimelinePosition position) {
+        List<String> dependencies = super.getClipDependency(position);
+        initializedPluginData.nameToParameter.values()
+                .stream()
+                .filter(a -> a instanceof DependentClipProvider)
+                .map(a -> ((DependentClipProvider) a).getValueAt(position))
+                .filter(a -> a != null)
+                .filter(a -> !a.isEmpty())
+                .forEach(a -> dependencies.add(a));
+        return dependencies;
+    }
 }
