@@ -280,6 +280,13 @@ int loadPlugin(LoadPluginRequest* loadPluginRequest) {
     return globalUniqueLoadedPluginIndex;
 }
 
+bool isDefaultClip(const char* name) {
+    return strcmp(name, kOfxImageEffectSimpleSourceClipName) == 0 
+                || strcmp(name, kOfxImageEffectOutputClipName) == 0
+                || strcmp(name, kOfxImageEffectTransitionSourceToClipName) == 0
+                || strcmp(name, kOfxImageEffectTransitionSourceFromClipName) == 0;
+}
+
 struct CreatePluginInstanceRequest {
     int width;
     int height;
@@ -537,10 +544,7 @@ int createInstance(CreateInstanceRequest* request) {
 
     int index = 0;
     for (auto entry : instanceHandle->clips) {
-        if (strcmp(entry.first.c_str(), kOfxImageEffectSimpleSourceClipName) == 0 
-                || strcmp(entry.first.c_str(), kOfxImageEffectOutputClipName) == 0
-                || strcmp(entry.first.c_str(), kOfxImageEffectTransitionSourceToClipName) == 0
-                || strcmp(entry.first.c_str(), kOfxImageEffectTransitionSourceFromClipName) == 0) {
+        if (isDefaultClip(entry.first.c_str())) {
             continue;
         }
         ClipInformation* info = new ClipInformation();
@@ -583,10 +587,19 @@ int renderImage(RenderImageRequest* imageRequest)
         renderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName] = sourceImage;
     }
 
+    for (auto entry : effectHandle->clips) {
+        if (!isDefaultClip(entry.first.c_str()) && entry.second != NULL) {
+            propSetInt(entry.second->properties, kOfxImageClipPropConnected, 0, 0);
+        }
+    }
     if (imageRequest->clips != NULL) {
         for (int i = 0; i < imageRequest->numberOfAdditionalClips; ++i) {
             Image* image = new Image(imageRequest->clips[i].width, imageRequest->clips[i].height, imageRequest->clips[i].data);
             renderRequest->sourceClips[imageRequest->clips[i].name] = image;
+            
+            if (effectHandle->clips.find(imageRequest->clips[i].name) != effectHandle->clips.end()) {
+                propSetInt(effectHandle->clips[imageRequest->clips[i].name]->properties, kOfxImageClipPropConnected, 0, 1);
+            }
         }
     }
 
@@ -759,6 +772,10 @@ int main(int argc, char** argv) {
         std::cout << createInstanceRequest.clips->clip[i].name << std::endl;
     }
 
+    RenderImageClip clip;
+    clip.width = createInstanceRequest.width;
+    clip.height = createInstanceRequest.height;
+    clip.name = "Mask";
     Image* sourceImage = loadImage("/home/black/Downloads/image_jhalf.ppm");
 
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
@@ -780,21 +797,7 @@ int main(int argc, char** argv) {
 
     sourceImage = loadImage("/home/black/Downloads/image_f.ppm");
 
-    RenderImageClip clip;
-    clip.width = createInstanceRequest.width;
-    clip.height = createInstanceRequest.height;
-    clip.name = "Mask";
 
-    clip.data = new char[clip.width * clip.height * 4];
-    for (int i = 0; i < clip.height; ++i) {
-        for (int j = 0; j < clip.width; ++j) {
-            char d = ((i / 10) % 2 == 0) * 255;
-            clip.data[i * clip.width * 4 + j * 4 + 0] =d;
-            clip.data[i * clip.width * 4 + j * 4 + 1] =d;
-            clip.data[i * clip.width * 4 + j * 4 + 2] =d;
-            clip.data[i * clip.width * 4 + j * 4 + 3] =d;
-        }
-    }
 
     renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
@@ -804,8 +807,24 @@ int main(int argc, char** argv) {
     renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
     renderImageRequest->numberOfAdditionalClips = 1;
+
+    clip.data = new char[renderImageRequest->width * renderImageRequest->height * 4];
+    for (int i = 0; i < renderImageRequest->height; ++i) {
+        for (int j = 0; j < renderImageRequest->width; ++j) {
+            char d = 255;//((i / 10) % 2 == 0) * 255;
+            clip.data[i * renderImageRequest->width * 4 + j * 4 + 0] =d;
+            clip.data[i * renderImageRequest->width * 4 + j * 4 + 1] =d;
+            clip.data[i * renderImageRequest->width * 4 + j * 4 + 2] =d;
+            clip.data[i * renderImageRequest->width * 4 + j * 4 + 3] =d;
+        }
+    }
+    clip.width =renderImageRequest->width;
+    clip.height =renderImageRequest->height;
+    
     renderImageRequest->clips = &clip;
     
+
+
     renderImage(renderImageRequest);
     image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
 

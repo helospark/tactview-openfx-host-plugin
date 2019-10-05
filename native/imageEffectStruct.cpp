@@ -121,100 +121,58 @@ OfxStatus clipGetPropertySet(OfxImageClipHandle clip,
                 return kOfxStatOK;
 }
 
-void createMask(OfxImageClipHandle clip,
-            OfxTime       time,
-            const OfxRectD     *region,
-            OfxPropertySetHandle   *imageHandle) {
-
-            OfxPropertySetHandle clipImage = new OfxPropertySetStruct();
-            propSetString(clipImage, kOfxImageEffectPropPixelDepth, 0, kOfxBitDepthByte);
-            propSetString(clipImage, kOfxImageEffectPropComponents, 0, kOfxImageComponentAlpha);
-            propSetString(clipImage, kOfxImageEffectPropPreMultiplication, 0, kOfxImageOpaque);
-            propSetDouble(clipImage, kOfxImageEffectPropRenderScale, 0, 1.0);
-            propSetDouble(clipImage, kOfxImageEffectPropRenderScale, 1, 1.0);
-            propSetDouble(clipImage, kOfxImagePropPixelAspectRatio, 0, 1.0);
-            propSetString(clipImage, kOfxImageEffectPropPixelDepth, 0, clip->properties->strings["CLIP_TYPE"][0]);
-
-            int width = clip->imageEffect->currentRenderRequest->width;
-            int height = clip->imageEffect->currentRenderRequest->height;
-
-            auto maskIterator = clip->imageEffect->currentRenderRequest->sourceClips.find("Mask");
-
-            int typeSize;
-            int dimension[4] = {0, 0, width, height};
-            if (strcmp(clip->properties->strings["CLIP_TYPE"][0], kOfxBitDepthByte) == 0) {
-                typeSize = sizeof(char);
-                int dataSize =  dimension[2] * dimension[3] * typeSize;
-                if (clip->data == NULL || clip->dataSize != dataSize) {
-                    delete[] clip->data;
-                    int size = dimension[2] * dimension[3];
-                    char* clipData = new char[size];
-                    for (int i = 0; i < size; ++i) {
-                        clipData[i] = (char)255;
-                    }
-                    clip->data = clipData;
-                    clip->dataSize = dataSize;
-                }
-            } else if (strcmp(clip->properties->strings["CLIP_TYPE"][0], kOfxBitDepthFloat) == 0) {
-                    typeSize = sizeof(float);
-                    int dataSize = dimension[2] * dimension[3] * typeSize;
-                    if (clip->data == NULL || clip->dataSize != dataSize) {
-                        delete[] clip->data;
-                        int size = dimension[2] * dimension[3];
-                        float* clipData = new float[size];
-                        for (int i = 0; i < size; ++i) {
-                            clipData[i] = 1.0;
-                        }
-                        clip->data = (void*)clipData;
-                        clip->dataSize = dataSize;
-                    }
-            } else {
-                std::cout << "[!Error!] No conversion to image type" << std::endl;
-            }
-
-            if (maskIterator != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
-                Image* image = (*maskIterator).second;
-                std::cout << "Mask found " << image->width << " " << image->height << std::endl;
-
-                for (int i = 0; i < height; ++i) {
-                    for (int j = 0; j < width; ++j) {
-                        if (j < image->width && i < image->height) {
-                            ((char*)clip->data)[i * width + j] = ((char*)image->data)[i * image->width * 4 + j * 4 + 0];
-                        }
-                    }
-                }
-                
-            }
-
-            propSetInt(clipImage, kOfxImagePropRowBytes, 0, typeSize * dimension[2]);
-            propSetPointer(clipImage, kOfxImagePropData, 0, clip->data);
-            propSetIntN(clipImage, kOfxImagePropBounds, 4, dimension);
-            propSetIntN(clipImage, kOfxImagePropRegionOfDefinition, 4, dimension);
-            propSetString(clipImage, kOfxImagePropField, 0, kOfxImageFieldNone);
-            propSetString(clipImage, kOfxImagePropUniqueIdentifier, 0, "1");
-            propSetString(clipImage, kOfxPropType, 0, kOfxTypeImage);
-
-            *imageHandle = clipImage;
-}
-
-void* convertImage(Image* image, char* type, int* outputSize) {
+void* convertImage(Image* image, char* type, char* componentType, bool* allocated, int* numberOfComponentsOut, int* outputSize) {
     if (image == NULL) {
         return NULL;
     }
-    if (strcmp(type, kOfxBitDepthByte) == 0) {
-        *outputSize = image->width * image->height * sizeof(char);
-        return image->data;
-    } else if (strcmp(type, kOfxBitDepthFloat) == 0) {
+    void* data = NULL;
+    if (strcmp(type, kOfxBitDepthByte) == 0 && strcmp(componentType, kOfxImageComponentRGBA) == 0) {
+        *outputSize = image->width * image->height * 4 * sizeof(char);
+        data = image->data;
+        *allocated = false;
+        *numberOfComponentsOut = 4;
 
-        float* newData = new float[image->width * image->height * sizeof(float)];
-        for (int i = 0; i < image->width * image->height * 4; ++i) {
-            newData[i] = (((unsigned char*)image->data)[i]) / 255.0f;
-        }
-        *outputSize = image->width * image->height * sizeof(float);
-        delete[] image->data;
-        return newData;
+        return data;
     } else {
-        std::cout << "[!Error!] cannot convert, unknown type0" << std::endl;
+        *allocated = true;
+        int numberOfComponents = 1;
+        if (strcmp(componentType, kOfxImageComponentRGBA) == 0) {
+            numberOfComponents = 4;
+        } else if (strcmp(componentType, kOfxImageComponentRGB) == 0) {
+            numberOfComponents = 3;
+        } else if (strcmp(componentType, kOfxImageComponentAlpha) == 0) {
+            numberOfComponents = 1;
+        } else {
+            std::cout << "[!ERROR!] Unknown number of components" << std::endl;
+        }
+
+        *numberOfComponentsOut = numberOfComponents;
+
+        int numberOfElements = image->width * image->height * numberOfComponents;
+        if (strcmp(type, kOfxBitDepthByte) == 0) {
+            char* result = new char[numberOfElements];
+            for (int i = 0; i < image->width * image->height; ++i) {
+                for (int j = 0; j < numberOfComponents; ++j) {
+                    result[i * numberOfComponents + j] = ((char*)image->data)[i * 4 + j];
+                }
+            }
+            *outputSize = numberOfElements * sizeof(char);
+            return result;
+        }
+        else if (strcmp(type, kOfxBitDepthFloat) == 0) {
+            float* result = new float[numberOfElements];
+            for (int i = 0; i < image->width * image->height; ++i) {
+                for (int j = 0; j < numberOfComponents; ++j) {
+                    result[i * numberOfComponents + j] = ((char*)image->data)[i * 4 + j] / 255.0f;
+                }
+            }
+            *outputSize = numberOfElements * sizeof(float);
+            return result;
+        } else {
+            std::cout << "[!ERROR!] Unsupported type " << type << std::endl;
+        }
+
+
     }
     return NULL;
 }
@@ -228,33 +186,36 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             char* clipName;
             propGetString(clip->properties, "CLIP_NAME", 0, &clipName);
 
-            if (strcmp(clipName, "Mask") == 0) {
-                std::cout << "Creating white mask" << std::endl;
-                createMask(clip, time, region, imageHandle);
-                return kOfxStatOK;
-            }
-
-
-            Image* image = NULL;
-
-
             char* type = clip->properties->strings[kOfxImageEffectPropPixelDepth][0];
             int sizePerComponent = 1;
             if (strcmp(type, kOfxBitDepthByte) == 0) {
-                sizePerComponent = 1;
+                sizePerComponent = sizeof(char);
             } else {
-                sizePerComponent = 4;
+                sizePerComponent = sizeof(float);
             }
 
+            char* componentType = NULL;
+            for (auto element : clip->properties->strings[kOfxImageEffectPropComponents]) {
+                if (strcmp(element, kOfxParamTypeRGBA) == 0) {
+                    componentType = kOfxParamTypeRGBA;
+                    break;
+                }
+            }
+            if (componentType == NULL) {
+                componentType = clip->properties->strings[kOfxImageEffectPropComponents][0];
+            }
 
             int width = clip->imageEffect->currentRenderRequest->width;
             int height = clip->imageEffect->currentRenderRequest->height;
 
             void* data;
             int dataSize;
+            bool allocated = false;
+            int numberOfComponents = 0;
             
             if (strcmp(clipName, kOfxImageEffectOutputClipName) == 0) {
                 dataSize = width * height * sizePerComponent * 4;
+                numberOfComponents = 4;
                 if (clip->dataSize != dataSize) {
                     delete[] clip->data;
                     data = new char[dataSize];
@@ -262,11 +223,16 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                     data = clip->data;
                 }
             } else {
+
                 auto source = clip->imageEffect->currentRenderRequest->sourceClips.find(clipName);
 
                 if (source != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
-                    data = convertImage(source->second, type, &dataSize);
+                    data = convertImage(source->second, type, componentType, &allocated, &numberOfComponents, &dataSize);
+                    width = source->second->width;
+                    height = source->second->height;
                 } else {
+                    return kOfxStatFailed;
+                    /**
                     LoadImageRequest loadImageRequest;
                     loadImageRequest.time = time;
                     loadImageRequest.width = width;
@@ -280,19 +246,20 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                     std::cout << "Source image loaded " << std::endl;
                     std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
 
-                    image = new Image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data);
-                    data = convertImage(image, type, &dataSize);
+                    Image image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data) ;
+                    data = convertImage(&image, type, componentType, &allocated, &numberOfComponents, &dataSize);
+                    */
                 }
-
 
             }
 
 
             clip->data = data;
             clip->dataSize = dataSize;
+            clip->allocated = allocated;
 
             OfxPropertySetHandle clipImage = new OfxPropertySetStruct();
-            propSetString(clipImage, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGBA);
+            propSetString(clipImage, kOfxImageEffectPropComponents, 0, componentType);
             propSetString(clipImage, kOfxImageEffectPropPreMultiplication, 0, kOfxImageOpaque);
             propSetDouble(clipImage, kOfxImageEffectPropRenderScale, 0, 1.0);
             propSetDouble(clipImage, kOfxImageEffectPropRenderScale, 1, 1.0);
@@ -303,11 +270,12 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             propSetPointer(clipImage, kOfxImagePropData, 0, data);
             propSetIntN(clipImage, kOfxImagePropBounds, 4, dimension);
             propSetIntN(clipImage, kOfxImagePropRegionOfDefinition, 4, dimension);
-            propSetInt(clipImage, kOfxImagePropRowBytes, 0, sizePerComponent * 4 * dimension[2]);
+            propSetInt(clipImage, kOfxImagePropRowBytes, 0, sizePerComponent * numberOfComponents * dimension[2]);
             propSetString(clipImage, kOfxImagePropField, 0, kOfxImageFieldNone);
             propSetString(clipImage, kOfxImagePropUniqueIdentifier, 0, "1");
             propSetString(clipImage, kOfxPropType, 0, kOfxTypeImage);
             propSetString(clipImage, kOfxImageEffectPropPixelDepth, 0, type);
+            propSetInt(clipImage, "ALLOCATED", 0, allocated ? 1 : 0);
 
             *imageHandle = clipImage;
 
@@ -315,8 +283,15 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
 }
 OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle){
                 std::cout << "[!ERROR!] clipReleaseImage" << std::endl;
+                int allocated;
+                propGetInt(imageHandle, "ALLOCATED", 0, &allocated);
 
-                //delete[] propGetPointer(imageHandle, kOfxImagePropData);
+                if (allocated) {
+                    void* pointer;
+                    propGetPointer(imageHandle, kOfxImagePropData, 0, &pointer);
+                    delete[] pointer;
+                }
+
                 return kOfxStatOK;
 }
 

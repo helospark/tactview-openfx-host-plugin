@@ -20,6 +20,7 @@ struct OfxImageClipStruct {
     OfxPropertySetHandle properties;
     void* data = NULL;
     int dataSize = 0;
+    bool allocated = false;
     char* type;
     OfxImageEffectHandle imageEffect;
 };
