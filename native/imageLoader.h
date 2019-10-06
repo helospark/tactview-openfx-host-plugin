@@ -9,7 +9,7 @@ struct Image {
     Image(int width2, int height2, void* data2) : width(width2), height(height2), data(data2) {}
 
     ~Image() {
-        delete[] data;
+       // delete[] data;
     }
 };
 

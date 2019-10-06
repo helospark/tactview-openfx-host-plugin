@@ -3,8 +3,12 @@
 
 struct LoadImageRequest {
     double time;
+    double scale;
     int width;
     int height;
+    char* clipName;
+    char* effectId;
+
     char* data;
 };
 

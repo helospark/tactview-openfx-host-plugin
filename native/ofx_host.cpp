@@ -309,6 +309,7 @@ struct RenderImageRequest {
     char* returnValue;
     char* inputImage;
     char* effectId;
+    double scale;
 
     int isTransition;
     double transitionProgress;
@@ -450,6 +451,21 @@ OfxImageClipHandle copyClip(OfxImageClipStruct* input, OfxImageEffectHandle newH
     clip->imageEffect = newHandle;
     clip->data = NULL;
     clip->dataSize = 0;
+
+    char* supportedComponent = NULL;
+    for (auto entry : clip->properties->strings[kOfxImageEffectPropSupportedComponents]) {
+        if (strcmp(entry, kOfxImageComponentRGBA) == 0) {
+            supportedComponent = kOfxImageComponentRGBA;
+            break;
+        }
+    }
+    if (supportedComponent == NULL) {
+        propGetString(clip->properties, kOfxImageEffectPropSupportedComponents, 0, &supportedComponent);
+    }
+
+    propSetString(clip->properties, kOfxImageEffectPropComponents, 0, supportedComponent);
+
+    return clip;
 }
 
 OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
@@ -576,6 +592,9 @@ int renderImage(RenderImageRequest* imageRequest)
     CurrentRenderRequest* renderRequest = new CurrentRenderRequest();
     renderRequest->width = imageRequest->width;
     renderRequest->height = imageRequest->height;
+    renderRequest->effectId = imageRequest->effectId;
+    renderRequest->time = imageRequest->time;
+    renderRequest->scale = imageRequest->scale;
 
     if (imageRequest->isTransition) {
         Image* sourceFromImage = new Image(imageRequest->width, imageRequest->height, imageRequest->inputImage);
@@ -785,6 +804,7 @@ int main(int argc, char** argv) {
     renderImageRequest->pluginIndex = instanceIndex;
     renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
+    renderImageRequest->scale = 1.0;
 
     renderImage(renderImageRequest);
     Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
@@ -807,6 +827,7 @@ int main(int argc, char** argv) {
     renderImageRequest->returnValue = new char[sourceImage->width * sourceImage->height * 4];
     renderImageRequest->inputImage = (char*)sourceImage->data;
     renderImageRequest->numberOfAdditionalClips = 1;
+    renderImageRequest->scale = 1.0;
 
     clip.data = new char[renderImageRequest->width * renderImageRequest->height * 4];
     for (int i = 0; i < renderImageRequest->height; ++i) {

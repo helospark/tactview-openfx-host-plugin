@@ -90,6 +90,7 @@ public class OpenFXTransitionEffect extends AbstractVideoTransitionEffect {
             renderImageRequest.returnValue = result.getBuffer();
             renderImageRequest.inputImage = transitionRequest.getFirstFrame().getBuffer();
             renderImageRequest.effectId = getId();
+            renderImageRequest.scale = transitionRequest.getScale();
 
             renderImageRequest.isTransition = 1;
             renderImageRequest.transitionProgress = transitionRequest.getProgress();

@@ -42,6 +42,8 @@ public class OpenFXEffectFactory {
     private OpenFxPluginInitializer openFxPluginInitializer;
     @Autowired
     private OpenFXPluginPathProvider openFXPluginPathProvider;
+    @Autowired
+    private LoadImageImplementation loadImageImplementation;
 
     private List<StandardEffectFactory> effectFactories;
     private List<ProceduralClipFactoryChainItem> proceduralClipFactories;
@@ -53,7 +55,7 @@ public class OpenFXEffectFactory {
         proceduralClipFactories = new ArrayList<>();
 
         InitializeHostRequest initializeHostRequest = new InitializeHostRequest();
-        initializeHostRequest.loadImageCallback = new LoadImageImplementation(831, 530, null); // DUMMY
+        initializeHostRequest.loadImageCallback = loadImageImplementation;
         initializeHostRequest.parameterValueProviderCallback = parameterResolverImplementation;
         OpenfxLibrary.INSTANCE.initializeHost(initializeHostRequest);
 

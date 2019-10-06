@@ -14,6 +14,7 @@ public class RenderImageRequest extends Structure implements Structure.ByReferen
     public ByteBuffer returnValue;
     public ByteBuffer inputImage;
     public String effectId;
+    public double scale;
 
     public int isTransition;
     public double transitionProgress;
@@ -24,7 +25,8 @@ public class RenderImageRequest extends Structure implements Structure.ByReferen
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("width", "height", "pluginIndex", "time", "returnValue", "inputImage", "effectId", "isTransition", "transitionProgress", "transitionInputImage", "numberOfAdditionalClips",
+        return Arrays.asList("width", "height", "pluginIndex", "time", "returnValue", "inputImage", "effectId", "scale", "isTransition", "transitionProgress", "transitionInputImage",
+                "numberOfAdditionalClips",
                 "clips");
     }
 }

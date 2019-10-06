@@ -108,6 +108,7 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
             RenderImageRequest renderImageRequest = new RenderImageRequest();
             renderImageRequest.width = width;
             renderImageRequest.height = height;
+            renderImageRequest.scale = request.getScale();
             renderImageRequest.time = request.getEffectPosition().getSeconds().doubleValue();
             renderImageRequest.pluginIndex = initializedPluginData.createdInstanceIndex;
             renderImageRequest.returnValue = result.getBuffer();

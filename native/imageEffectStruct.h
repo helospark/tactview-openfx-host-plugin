@@ -12,6 +12,10 @@ struct CurrentRenderRequest {
     int height;
     std::map<std::string, Image*> sourceClips;
 
+    double time;
+    char* effectId;
+    double scale;
+
     // only for transitions
     double transitionProgress;
 };

@@ -34,15 +34,9 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                 OfxPropertySetHandle clip = new OfxPropertySetStruct();
                 propSetString(clip, "CLIP_NAME", 0, name);
                 bool isAlpha = strcmp(name, "Mask") == 0;
-                if (!isAlpha) {
-                    const char* supportedComponents[] = {"kOfxImageComponentRGBA", "kOfxImageComponentAlpha"};
-                    propSetString(clip, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGBA);
-                    propSetStringN(clip, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
-                } else {
-                    const char* supportedComponents[] = {"kOfxImageComponentAlpha"};
-                    propSetString(clip, kOfxImageEffectPropComponents, 0, kOfxImageComponentAlpha);
-                    propSetStringN(clip, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
-                }
+               // const char* supportedComponents[] = {kOfxImageComponentRGBA, kOfxImageComponentAlpha};
+                propSetString(clip, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGBA);
+              //  propSetStringN(clip, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
 
                 auto actualSupportedFormats = imageEffect->properties->strings[kOfxImageEffectPropSupportedPixelDepths];
 
@@ -57,23 +51,6 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                 if (!typeToUse) {
                     typeToUse = imageEffect->properties->strings[kOfxImageEffectPropSupportedPixelDepths][0];
                 }
-                /**
-                if (imageEffect->properties->strings.find(kOfxImageEffectPropSupportedPixelDepths) != imageEffect->properties->strings.end()) {
-                    auto supportedFormats = imageEffect->properties->strings[kOfxImageEffectPropSupportedPixelDepths];
-                    bool supports = false;
-                    for (auto element : supportedFormats) {
-                        if (strcmp(element, typeToUse) == 0) {
-                            supports = true;
-                            break;
-                        }
-                    }
-
-                    if (!supports) {
-                           typeToUse = new char[100];
-                           propGetString(imageEffect->properties, kOfxActionDestroyInstanceInteract, 0, &typeToUse);
-                           std::cout << "Type overridden globally to " << typeToUse << std::endl;
-                    }
-                } */
 
                 std::cout << "Clip type" << typeToUse << std::endl;
 
@@ -227,28 +204,47 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                 auto source = clip->imageEffect->currentRenderRequest->sourceClips.find(clipName);
 
                 if (source != clip->imageEffect->currentRenderRequest->sourceClips.end()) {
-                    data = convertImage(source->second, type, componentType, &allocated, &numberOfComponents, &dataSize);
-                    width = source->second->width;
-                    height = source->second->height;
+                    if (time == clip->imageEffect->currentRenderRequest->time) {
+                        data = convertImage(source->second, type, componentType, &allocated, &numberOfComponents, &dataSize);
+                        width = source->second->width;
+                        height = source->second->height;
+                    } else {
+
+
+                        LoadImageRequest loadImageRequest;
+                        loadImageRequest.time = time;
+                        loadImageRequest.width = width;
+                        loadImageRequest.height = height;
+                        loadImageRequest.clipName = clipName;
+                        loadImageRequest.scale = clip->imageEffect->currentRenderRequest->scale;
+                        loadImageRequest.effectId = clip->imageEffect->currentRenderRequest->effectId;
+                        loadImageRequest.data = NULL;
+
+                        std::cout << "About to call Java" << std::endl;
+
+                        globalFunctionPointers->loadImageCallback(&loadImageRequest);
+
+                        std::cout << "Source image loaded " << std::endl;
+                        std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
+                        std::cout << width << " " << height << std::endl;
+                        std::cout << (int*)loadImageRequest.data << std::endl;
+
+                        if (loadImageRequest.data) {
+                            Image image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data) ;
+                            data = convertImage(&image, type, componentType, &allocated, &numberOfComponents, &dataSize);
+
+                            width = loadImageRequest.width;
+                            height = loadImageRequest.height;
+
+                            if (allocated) {
+                                // free original buffer
+                            }
+                        } else {
+                            return kOfxStatFailed;
+                        }
+                    }
                 } else {
                     return kOfxStatFailed;
-                    /**
-                    LoadImageRequest loadImageRequest;
-                    loadImageRequest.time = time;
-                    loadImageRequest.width = width;
-                    loadImageRequest.height = height;
-                    loadImageRequest.data = NULL;
-
-                    std::cout << "About to call Java" << std::endl;
-
-                    globalFunctionPointers->loadImageCallback(&loadImageRequest);
-
-                    std::cout << "Source image loaded " << std::endl;
-                    std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
-
-                    Image image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data) ;
-                    data = convertImage(&image, type, componentType, &allocated, &numberOfComponents, &dataSize);
-                    */
                 }
 
             }
@@ -282,11 +278,13 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             return kOfxStatOK;
 }
 OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle){
-                std::cout << "[!ERROR!] clipReleaseImage" << std::endl;
+                std::cout << "clipReleaseImage" << std::endl;
                 int allocated;
                 propGetInt(imageHandle, "ALLOCATED", 0, &allocated);
 
                 if (allocated) {
+                    std::cout << "Deleting allocated memory " << std::endl;
+
                     void* pointer;
                     propGetPointer(imageHandle, kOfxImagePropData, 0, &pointer);
                     delete[] pointer;

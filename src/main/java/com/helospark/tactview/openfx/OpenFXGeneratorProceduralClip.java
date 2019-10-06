@@ -100,6 +100,7 @@ public class OpenFXGeneratorProceduralClip extends ProceduralVisualClip {
             renderImageRequest.returnValue = result.getBuffer();
             renderImageRequest.inputImage = null;
             renderImageRequest.effectId = getId();
+            renderImageRequest.scale = request.getScale();
 
             OpenfxLibrary.INSTANCE.renderImage(renderImageRequest);
 
