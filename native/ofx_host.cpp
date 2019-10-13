@@ -746,7 +746,7 @@ int main(int argc, char** argv) {
     InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
     initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
 
-    int pluginToLoad = 20;
+    int pluginToLoad = 170;
 
     if (argc > 1) {
         pluginToLoad = atoi(argv[1]);
@@ -755,7 +755,7 @@ int main(int argc, char** argv) {
     initializeHost(initializeHostRequest);
 
     LoadLibraryRequest loadLibraryRequest;
-    loadLibraryRequest.file = "/home/black/tmp/openfx-misc/Misc/Linux-64-debug/Misc.ofx";
+    loadLibraryRequest.file = "/usr/OFX/Plugins/Sapphire.ofx.bundle/Contents/Linux-x86-64/Sapphire.ofx";
     
     int libraryIndex = loadLibrary(&loadLibraryRequest);
 

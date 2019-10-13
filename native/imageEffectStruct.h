@@ -46,6 +46,10 @@ struct OfxImageEffectStruct {
     OfxImageEffectStruct();
 };
 
+struct OfxImageMemoryStruct {
+    char* memory;
+};
+
 #include "../openfx/include/ofxImageEffect.h"
 
 OfxStatus getPropertySet(OfxImageEffectHandle imageEffect,

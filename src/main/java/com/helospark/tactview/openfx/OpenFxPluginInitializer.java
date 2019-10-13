@@ -29,8 +29,7 @@ class OpenFxPluginInitializerResult {
     int createdInstanceIndex;
     private List<OpenfxClip> clips;
 
-    public OpenFxPluginInitializerResult(Map<Integer, KeyframeableEffect> providers, List<ValueProviderDescriptor> descriptors, int createdInstanceIndex,
-            Map<String, KeyframeableEffect> nameToParameter, List<OpenfxClip> clips) {
+    public OpenFxPluginInitializerResult(Map<Integer, KeyframeableEffect> providers, List<ValueProviderDescriptor> descriptors, int createdInstanceIndex, Map<String, KeyframeableEffect> nameToParameter, List<OpenfxClip> clips) {
         this.providers = providers;
         this.descriptors = descriptors;
         this.createdInstanceIndex = createdInstanceIndex;
@@ -66,9 +65,11 @@ public class OpenFxPluginInitializer {
 
     private List<OpenfxClip> mapClips(CreateInstanceRequest createInstanceRequest) {
         List<OpenfxClip> resultClips = new ArrayList<>();
-        ClipInformation[] clips = (ClipInformation[]) createInstanceRequest.clips.clip.toArray(createInstanceRequest.clips.numberOfEntries);
-        for (var element : clips) {
-            resultClips.add(new OpenfxClip(element.name, element.isMask > 0));
+        if (createInstanceRequest.clips.numberOfEntries > 0) {
+            ClipInformation[] clips = (ClipInformation[]) createInstanceRequest.clips.clip.toArray(createInstanceRequest.clips.numberOfEntries);
+            for (var element : clips) {
+                resultClips.add(new OpenfxClip(element.name, element.isMask > 0));
+            }
         }
         return resultClips;
     }
@@ -129,12 +130,7 @@ public class OpenFxPluginInitializer {
                 metadata.put(paramMap[j].key, Arrays.asList(elements));
             }
 
-            parameters.put(parameter[i].name, OpenfxParameter.builder()
-                    .withMetadata(metadata)
-                    .withUniqueParameterId(parameter[i].uniqueParameterId)
-                    .withName(parameter[i].name)
-                    .withType(parameter[i].type)
-                    .build());
+            parameters.put(parameter[i].name, OpenfxParameter.builder().withMetadata(metadata).withUniqueParameterId(parameter[i].uniqueParameterId).withName(parameter[i].name).withType(parameter[i].type).build());
         }
         return parameters;
     }

@@ -15,8 +15,9 @@ OfxParamStruct::OfxParamStruct(const char* name, const char* type) {
 
 char* copyString(const char* str) {
     int len = strlen(str);
-    char* newPointer = new char[len];
+    char* newPointer = new char[len + 1];
     strcpy(newPointer, str);
+    newPointer[len] = '\0';
     return newPointer;
 }
 

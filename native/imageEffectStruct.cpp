@@ -316,21 +316,37 @@ int abortInternal(OfxImageEffectHandle imageEffect){
 OfxStatus imageMemoryAlloc(OfxImageEffectHandle instanceHandle, 
             size_t nBytes,
             OfxImageMemoryHandle *memoryHandle){
-                std::cout << "[!ERROR!] imageMemoryAlloc" << std::endl;
+                std::cout << "imageMemoryAlloc" << std::endl;
+
+                OfxImageMemoryStruct* result = new OfxImageMemoryStruct();
+                result->memory = new char[nBytes];
+
+                *memoryHandle = result;
+
                 return kOfxStatOK;
 }
+
 OfxStatus imageMemoryFree(OfxImageMemoryHandle memoryHandle){
-                std::cout << "[!ERROR!] imageMemoryFree" << std::endl;
+                std::cout << "imageMemoryFree" << std::endl;
+
+                delete[] memoryHandle->memory;
+                delete memoryHandle;
+
                 return kOfxStatOK;
 }
+
 OfxStatus imageMemoryLock(OfxImageMemoryHandle memoryHandle,
                 void **returnedPtr) {
+                std::cout << "imageMemoryLock" << std::endl;
 
-                std::cout << "[!ERROR!] imageMemoryLock" << std::endl;
+                *returnedPtr = memoryHandle->memory;
+
                 return kOfxStatOK;
-                }
+}
+
 OfxStatus imageMemoryUnlock(OfxImageMemoryHandle memoryHandle){
-                std::cout << "[!ERROR!] imageMemoryUnlock" << std::endl;
+                std::cout << "imageMemoryUnlock" << std::endl;
+                // noop
                 return kOfxStatOK;
 }
 
