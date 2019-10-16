@@ -68,10 +68,6 @@ struct PluginDefinition {
 std::map<int, PluginDefinition*> createdPlugins;
 std::map<std::string, void*> handles;
 
-std::vector<PluginDefinition> loadDefinitions() {
-
-}
-
 struct LoadPluginRequest {
     int libraryDescriptor;
     int pluginIndex;
@@ -404,16 +400,14 @@ int describeInContext(DescribeInContextRequest* describeInContextRequest) {
     LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeInContextRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
-    OfxPropertySetHandle inParam = new OfxPropertySetStruct();
+    OfxPropertySetStruct inParam;
 
     propSetString(effectHandle->properties, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
     propSetString(effectHandle->properties, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGB);
-    propSetString(inParam, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
+    propSetString(&inParam, kOfxImageEffectPropContext, 0, describeInContextRequest->context);
 
 
-    OfxStatus status = callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, inParam, NULL, pluginDefinition->plugin);
-
-    delete inParam;
+    OfxStatus status = callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, &inParam, NULL, pluginDefinition->plugin);
 
     bool returnStatus = 0;
     if (status == kOfxStatErrUnsupported) {
@@ -479,7 +473,7 @@ OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
     OfxParamSetStruct* parameters = from->parameters;
     for (auto element : parameters->parameters) {
         OfxParamStruct* copiedParameter = new OfxParamStruct(element->name, element->type);
-        copiedParameter->properties = element->properties;
+        copiedParameter->properties = copyProperties(element->properties);
         copiedParameter->paramId = globalParameterIndex++;
         copiedParameter->imageEffectHandle = actualHandle;
 
@@ -498,14 +492,15 @@ OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
 }
 
 void deleteImageEffectHandle(OfxImageEffectHandle toDelete) {
-    delete toDelete->properties;
-    for (auto element : toDelete->parameters->parameters) {
-        delete element;
-    }
     for (auto element : toDelete->clips) {
         delete element.second->properties;
+        if (element.second->allocated) {
+            delete[] element.second->data;
+        }
         delete element.second;
     }
+    delete toDelete->parameters;
+    delete toDelete;
 }
 
 int createInstance(CreateInstanceRequest* request) {
@@ -693,6 +688,7 @@ int renderImage(RenderImageRequest* imageRequest)
 
     // TODO: delete clips
     // delete effectHandle->currentRenderRequest->sourceClips[kOfxImageEffectSimpleSourceClipName];
+    delete effectHandle->currentRenderRequest;
     effectHandle->currentRenderRequest = NULL;
     delete inParam;
     delete outParam;
@@ -700,27 +696,6 @@ int renderImage(RenderImageRequest* imageRequest)
     return 0;
 }
 
-void closePlugin(int pluginIndex, int libraryIndex) {
-    PluginDefinition* pluginDefinition = createdPlugins[pluginIndex];
-    OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
-    callEntryPoint(kOfxActionUnload, effectHandle, NULL, NULL, pluginDefinition->ofxPlugin);
-
-    LoadedLibraryDescriptor* libraryDescriptor = loadedLibraries[libraryIndex];
-
-    #ifdef __linux__
-        dlclose(libraryDescriptor);
-    #elif _WIN32 || __CYGWIN__
-        FreeLibrary((HINSTANCE)pluginDefinition->handle); 
-    #endif
-    createdPlugins.erase(pluginIndex);
-    loadedLibraries.erase(libraryIndex);
-
-    delete[] effectHandle->clipList;
-    delete effectHandle->describeInContextList; // more deletion probably required
-    delete libraryDescriptor->file;
-    delete libraryDescriptor;
-    delete pluginDefinition;
-}
 }
 
 void loadImageCallbackMock(LoadImageRequest* request) {
@@ -740,6 +715,58 @@ void deletePlugin(int pluginIndex) {
     callEntryPoint(kOfxActionDestroyInstance, effectHandle, NULL, NULL, pluginDefinition->ofxPlugin);
 
     deleteImageEffectHandle(effectHandle);
+
+    ParameterList* parameterListToDelete = (ParameterList*)effectHandle->describeInContextList;
+    for (int i = 0; i < parameterListToDelete->numberOfParameters; ++i) {
+        for (int j = 0; j <parameterListToDelete->parameter[i].numberOfEntries; ++j) {
+            for (int k = 0; k < parameterListToDelete->parameter[i].parameterMap[j].numberOfValues; ++k) {
+                delete[] parameterListToDelete->parameter[i].parameterMap[j].value[k];
+            }
+            delete[] parameterListToDelete->parameter[i].parameterMap[j].value;
+        }
+        delete[] parameterListToDelete->parameter[i].parameterMap;
+        delete[] parameterListToDelete->parameter[i].name;
+        delete[] parameterListToDelete->parameter[i].type;
+    }
+    delete[] parameterListToDelete->parameter;
+    delete parameterListToDelete;
+}
+
+void uninitialize() {
+    std::vector<int> loadedInstances;
+    for(auto e : createdPlugins) {
+        loadedInstances.push_back(e.first);
+    }
+    for (auto element : loadedInstances) {
+        deletePlugin(element);
+    }
+    for (auto element : pluginDescriptors) {
+        auto toDelete = element.second;
+        //callEntryPoint(kOfxActionUnload, toDelete, NULL, NULL, toDelete->plugin);
+        deleteImageEffectHandle(toDelete->effectDescriptor);
+        for (auto e : toDelete->supportedContexts) {
+            delete[] e;
+        }
+        delete toDelete;
+    }
+    for (auto element : loadedLibraries) {
+        auto toDelete = element.second;
+
+        #ifdef __linux__
+            dlclose(toDelete->handle);
+        #elif _WIN32 || __CYGWIN__
+            FreeLibrary((HINSTANCE)pluginDefinition->handle); 
+        #endif
+    }
+    delete globalHost->host;
+    delete globalHost;
+
+    delete getOfxImageEffectSuiteV1();
+    delete createPropertySuiteV1();
+    delete getParameterSuite();
+    delete getMultiThreadSuite();
+    delete getMemorySuiteV1();
+    delete getMessageSuite();
 }
 
 int main(int argc, char** argv) {
@@ -795,7 +822,7 @@ int main(int argc, char** argv) {
     clip.width = createInstanceRequest.width;
     clip.height = createInstanceRequest.height;
     clip.name = "Mask";
-    Image* sourceImage = loadImage("/home/black/Downloads/image_jhalf.ppm");
+    Image* sourceImage = loadImage("/home/black/Downloads/image.ppm");
 
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
@@ -809,13 +836,17 @@ int main(int argc, char** argv) {
     renderImage(renderImageRequest);
     Image* image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
     
+
     std::stringstream ss;
     ss << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_1" << ".ppm";
 
     writeImage(ss.str().c_str(), image, "OfxBitDepthByte");
 
+    delete renderImageRequest;
+    delete image;
+    delete sourceImage;
 
-    sourceImage = loadImage("/home/black/Downloads/image_f.ppm");
+    sourceImage = loadImage("/home/black/Downloads/image.ppm");
 
 
 
@@ -849,12 +880,20 @@ int main(int argc, char** argv) {
     renderImage(renderImageRequest);
     image = new Image(renderImageRequest->width, renderImageRequest->height, renderImageRequest->returnValue);
 
+    delete renderImageRequest;
+    delete sourceImage;
+
     std::stringstream ss2;
     ss2 << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_2" << ".ppm";
 
 
     writeImage(ss2.str().c_str(), image, "OfxBitDepthByte");
 
+    delete image;
 
     deletePlugin(instanceIndex);
+
+    uninitialize();
+    delete request;
+    delete initializeHostRequest;
 }

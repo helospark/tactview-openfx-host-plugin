@@ -12,6 +12,11 @@ OfxImageEffectStruct::OfxImageEffectStruct() {
     parameters = new OfxParamSetStruct();
 }
 
+OfxImageEffectStruct::~OfxImageEffectStruct() {
+    delete properties;
+    delete parameters;
+}
+
 OfxStatus getPropertySet(OfxImageEffectHandle imageEffect, OfxPropertySetHandle *propHandle) {
     std::cout << "getPropertySet" << std::endl;
     *propHandle = imageEffect->properties;
@@ -289,6 +294,8 @@ OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle){
                     propGetPointer(imageHandle, kOfxImagePropData, 0, &pointer);
                     delete[] pointer;
                 }
+
+                delete imageHandle;
 
                 return kOfxStatOK;
 }

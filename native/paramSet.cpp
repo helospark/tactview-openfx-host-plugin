@@ -4,13 +4,26 @@
 #include "ofx_property.h"
 #include "globalCallbackFunctions.h"
 #include "imageEffectStruct.h"
+#include "string_operations.h"
 
 OfxParameterSuiteV1* parameterSuite = NULL;
 
 OfxParamStruct::OfxParamStruct(const char* name, const char* type) {
-    this->name = name;
-    this->type = type;
+    this->name = duplicateString(name);
+    this->type = duplicateString(type);
     this->properties = new OfxPropertySetStruct();
+}
+
+OfxParamStruct::~OfxParamStruct() {
+    delete properties;
+    delete[] name;
+    delete[] type;
+}
+
+OfxParamSetStruct::~OfxParamSetStruct() {
+    for (auto e : this->parameters) {
+        delete e;
+    }
 }
 
 char* copyString(const char* str) {
@@ -27,10 +40,10 @@ OfxStatus paramDefine(OfxParamSetHandle paramSet,
             OfxPropertySetHandle *propertySet) {
                 std::cout << "paramDefine " << name << std::endl;
 
-                OfxParamHandle result = new OfxParamStruct(copyString(name), copyString(paramType)); 
+                OfxParamHandle result = new OfxParamStruct(name, paramType); 
 
-                propSetString(result->properties, kOfxParamPropType, 0, copyString(paramType));
-                propSetString(result->properties, kOfxPropName, 0, copyString(name));
+                propSetString(result->properties, kOfxParamPropType, 0, paramType);
+                propSetString(result->properties, kOfxPropName, 0, name);
                 result->paramId = -1; // set to real value during createInstance
 
                 paramSet->parameters.push_back(result);

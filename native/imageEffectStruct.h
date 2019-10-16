@@ -44,6 +44,7 @@ struct OfxImageEffectStruct {
     void* clipList;
     
     OfxImageEffectStruct();
+    ~OfxImageEffectStruct();
 };
 
 struct OfxImageMemoryStruct {

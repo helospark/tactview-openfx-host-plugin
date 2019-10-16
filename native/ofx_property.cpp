@@ -47,7 +47,12 @@ OfxStatus propReset(OfxPropertySetHandle properties, const char *property) {
     properties->doubles.erase(std::string(property));
     properties->integers.erase(std::string(property));
     properties->pointers.erase(std::string(property));
-    properties->strings.erase(std::string(property));
+
+    auto it = properties->strings.find(std::string(property));
+    for (auto e : it->second) {
+        delete[] e;
+    }
+    properties->strings.erase(it);
     return kOfxStatOK;
 }
 

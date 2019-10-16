@@ -13,10 +13,13 @@ struct OfxParamStruct {
     OfxImageEffectHandle imageEffectHandle;
 
     OfxParamStruct(const char* name, const char* type);
+    ~OfxParamStruct();
 };
 
 struct OfxParamSetStruct {
     std::vector<OfxParamStruct*> parameters;
+
+    ~OfxParamSetStruct();
 };
 
 #include "../openfx/include/ofxParam.h"
