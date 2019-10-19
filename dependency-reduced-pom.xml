@@ -1,36 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.helospark</groupId>
   <artifactId>tactview-openfx-host-plugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-
-  <dependencies>
-    <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
-      <version>4.5.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.helospark.tactview</groupId>
-      <artifactId>tactview-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.helospark.tactview</groupId>
-      <artifactId>tactview-ui-api</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.0</version>
         <configuration>
@@ -39,7 +15,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.1</version>
         <executions>
@@ -50,8 +25,7 @@
             </goals>
             <configuration>
               <transformers>
-                <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                <transformer>
                   <resource>resources/lightdi/preprocessed</resource>
                 </transformer>
               </transformers>
@@ -82,7 +56,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.1.1</version>
         <executions>
@@ -100,7 +73,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <version>3.1.0</version>
@@ -126,5 +98,52 @@
       </plugin>
     </plugins>
   </build>
-
+  <dependencies>
+    <dependency>
+      <groupId>com.helospark.tactview</groupId>
+      <artifactId>tactview-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>jackson-databind</artifactId>
+          <groupId>com.fasterxml.jackson.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>lightdi</artifactId>
+          <groupId>com.helospark</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>cglib</artifactId>
+          <groupId>cglib</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>caffeine</artifactId>
+          <groupId>com.github.ben-manes.caffeine</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.helospark.tactview</groupId>
+      <artifactId>tactview-ui-api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

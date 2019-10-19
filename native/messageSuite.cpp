@@ -1,6 +1,7 @@
 #include "messageSuite.h"
 #include <cstdio>
 #include <iostream>
+#include "global.h"
 
 OfxMessageSuiteV2* messageSuite = NULL;
 
@@ -9,12 +10,12 @@ OfxStatus message(void *handle,
             const char *messageId,
             const char *format,
             ...) {
-                fprintf(stdout, "[MESSAGE] %s %s", messageId, format);
+                std::cout <<  "[MESSAGE] " << messageId << " " << format << std::endl;
                 return kOfxStatOK;
 }
 
 OfxStatus clearPersistentMessage(void *handle) {
-    std::cout << "clearPersistentMessage" << std::endl;
+    LOG("clearPersistentMessage" );
     return kOfxStatOK;
 }
 
@@ -23,7 +24,7 @@ OfxStatus setPersistentMessage(void *handle,
                                 const char *messageId,
                                 const char *format,
                                 ...) {
-    fprintf(stdout, "[PERSISTENT_MESSAGE] %s %s", messageId, format);
+    std::cout << "[PERSISTENT_MESSAGE] " <<  messageId << " " << format << std::endl;
     return kOfxStatOK;
 }
 

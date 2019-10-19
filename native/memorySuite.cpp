@@ -1,18 +1,19 @@
 #include "memorySuite.h"
 #include <iostream>
+#include "global.h"
 
 OfxMemorySuiteV1* memorySuite = NULL;
 
 OfxStatus memoryAlloc(void *handle, 
             size_t nBytes,
             void **allocatedData) {
-    std::cout << "memoryAlloc" << std::endl;
+    LOG("memoryAlloc" );
                 *allocatedData = new char[nBytes];
                 return kOfxStatOK;
 }
 
 OfxStatus memoryFree(void *allocatedData) {
-    std::cout << "memoryFree" << std::endl;
+    LOG("memoryFree" );
     delete[] (char*)allocatedData;
     return kOfxStatOK;
 }

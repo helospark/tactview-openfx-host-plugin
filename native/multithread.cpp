@@ -1,33 +1,34 @@
 #include "multithread.h"
 #include <iostream>
+#include "global.h"
 
 OfxMultiThreadSuiteV1* multithreadSuite = NULL;
 
 OfxStatus multiThread(OfxThreadFunctionV1 func, unsigned int nThreads, void *customArg) {
-    std::cout << "multiThread" << std::endl;
+    LOG("multiThread" );
     func(0, 1, customArg);
     return kOfxStatOK;
 }
 
 OfxStatus multiThreadNumCPUs(unsigned int *nCPUs) {
-    std::cout << "multiThreadNumCPUs" << std::endl;
+    LOG("multiThreadNumCPUs" );
     *nCPUs = 1;
     return kOfxStatOK;
 }
 
 OfxStatus multiThreadIndex(unsigned int *threadIndex) {
-    std::cout << "multiThreadIndex" << std::endl;
+    LOG("multiThreadIndex" );
     *threadIndex = 0;
     return kOfxStatOK;
 }
 
 int multiThreadIsSpawnedThread(void) {
-    std::cout << "[!ERROR!] multiThreadIsSpawnedThread" << std::endl;
+    LOG_ERROR("multiThreadIsSpawnedThread" );
     return kOfxStatOK;
 }
 
 OfxStatus mutexCreate(OfxMutexHandle *mutex, int lockCount) {
-    std::cout << "mutexCreate" << std::endl;
+    LOG("mutexCreate" );
 
     *mutex = new OfxMutex();
 
@@ -35,22 +36,19 @@ OfxStatus mutexCreate(OfxMutexHandle *mutex, int lockCount) {
 }
 
 OfxStatus mutexDestroy(const OfxMutexHandle mutex) {
-    std::cout << "mutexDestroy" << std::endl;
+    LOG("mutexDestroy" );
     return kOfxStatOK;
 }
 
 OfxStatus mutexLock(const OfxMutexHandle mutex) {
-    //std::cout << "[!ERROR!] mutexLock" << std::endl;
-
     return kOfxStatOK;
 }
 OfxStatus mutexUnLock(const OfxMutexHandle mutex) {
-    //std::cout << "[!ERROR!] mutexUnLock" << std::endl;
     return kOfxStatOK;
 }
 
 OfxStatus mutexTryLock(const OfxMutexHandle mutex){
-    std::cout << "mutexTryLock" << std::endl;
+    LOG("mutexTryLock" );
     return kOfxStatOK;
 }
 

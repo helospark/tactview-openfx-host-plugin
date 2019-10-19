@@ -5,6 +5,7 @@
 #include "globalCallbackFunctions.h"
 #include "imageEffectStruct.h"
 #include "string_operations.h"
+#include "global.h"
 
 OfxParameterSuiteV1* parameterSuite = NULL;
 
@@ -38,7 +39,7 @@ OfxStatus paramDefine(OfxParamSetHandle paramSet,
             const char *paramType,
             const char *name,
             OfxPropertySetHandle *propertySet) {
-                std::cout << "paramDefine " << name << std::endl;
+                LOG("paramDefine " << name );
 
                 OfxParamHandle result = new OfxParamStruct(name, paramType); 
 
@@ -64,7 +65,7 @@ OfxStatus paramGetHandle(OfxParamSetHandle paramSet,
                 const char *name,
                 OfxParamHandle *param,
                 OfxPropertySetHandle *propertySet) {
-                    std::cout << "paramGetHandle " << name << " " << param << std::endl;
+                    LOG("paramGetHandle " << name << " " << param );
                     for (int i = 0; i < paramSet->parameters.size(); ++i) {
                         if (strcmp(paramSet->parameters[i]->name, name) == 0) {
                             *param = paramSet->parameters[i];
@@ -74,9 +75,9 @@ OfxStatus paramGetHandle(OfxParamSetHandle paramSet,
                             return kOfxStatOK;
                         }
                     }
-                    std::cout << "[!Error!] - " << name  << " not found" << std::endl;
+                    LOG("[!Error!] - " << name  << " not found" );
                     for (int i = 0; i < paramSet->parameters.size(); ++i) {
-                        std::cout << "   -  " <<  paramSet->parameters[i]->name << std::endl;
+                        LOG("   -  " <<  paramSet->parameters[i]->name );
                     }
                     return kOfxStatErrBadHandle;
                 }
@@ -85,13 +86,13 @@ OfxStatus paramSetGetPropertySet(OfxParamSetHandle paramSet, OfxPropertySetHandl
         // WHUT IS THIS??
     *propHandle = NULL;
 
-    std::cout << "[!ERROR!] paramSetGetPropertySet" << std::endl;
+    LOG_ERROR("paramSetGetPropertySet" );
     return kOfxStatOK;
 
 }
 
 OfxStatus paramGetPropertySet(OfxParamHandle param, OfxPropertySetHandle *propHandle) {
-    std::cout << "paramGetPropertySet" << std::endl;
+    LOG("paramGetPropertySet" );
     *propHandle = param->properties;
     return kOfxStatOK;
 }
@@ -105,10 +106,10 @@ bool isNormalized(OfxPropertySetHandle properties) {
 }
 
 OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
-    std::cout << "paramGetValue " << paramHandle->type << " " << paramHandle->name << std::endl;
+    LOG("paramGetValue " << paramHandle->type << " " << paramHandle->name );
     
 #ifdef DEBUG
-    std::cout << "paramGetValue " << paramHandle->type << " " << paramHandle->name << std::endl;
+    LOG("paramGetValue " << paramHandle->type << " " << paramHandle->name );
     
     va_list ap;
     va_start(ap, paramHandle);
@@ -116,11 +117,11 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     if (strcmp(paramHandle->type, kOfxParamTypeInteger) == 0) {
         int* value = va_arg(ap, int*);
         *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeDouble) == 0) {
         double* value = va_arg(ap, double*);
         *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
         int* value = va_arg(ap, int*);
         if (paramHandle->properties->integers.find(kOfxParamPropDefault) != paramHandle->properties->integers.end()) {
@@ -129,36 +130,36 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
             *value = 0;
         }
         //*value = 1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeInteger2D)== 0) {
         int* value = va_arg(ap, int*);
         *value = paramHandle->properties->integers[kOfxParamPropDefault][0];
         int* value2 = va_arg(ap, int*);
         *value2 = paramHandle->properties->integers[kOfxParamPropDefault][1];
-        std::cout << "Integer2D returned " << *value << " " << *value2 << std::endl;
+        LOG("Integer2D returned " << *value << " " << *value2 );
     } else if (strcmp(paramHandle->type, kOfxParamTypeDouble2D) == 0) {
         double* value = va_arg(ap, double*);
         *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
         double* value2 = va_arg(ap, double*);
         *value2 = paramHandle->properties->doubles[kOfxParamPropDefault][1];
-        std::cout << "Double2D returned " << *value << " " << *value2 << std::endl;
+        LOG("Double2D returned " << *value << " " << *value2 );
     }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
         for (int i = 0; i < 3; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
-            std::cout << "double3d[" << i << "] = " << *value << std::endl;
+            LOG("double3d[" << i << "] = " << *value );
         }
     }  else if (strcmp(paramHandle->type, kOfxParamTypeRGBA) == 0) {
         for (int i = 0; i < 4; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
-            std::cout << "RGBA[" << i << "] = " << *value << std::endl;
+            LOG("RGBA[" << i << "] = " << *value );
         }
     } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
         for (int i = 0; i < 3; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
-            std::cout << "RGB[" << i << "] = " << *value << std::endl;
+            LOG("RGB[" << i << "] = " << *value );
         }
     } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
         int* value = va_arg(ap, int*);
@@ -168,9 +169,9 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
         } else {
             *value = 0;
         }
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else {
-        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+        LOG("[!ERROR!] Type not supported yet " << paramHandle->type );
     }
     return kOfxStatOK;
 #else
@@ -181,7 +182,7 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     if (strcmp(paramHandle->name, kOfxImageEffectTransitionParamName) == 0) {
         double* value = va_arg(ap, double*);
         *value = paramHandle->imageEffectHandle->currentRenderRequest->transitionProgress;
-        std::cout << "TransitionProgress " << *value << std::endl;
+        LOG("TransitionProgress " << *value );
         return kOfxStatOK;
     }
 
@@ -195,15 +196,15 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     if (strcmp(paramHandle->type, kOfxParamTypeInteger) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeDouble) == 0) {
         double* value = va_arg(ap, double*);
         *value = resolveValueRequest.result->doubleValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeInteger3D)== 0) {
         int* value = va_arg(ap, int*);
         double* value1 = va_arg(ap, double*);
@@ -222,7 +223,7 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
             *value1 *= paramHandle->imageEffectHandle->currentRenderRequest->width;
             *value2 *= paramHandle->imageEffectHandle->currentRenderRequest->height;
         }
-        std::cout << "Returned " << *value1 << " " << *value2 << std::endl;
+        LOG("Returned " << *value1 << " " << *value2 );
     }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);
@@ -249,9 +250,9 @@ OfxStatus paramGetValue(OfxParamHandle  paramHandle, ...) {
     } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else {
-        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+        LOG("[!ERROR!] Type not supported yet " << paramHandle->type );
     }
     delete resolveValueRequest.result;
 
@@ -279,23 +280,23 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
         for (int i = 0; i < 3; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][0];
-            std::cout << "double3d[" << i << "] = " << *value << std::endl;
+            LOG("double3d[" << i << "] = " << *value );
         }
     } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
         int* value = va_arg(ap, int*);
         *value = strstr(paramHandle->name, "NatronOfxParamProcess") != 0;
-        std::cout << "   returns " << *value << std::endl;
+        LOG("   returns " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeRGBA) == 0) {
         for (int i = 0; i < 4; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
-            std::cout << "RGBA[" << i << "] = " << *value << std::endl;
+            LOG("RGBA[" << i << "] = " << *value );
         }
     } else if (strcmp(paramHandle->type, kOfxParamTypeRGB) == 0) {
         for (int i = 0; i < 3; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
-            std::cout << "RGB[" << i << "] = " << *value << std::endl;
+            LOG("RGB[" << i << "] = " << *value );
         }
     } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
         int* value = va_arg(ap, int*);
@@ -305,26 +306,26 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
         } else {
             *value = 0;
         }
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeDouble2D) == 0) {
         for (int i = 0; i < 2; ++i) {
             double* value = va_arg(ap, double*);
             *value = paramHandle->properties->doubles[kOfxParamPropDefault][i];
-            std::cout << "double2d[" << i << "] = " << *value << std::endl;
+            LOG("double2d[" << i << "] = " << *value );
         }
     } else {
-        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+        LOG("[!ERROR!] Type not supported yet " << paramHandle->type );
     }
     return kOfxStatOK;
 #else
-    std::cout << "paramGetValueAtTime " << paramHandle->name << std::endl;
+    LOG("paramGetValueAtTime " << paramHandle->name );
     va_list ap;
     va_start(ap, time);
 
     if (strcmp(paramHandle->name, kOfxImageEffectTransitionParamName) == 0) {
         double* value = va_arg(ap, double*);
         *value = paramHandle->imageEffectHandle->currentRenderRequest->transitionProgress;
-        std::cout << "TransitionProgress " << *value << std::endl;
+        LOG("TransitionProgress " << *value );
         return kOfxStatOK;
     }
 
@@ -338,15 +339,15 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
     if (strcmp(paramHandle->type, kOfxParamTypeInteger) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeDouble) == 0) {
         double* value = va_arg(ap, double*);
         *value = resolveValueRequest.result->doubleValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeBoolean) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else if (strcmp(paramHandle->type, kOfxParamTypeInteger3D)== 0) {
         int* value = va_arg(ap, int*);
         double* value1 = va_arg(ap, double*);
@@ -366,7 +367,7 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
             *value2 *= paramHandle->imageEffectHandle->currentRenderRequest->height;
         }
 
-        std::cout << "returned " << *value1 << " " << *value2 << std::endl;
+        LOG("returned " << *value1 << " " << *value2 );
     }else if (strcmp(paramHandle->type, kOfxParamTypeDouble3D) == 0) {
         double* value1 = va_arg(ap, double*);
         double* value2 = va_arg(ap, double*);
@@ -393,9 +394,9 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
     } else if (strcmp(paramHandle->type, kOfxParamTypeChoice) == 0) {
         int* value = va_arg(ap, int*);
         *value = resolveValueRequest.result->intValue1;
-        std::cout << " returned " << *value << std::endl;
+        LOG(" returned " << *value );
     } else {
-        std::cout << "[!ERROR!] Type not supported yet " << paramHandle->type << std::endl;
+        LOG_ERROR("Type not supported yet " << paramHandle->type );
     }
 
     delete resolveValueRequest.result;
@@ -405,37 +406,37 @@ OfxStatus paramGetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
 }
 
 OfxStatus paramGetDerivative(OfxParamHandle  paramHandle, OfxTime time, ...) {
-    std::cout << "[!ERROR!]  paramGetDerivative" << std::endl;
+    LOG_ERROR("paramGetDerivative" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramGetIntegral(OfxParamHandle  paramHandle, OfxTime time1, OfxTime time2, ...) {
-    std::cout << "[!ERROR!] paramGetIntegral" << std::endl;
+    LOG_ERROR("paramGetIntegral" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramSetValue(OfxParamHandle  paramHandle, ...) {
-    std::cout << "[!ERROR!] paramSetValue" << std::endl;
+    LOG_ERROR("paramSetValue" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramSetValueAtTime(OfxParamHandle  paramHandle, OfxTime time, ...) {
-    std::cout << "[!ERROR!] paramSetValueAtTime" << std::endl;
+    LOG_ERROR("paramSetValueAtTime" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramGetNumKeys(OfxParamHandle  paramHandle, unsigned int  *numberOfKeys) {
-    std::cout << "[!ERROR!] paramGetNumKeys" << std::endl;
+    LOG_ERROR("paramGetNumKeys" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramGetKeyTime(OfxParamHandle  paramHandle, unsigned int nthKey, OfxTime *time) {
-    std::cout << "[!ERROR!] paramGetKeyTime" << std::endl;
+    LOG_ERROR("paramGetKeyTime" );
 
     return kOfxStatOK;
 }
@@ -444,36 +445,36 @@ OfxStatus paramGetKeyIndex(OfxParamHandle  paramHandle,
             OfxTime time,
             int     direction,
             int    *index) {
-                std::cout << "[!ERROR!] paramGetKeyIndex" << std::endl;
+                LOG_ERROR("paramGetKeyIndex" );
                 return kOfxStatOK;
-            }
+}
 
 OfxStatus paramDeleteKey(OfxParamHandle  paramHandle, OfxTime time) {
-    std::cout << "[!ERROR!] paramDeleteKey" << std::endl;
+    LOG_ERROR("paramDeleteKey" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramDeleteAllKeys(OfxParamHandle  paramHandle) {
-    std::cout << "[!ERROR!] paramDeleteAllKeys" << std::endl;
+    LOG_ERROR("paramDeleteAllKeys" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramCopy(OfxParamHandle  paramTo, OfxParamHandle  paramFrom, OfxTime dstOffset, const OfxRangeD *frameRange) {
-    std::cout << "[!ERROR!] paramCopy" << std::endl;
+    LOG_ERROR("paramCopy" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramEditBegin(OfxParamSetHandle paramSet, const char *name) {
-    std::cout << "[!ERROR!] paramEditBegin" << std::endl;
+    LOG_ERROR("paramEditBegin" );
 
     return kOfxStatOK;
 }
 
 OfxStatus paramEditEnd(OfxParamSetHandle paramSet) {
-    std::cout << "[!ERROR!] paramEditEnd" << std::endl;
+    LOG_ERROR("paramEditEnd" );
 
     return kOfxStatOK;
 }

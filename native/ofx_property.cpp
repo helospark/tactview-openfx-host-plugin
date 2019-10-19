@@ -3,16 +3,17 @@
 #include "ofx_property.h"
 #include "string_operations.h"
 #include <sstream>
+#include "global.h"
 
 OfxPropertySuiteV1* propertySuiteV1 = NULL;
 
 OfxStatus propGetDoubleN(OfxPropertySetHandle properties, const char *property, int count, double *value) {
-    std::cout << "propGetDoubleN" << std::endl;
+    LOG("propGetDoubleN" );
 
     auto val = properties->doubles[std::string(property)];
 
     if (val.size() < count) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         return kOfxStatErrBadIndex;
     }
 
@@ -24,18 +25,18 @@ OfxStatus propGetDoubleN(OfxPropertySetHandle properties, const char *property, 
 }
 
 OfxStatus propGetIntN(OfxPropertySetHandle properties, const char *property, int count, int *value) {
-    std::cout << "propGetIntN " << property << std::endl;
+    LOG("propGetIntN " << property );
 
     auto val = properties->integers[std::string(property)];
 
     if (val.size() < count) {
-        std::cout << "NOT ENOUGH values " << val.size() << " " << count << std::endl;
+        LOG("NOT ENOUGH values " << val.size() << " " << count );
         printAllProperties(properties);
         return kOfxStatErrBadIndex;
     }
 
     for (int i = 0; i < count; ++i) {
-        std::cout << "propGetIntN[] " << val[i] << std::endl;
+        LOG("propGetIntN[] " << val[i] );
         value[i] = val[i];
     }
 
@@ -43,7 +44,7 @@ OfxStatus propGetIntN(OfxPropertySetHandle properties, const char *property, int
 }
 
 OfxStatus propReset(OfxPropertySetHandle properties, const char *property) {
-    std::cout << "propReset" << std::endl;
+    LOG("propReset" );
     properties->doubles.erase(std::string(property));
     properties->integers.erase(std::string(property));
     properties->pointers.erase(std::string(property));
@@ -57,7 +58,7 @@ OfxStatus propReset(OfxPropertySetHandle properties, const char *property) {
 }
 
 OfxStatus propGetDimension(OfxPropertySetHandle properties, const char *property, int *count) {
-    std::cout << "propGetDimension " << property << std::endl;
+    LOG("propGetDimension " << property );
     std::map<std::string,std::vector<double>>::iterator doubleIterator = properties->doubles.find(std::string(property));
     if (doubleIterator != properties->doubles.end()) {
         *count = (*doubleIterator).second.size();
@@ -84,12 +85,12 @@ OfxStatus propGetDimension(OfxPropertySetHandle properties, const char *property
 
     *count = 0;
 
-    std::cout << "       No dimenstion " << property << std::endl;
+    LOG("       No dimenstion " << property );
     return kOfxStatOK;
 }
 
 OfxStatus propSetPointer(OfxPropertySetHandle properties, const char *property, int index, void *value) {
-    std::cout << "propSetPointer " << property << " " << value << std::endl;
+    LOG("propSetPointer " << property << " " << value );
     std::string sproperty(property);
     if (properties->pointers[sproperty].size() <= index) {
         properties->pointers[sproperty].resize(index + 1);
@@ -99,18 +100,18 @@ OfxStatus propSetPointer(OfxPropertySetHandle properties, const char *property, 
 }
 
 OfxStatus propSetString(OfxPropertySetHandle properties, const char *property, int index, const char *value) {
-    std::cout << "propSetString " << property << " " << value << std::endl;
+    LOG("propSetString " << property << " " << value );
     std::string sproperty(property);
     if (properties->strings[sproperty].size() <= index) {
         properties->strings[sproperty].resize(index + 1);
     }
     properties->strings[sproperty].at(index) = duplicateString(value);
-    std::cout << "Successfully appended" << std::endl;
+    LOG("Successfully appended" );
     return kOfxStatOK;
 }
 
 OfxStatus propSetDouble(OfxPropertySetHandle properties, const char *property, int index, double value) {
-    std::cout << "propSetDouble " << property << std::endl;
+    LOG("propSetDouble " << property );
     std::string sproperty(property);
     if (properties->doubles[sproperty].size() <= index) {
         properties->doubles[sproperty].resize(index + 1);
@@ -120,11 +121,11 @@ OfxStatus propSetDouble(OfxPropertySetHandle properties, const char *property, i
 }
 
 OfxStatus propSetInt(OfxPropertySetHandle properties, const char *property, int index, int value) {
-    std::cout << "propSetInt " << property << " " << index << " " << value << std::endl;
+    LOG("propSetInt " << property << " " << index << " " << value );
     std::string sproperty(property);
-    std::cout << "Setting " << sproperty << " " << properties->integers.size() << std::endl;
+    LOG("Setting " << sproperty << " " << properties->integers.size() );
     if (properties->integers[sproperty].size() <= index) {
-        std::cout << "Resizing " << sproperty << " " << (index + 1) << std::endl;
+        LOG("Resizing " << sproperty << " " << (index + 1) );
         properties->integers[sproperty].resize(index + 1);
     }
     properties->integers[sproperty].at(index) = value;
@@ -133,7 +134,7 @@ OfxStatus propSetInt(OfxPropertySetHandle properties, const char *property, int 
 }
 
 OfxStatus propSetPointerN(OfxPropertySetHandle properties, const char *property, int count, void *const*value) {
-    std::cout << "propSetPointerN" << std::endl;
+    LOG("propSetPointerN" );
     std::string sproperty(property);
 
     properties->pointers[sproperty].resize(count);
@@ -146,7 +147,7 @@ OfxStatus propSetPointerN(OfxPropertySetHandle properties, const char *property,
 
 OfxStatus propSetStringN(OfxPropertySetHandle properties, const char *property, int count, const char *const*value) {
     
-    std::cout << "propSetStringN" << std::endl;
+    LOG("propSetStringN" );
     std::string sproperty(property);
 
     properties->strings[sproperty].resize(count);
@@ -158,7 +159,6 @@ OfxStatus propSetStringN(OfxPropertySetHandle properties, const char *property, 
 }
 
 OfxStatus propSetDoubleN(OfxPropertySetHandle properties, const char *property, int count, const double *value) {
-    std::cout << "" << std::endl;
     std::string sproperty(property);
 
     properties->doubles[sproperty].resize(count);
@@ -170,25 +170,25 @@ OfxStatus propSetDoubleN(OfxPropertySetHandle properties, const char *property, 
 }
 
 OfxStatus propSetIntN(OfxPropertySetHandle properties, const char *property, int count, const int *value) {
-    std::cout << "propSetIntN" << std::endl;
+    LOG("propSetIntN" );
     std::string sproperty(property);
 
     properties->integers[sproperty].resize(count);
 
     for (int i = 0; i < count; ++i) {
-        std::cout << "propSetIntN[] " << value[i]<< std::endl;
+        LOG("propSetIntN[] " << value[i]);
         properties->integers[sproperty].at(i) = value[i];
     }
     return kOfxStatOK;
 }
 
 OfxStatus propGetPointer(OfxPropertySetHandle properties, const char *property, int index, void **value) {
-    std::cout << "propGetPointer " << property << std::endl;
+    LOG("propGetPointer " << property );
     std::string sproperty(property);
     std::map<std::string,std::vector<void*>>::iterator pointerIterator = properties->pointers.find(std::string(property));
 
     if (pointerIterator == properties->pointers.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         return kOfxStatErrBadHandle;
     }
 
@@ -196,21 +196,21 @@ OfxStatus propGetPointer(OfxPropertySetHandle properties, const char *property, 
 
     if (index < result.size()) {
         *value = result.at(index);
-        std::cout << "    Returning " << *value << std::endl;
+        LOG("    Returning " << *value );
         return kOfxStatOK;
     } else {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         return kOfxStatErrBadIndex;
     }
 }
 
 OfxStatus propGetString(OfxPropertySetHandle properties, const char *property, int index, char **value) {
-    std::cout << "propGetString " << property << std::endl;
+    LOG("propGetString " << property );
     std::string sproperty(property);
     std::map<std::string,std::vector<char*>>::iterator pointerIterator = properties->strings.find(std::string(property));
 
     if (pointerIterator == properties->strings.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         printAllProperties(properties);
         return kOfxStatErrBadHandle;
     }
@@ -219,22 +219,22 @@ OfxStatus propGetString(OfxPropertySetHandle properties, const char *property, i
 
     if (index < result.size()) {
         *value = result.at(index);
-        std::cout << "Success, returning " << *value << std::endl;
+        LOG("Success, returning " << *value );
         return kOfxStatOK;
     } else {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         printAllProperties(properties);
         return kOfxStatErrBadIndex;
     }
 }
 
 OfxStatus propGetDouble(OfxPropertySetHandle properties, const char *property, int index, double *value) {
-    std::cout << "propGetDouble " << property << " " << index << std::endl;
+    LOG("propGetDouble " << property << " " << index );
     std::string sproperty(property);
     std::map<std::string,std::vector<double>>::iterator doubleIterator = properties->doubles.find(std::string(property));
 
     if (doubleIterator == properties->doubles.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         printAllProperties(properties);
         return kOfxStatErrBadHandle;
     }
@@ -243,22 +243,22 @@ OfxStatus propGetDouble(OfxPropertySetHandle properties, const char *property, i
 
     if (index < result.size()) {
         *value = result.at(index);
-        std::cout << "        returning " << *value << std::endl;
+        LOG("        returning " << *value );
         return kOfxStatOK;
     } else {
         printAllProperties(properties);
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG("No handle " << property );
         return kOfxStatErrBadIndex;
     }
 }
 
 OfxStatus propGetInt(OfxPropertySetHandle properties, const char *property, int index, int *value) {
-    std::cout << "propGetInt " << property << " " << index << std::endl;
+    LOG("propGetInt " << property << " " << index );
     std::string sproperty(property);
     std::map<std::string,std::vector<int>>::iterator doubleIterator = properties->integers.find(std::string(property));
 
     if (doubleIterator == properties->integers.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG("[!ERROR!] - No handle " << property );
         return kOfxStatErrBadHandle;
     }
 
@@ -266,21 +266,21 @@ OfxStatus propGetInt(OfxPropertySetHandle properties, const char *property, int 
 
     if (index < result.size()) {
         *value = result.at(index);
-        std::cout << "         returning " << *value << std::endl;
+        LOG("         returning " << *value );
         return kOfxStatOK;
     } else {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
         return kOfxStatErrBadIndex;
     }
 }
 
 OfxStatus propGetPointerN(OfxPropertySetHandle properties, const char *property, int count, void **value) {
-    std::cout << "" << std::endl;
+    LOG("" );
     std::string sproperty(property);
     std::map<std::string,std::vector<void*>>::iterator doubleIterator = properties->pointers.find(std::string(property));
 
     if (doubleIterator == properties->pointers.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR(" No handle " << property );
         return kOfxStatErrBadHandle;
     }
 
@@ -296,18 +296,18 @@ OfxStatus propGetPointerN(OfxPropertySetHandle properties, const char *property,
 }
 
 OfxStatus propGetStringN(OfxPropertySetHandle properties, const char *property, int count, char **value) {
-    std::cout << "" << std::endl;
+    LOG("" );
     std::string sproperty(property);
     std::map<std::string,std::vector<char*>>::iterator doubleIterator = properties->strings.find(std::string(property));
 
     if (doubleIterator == properties->strings.end()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG("[!ERROR!] - No handle " << property );
         return kOfxStatErrBadHandle;
     }
 
     std::vector<char*> result = (*doubleIterator).second;
     if (count >= result.size()) {
-        std::cout << "[!ERROR!] - No handle " << property << std::endl;
+        LOG_ERROR("No handle " << property );
        return kOfxStatErrBadIndex;
     } else {
         for (int i = 0; i <count; ++i) {
@@ -318,7 +318,6 @@ OfxStatus propGetStringN(OfxPropertySetHandle properties, const char *property, 
 }
 
 OfxPropertySuiteV1* createPropertySuiteV1() {
-    std::cout << "" << std::endl;
     if (propertySuiteV1 != NULL) {
         return propertySuiteV1;
     } else {
@@ -348,23 +347,27 @@ OfxPropertySuiteV1* createPropertySuiteV1() {
 
 template<class T>
 void printMap(std::map<std::string, std::vector<T>> map) {
-    for (auto& t : map) {
-        std::cout << t.first << "  :   ";
-        for (int i = 0; i < t.second.size(); ++i) {
-            std::cout << t.second[i] << " ";
+    #ifdef DEBUG_LOGGING
+        for (auto& t : map) {
+            std::cout << t.first << "  :   ";
+            for (int i = 0; i < t.second.size(); ++i) {
+                std::cout << t.second[i] << " ";
+            }
+            std::cout << std::endl;
         }
         std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    #endif
 }
 
 void printAllProperties(OfxPropertySetHandle properties) {
-    std::cout << "Values" << std::endl;
-    printMap(properties->doubles );
-    printMap(properties->integers);
-    printMap(properties->pointers);
-    printMap(properties->strings);
-    std::cout << "//Values" << std::endl;
+    #ifdef DEBUG_LOGGING
+        std::cout << "Values" << std::endl;
+        printMap(properties->doubles );
+        printMap(properties->integers);
+        printMap(properties->pointers);
+        printMap(properties->strings);
+        std::cout << "//Values" << std::endl;
+    #endif
 }
 
 std::map<std::string, std::vector<char*>>* getParametersAsMap(OfxPropertySetHandle properties) {
@@ -410,7 +413,7 @@ std::map<std::string, std::vector<char*>>* getParametersAsMap(OfxPropertySetHand
         result[t.first] = elementLine;
     }
     for (auto& t : properties->pointers) {
-        std::cout << "ERROR pointer cannot be serialized" << std::endl;
+        LOG("ERROR pointer cannot be serialized" );
     }
 
     return resultPointer;

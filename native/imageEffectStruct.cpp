@@ -4,6 +4,7 @@
 #include "imageLoader.h"
 #include <cstring>
 #include "globalCallbackFunctions.h"
+#include "global.h"
 
 OfxImageEffectSuiteV1* effectSuite = NULL;
 
@@ -18,13 +19,13 @@ OfxImageEffectStruct::~OfxImageEffectStruct() {
 }
 
 OfxStatus getPropertySet(OfxImageEffectHandle imageEffect, OfxPropertySetHandle *propHandle) {
-    std::cout << "getPropertySet" << std::endl;
+    LOG("getPropertySet" );
     *propHandle = imageEffect->properties;
     return kOfxStatOK;
 }
 
 OfxStatus getParamSet(OfxImageEffectHandle imageEffect, OfxParamSetHandle *paramSet){
-    std::cout << "getParamSet" << std::endl;
+    LOG("getParamSet" );
 
     *paramSet = imageEffect->parameters;
 
@@ -33,7 +34,7 @@ OfxStatus getParamSet(OfxImageEffectHandle imageEffect, OfxParamSetHandle *param
 OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
             const char *name,	 
             OfxPropertySetHandle *propertySet) {
-                std::cout << "clipDefine " << name << std::endl;
+                LOG("clipDefine " << name );
 
 
                 OfxPropertySetHandle clip = new OfxPropertySetStruct();
@@ -57,7 +58,7 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                     typeToUse = imageEffect->properties->strings[kOfxImageEffectPropSupportedPixelDepths][0];
                 }
 
-                std::cout << "Clip type" << typeToUse << std::endl;
+                LOG("Clip type" << typeToUse );
 
                 propSetString(clip, kOfxImageEffectPropPixelDepth, 0, typeToUse);
                 propSetString(clip, "CLIP_TYPE", 0, typeToUse);
@@ -79,7 +80,7 @@ OfxStatus clipGetHandle(OfxImageEffectHandle imageEffect,
                             const char *name,
                             OfxImageClipHandle *clip,
                             OfxPropertySetHandle *propertySet){
-                std::cout << "clipGetHandle " << name << std::endl;
+                LOG("clipGetHandle " << name );
 
                 std::map<std::string, OfxImageClipHandle>::iterator it = imageEffect->clips.find(std::string(name));
 
@@ -96,7 +97,7 @@ OfxStatus clipGetHandle(OfxImageEffectHandle imageEffect,
 }
 OfxStatus clipGetPropertySet(OfxImageClipHandle clip,
                      OfxPropertySetHandle *propHandle) {
-                std::cout << "clipGetPropertySet" << std::endl;
+                LOG("clipGetPropertySet" );
 
                 *propHandle = clip->properties;
 
@@ -125,7 +126,7 @@ void* convertImage(Image* image, char* type, char* componentType, bool* allocate
         } else if (strcmp(componentType, kOfxImageComponentAlpha) == 0) {
             numberOfComponents = 1;
         } else {
-            std::cout << "[!ERROR!] Unknown number of components" << std::endl;
+            LOG_ERROR("Unknown number of components" );
         }
 
         *numberOfComponentsOut = numberOfComponents;
@@ -151,7 +152,7 @@ void* convertImage(Image* image, char* type, char* componentType, bool* allocate
             *outputSize = numberOfElements * sizeof(float);
             return result;
         } else {
-            std::cout << "[!ERROR!] Unsupported type " << type << std::endl;
+            LOG_ERROR("Unsupported type " << type );
         }
 
 
@@ -163,7 +164,7 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             OfxTime       time,
             const OfxRectD     *region,
             OfxPropertySetHandle   *imageHandle){
-            std::cout << "clipGetImage" << std::endl;
+            LOG("clipGetImage" );
 
             char* clipName;
             propGetString(clip->properties, "CLIP_NAME", 0, &clipName);
@@ -225,14 +226,14 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
                         loadImageRequest.effectId = clip->imageEffect->currentRenderRequest->effectId;
                         loadImageRequest.data = NULL;
 
-                        std::cout << "About to call Java" << std::endl;
+                        LOG("About to call Java" );
 
                         globalFunctionPointers->loadImageCallback(&loadImageRequest);
 
-                        std::cout << "Source image loaded " << std::endl;
-                        std::cout << loadImageRequest.width << " " << loadImageRequest.height << std::endl;
-                        std::cout << width << " " << height << std::endl;
-                        std::cout << (int*)loadImageRequest.data << std::endl;
+                        LOG("Source image loaded " );
+                        LOG(loadImageRequest.width << " " << loadImageRequest.height );
+                        LOG(width << " " << height );
+                        LOG((int*)loadImageRequest.data );
 
                         if (loadImageRequest.data) {
                             Image image(loadImageRequest.width, loadImageRequest.height, loadImageRequest.data) ;
@@ -283,12 +284,12 @@ OfxStatus clipGetImage(OfxImageClipHandle clip,
             return kOfxStatOK;
 }
 OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle){
-                std::cout << "clipReleaseImage" << std::endl;
+                LOG("clipReleaseImage" );
                 int allocated;
                 propGetInt(imageHandle, "ALLOCATED", 0, &allocated);
 
                 if (allocated) {
-                    std::cout << "Deleting allocated memory " << std::endl;
+                    LOG("Deleting allocated memory " );
 
                     void* pointer;
                     propGetPointer(imageHandle, kOfxImagePropData, 0, &pointer);
@@ -303,7 +304,7 @@ OfxStatus clipReleaseImage(OfxPropertySetHandle imageHandle){
 OfxStatus clipGetRegionOfDefinition(OfxImageClipHandle clip,
                     OfxTime time,
                     OfxRectD *bounds){
-                std::cout << "clipGetRegionOfDefinition" << std::endl;
+                LOG("clipGetRegionOfDefinition" );
 
                 bounds->x1 = 0;
                 bounds->y1 = 0;
@@ -316,14 +317,14 @@ OfxStatus clipGetRegionOfDefinition(OfxImageClipHandle clip,
 
 
 int abortInternal(OfxImageEffectHandle imageEffect){
-    std::cout << "abort" << std::endl;
+    LOG("abort" );
     return kOfxStatOK;
 }
 
 OfxStatus imageMemoryAlloc(OfxImageEffectHandle instanceHandle, 
             size_t nBytes,
             OfxImageMemoryHandle *memoryHandle){
-                std::cout << "imageMemoryAlloc" << std::endl;
+                LOG("imageMemoryAlloc" );
 
                 OfxImageMemoryStruct* result = new OfxImageMemoryStruct();
                 result->memory = new char[nBytes];
@@ -334,7 +335,7 @@ OfxStatus imageMemoryAlloc(OfxImageEffectHandle instanceHandle,
 }
 
 OfxStatus imageMemoryFree(OfxImageMemoryHandle memoryHandle){
-                std::cout << "imageMemoryFree" << std::endl;
+                LOG("imageMemoryFree" );
 
                 delete[] memoryHandle->memory;
                 delete memoryHandle;
@@ -344,7 +345,7 @@ OfxStatus imageMemoryFree(OfxImageMemoryHandle memoryHandle){
 
 OfxStatus imageMemoryLock(OfxImageMemoryHandle memoryHandle,
                 void **returnedPtr) {
-                std::cout << "imageMemoryLock" << std::endl;
+                LOG("imageMemoryLock" );
 
                 *returnedPtr = memoryHandle->memory;
 
@@ -352,7 +353,7 @@ OfxStatus imageMemoryLock(OfxImageMemoryHandle memoryHandle,
 }
 
 OfxStatus imageMemoryUnlock(OfxImageMemoryHandle memoryHandle){
-                std::cout << "imageMemoryUnlock" << std::endl;
+                LOG("imageMemoryUnlock" );
                 // noop
                 return kOfxStatOK;
 }

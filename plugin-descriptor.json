@@ -1,0 +1,7 @@
+{
+  "id": "openfx-host-plugin",
+  "name": "OpenFXHostPlugin",
+  "description": "Tactview plugin to load OpenFX plugins",
+  "author": "helospark",
+  "version": "${project.version}"
+}

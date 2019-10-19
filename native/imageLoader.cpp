@@ -2,16 +2,17 @@
 #include <fstream>
 #include <cstring>
 #include "imageLoader.h"
+#include "global.h"
 
 int readInt(std::ifstream& file) {
     while (file.is_open()) {
         std::string data;
         file >> data;
-        //std::cout << "Peaked " << data << std::endl;
+        //LOG("Peaked " << data );
         if (data[0] == '#') {
             std::string line;
             getline( file, line );
-            std::cout << "Comment read" << line << std::endl;
+            LOG("Comment read" << line );
         } else {
             return std::stoi(data);
         }
@@ -25,7 +26,7 @@ Image* loadImage(const char* fileName) {
 
     file >> data;
 
-    std::cout << "Read data " << data << std::endl; 
+    LOG("Read data " << data ); 
 
     if (data == "P3") {
         int width  = readInt(file);
@@ -44,11 +45,11 @@ Image* loadImage(const char* fileName) {
             }
         }
 
-        std::cout << "Loadedd image " << width << " " << height << std::endl;
+        LOG("Loadedd image " << width << " " << height );
 
         return new Image(width, height, data);
     } else {
-        std::cout << "Wrong format" << std::endl;
+        LOG("Wrong format" );
         return NULL;
     }
 

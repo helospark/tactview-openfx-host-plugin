@@ -49,6 +49,8 @@ public class OpenFXEffectFactory {
     private List<ProceduralClipFactoryChainItem> proceduralClipFactories;
     private Map<String, Integer> pluginNameToLoadedPluginId = new HashMap<>();
 
+    private Map<String, PluginDescription> idToPluginDescription = new HashMap<>();
+
     @PostConstruct
     public List<StandardEffectFactory> openfxEffect() {
         effectFactories = new ArrayList<>();
@@ -82,11 +84,11 @@ public class OpenFXEffectFactory {
                 List<String> supportedContexts = Arrays.asList(describeRequest.supportedContexts.getStringArray(0, describeRequest.supportedContextSize));
 
                 if (supportedContexts.contains(FILTER_CONTEXT)) {
-                    createEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
+                    createEffectFactory(loadedPluginIndex, pluginName, describeRequest, bundle).ifPresent(effectFactories::add);
                 } else if (supportedContexts.contains(GENERATOR_CONTEXT)) {
-                    createProcuduralClipFactory(loadedPluginIndex, pluginName).ifPresent(proceduralClipFactories::add);
+                    createProcuduralClipFactory(loadedPluginIndex, pluginName, describeRequest, bundle).ifPresent(proceduralClipFactories::add);
                 } else if (supportedContexts.contains(TRANSITION_CONTEXT)) {
-                    createTransitionEffectFactory(loadedPluginIndex, pluginName).ifPresent(effectFactories::add);
+                    createTransitionEffectFactory(loadedPluginIndex, pluginName, describeRequest, bundle).ifPresent(effectFactories::add);
                 }
             }
         }
@@ -94,7 +96,7 @@ public class OpenFXEffectFactory {
 
     }
 
-    private Optional<StandardEffectFactory> createEffectFactory(int loadedPluginIndex, String pluginName) {
+    private Optional<StandardEffectFactory> createEffectFactory(int loadedPluginIndex, String pluginName, DescribeRequest describeRequest, File bundle) {
         Optional<StandardEffectFactory> effectFactory = Optional.empty();
         DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
         describeInContextRequest.pluginIndex = loadedPluginIndex;
@@ -102,20 +104,27 @@ public class OpenFXEffectFactory {
         int returnStatus = OpenfxLibrary.INSTANCE.describeInContext(describeInContextRequest);
 
         if (returnStatus >= 0) {
+            String id = "openfx-filter-" + pluginName;
             effectFactory = Optional.of(StandardEffectFactory.builder()
                     .withFactory(request -> new OpenFXFilterEffect(new TimelineInterval(request.getPosition(), TimelineLength.ofMillis(5000)), loadedPluginIndex, openFxPluginInitializer,
                             pluginName))
                     .withRestoreFactory((node, loadMetadata) -> new OpenFXFilterEffect(node, loadMetadata, openFxPluginInitializer, pluginNameToLoadedPluginId))
                     .withName(pluginName + "-openfx")
-                    .withSupportedEffectId("openfx-filter-" + pluginName)
+                    .withSupportedEffectId(id)
                     .withSupportedClipTypes(List.of(TimelineClipType.VIDEO, TimelineClipType.IMAGE))
                     .withEffectType(TimelineEffectType.VIDEO_EFFECT)
                     .build());
+            PluginDescription pluginDescription = PluginDescription.builder()
+                    .withDescription(describeRequest.description)
+                    .withLibraryPath(bundle)
+                    .withPluginId(describeRequest.pluginId)
+                    .build();
+            idToPluginDescription.put(id, pluginDescription);
         }
         return effectFactory;
     }
 
-    private Optional<ProceduralClipFactoryChainItem> createProcuduralClipFactory(int loadedPluginIndex, String pluginName) {
+    private Optional<ProceduralClipFactoryChainItem> createProcuduralClipFactory(int loadedPluginIndex, String pluginName, DescribeRequest describeRequest, File bundle) {
         DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
         describeInContextRequest.pluginIndex = loadedPluginIndex;
         describeInContextRequest.context = GENERATOR_CONTEXT;
@@ -129,7 +138,8 @@ public class OpenFXEffectFactory {
                     .withLength(defaultLength)
                     .build();
 
-            ProceduralClipFactoryChainItem proceduralClipFactory = new StandardProceduralClipFactoryChainItem("openfx-generator-" + pluginName, pluginName + "-openfx",
+            String id = "openfx-generator-" + pluginName;
+            ProceduralClipFactoryChainItem proceduralClipFactory = new StandardProceduralClipFactoryChainItem(id, pluginName + "-openfx",
                     request -> {
                         return new OpenFXGeneratorProceduralClip(metadata, new TimelineInterval(request.getPosition(), defaultLength), loadedPluginIndex, openFxPluginInitializer,
                                 pluginName);
@@ -137,13 +147,19 @@ public class OpenFXEffectFactory {
                     (node, loadMetadata) -> {
                         return new OpenFXGeneratorProceduralClip(metadata, node, loadMetadata, openFxPluginInitializer, pluginNameToLoadedPluginId);
                     });
+            PluginDescription pluginDescription = PluginDescription.builder()
+                    .withDescription(describeRequest.description)
+                    .withLibraryPath(bundle)
+                    .withPluginId(describeRequest.pluginId)
+                    .build();
+            idToPluginDescription.put(id, pluginDescription);
             return Optional.of(proceduralClipFactory);
         } else {
             return Optional.empty();
         }
     }
 
-    private Optional<StandardEffectFactory> createTransitionEffectFactory(int loadedPluginIndex, String pluginName) {
+    private Optional<StandardEffectFactory> createTransitionEffectFactory(int loadedPluginIndex, String pluginName, DescribeRequest describeRequest, File bundle) {
         Optional<StandardEffectFactory> effectFactory = Optional.empty();
         DescribeInContextRequest describeInContextRequest = new DescribeInContextRequest();
         describeInContextRequest.pluginIndex = loadedPluginIndex;
@@ -151,15 +167,23 @@ public class OpenFXEffectFactory {
         int returnStatus = OpenfxLibrary.INSTANCE.describeInContext(describeInContextRequest);
 
         if (returnStatus >= 0) {
+            String id = "openfx-transition-" + pluginName;
             effectFactory = Optional.of(StandardEffectFactory.builder()
                     .withFactory(request -> new OpenFXTransitionEffect(new TimelineInterval(request.getPosition(), TimelineLength.ofMillis(2000)), loadedPluginIndex, openFxPluginInitializer,
                             pluginName))
                     .withRestoreFactory((node, loadMetadata) -> new OpenFXFilterEffect(node, loadMetadata, openFxPluginInitializer, pluginNameToLoadedPluginId))
                     .withName(pluginName + "-openfx")
-                    .withSupportedEffectId("openfx-transition-" + pluginName)
+                    .withSupportedEffectId(id)
                     .withSupportedClipTypes(List.of(TimelineClipType.VIDEO, TimelineClipType.IMAGE))
                     .withEffectType(TimelineEffectType.VIDEO_TRANSITION)
                     .build());
+
+            PluginDescription pluginDescription = PluginDescription.builder()
+                    .withDescription(describeRequest.description)
+                    .withLibraryPath(bundle)
+                    .withPluginId(describeRequest.pluginId)
+                    .build();
+            idToPluginDescription.put(id, pluginDescription);
         }
         return effectFactory;
     }
@@ -172,6 +196,10 @@ public class OpenFXEffectFactory {
     @Bean
     public List<ProceduralClipFactoryChainItem> getProceduralClipFactories() {
         return proceduralClipFactories;
+    }
+
+    public Map<String, PluginDescription> getIdToPluginDescription() {
+        return idToPluginDescription;
     }
 
 }

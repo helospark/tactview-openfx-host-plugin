@@ -14,6 +14,7 @@
 #include <map>
 #include "globalCallbackFunctions.h"
 #include "string_operations.h"
+#include "global.h"
 
 #ifdef __linux__ 
 #include <dlfcn.h>
@@ -25,7 +26,7 @@ typedef int(*intFptr)();
 typedef OfxPlugin*(*getPluginFptr)(int);
 
 const void *fetchSuite(OfxPropertySetHandle host, const char *suiteName, int suiteVersion) {
-    std::cout << "Getting " << suiteName << " " << suiteVersion << std::endl;
+    LOG("Getting " << suiteName << " " << suiteVersion );
 
     if (strcmp(suiteName, kOfxImageEffectSuite) == 0 && suiteVersion == 1) {
         return getOfxImageEffectSuiteV1();
@@ -41,17 +42,17 @@ const void *fetchSuite(OfxPropertySetHandle host, const char *suiteName, int sui
         return getMessageSuite();
     }
 
-    std::cout << " :( [ERROR] missing feature" << std::endl;
+    LOG_WARN("missing feature " << suiteName << " " << suiteVersion );
 
     return (void*)0;
 }
 
 OfxStatus callEntryPoint(const char *action, const void *handle, OfxPropertySetHandle inArgs, OfxPropertySetHandle outArgs, OfxPlugin* plugin) {
-    std::cout << "Calling " << action << std::endl;
+    LOG("Calling " << action );
     OfxStatus result = plugin->mainEntry(action, handle, inArgs, outArgs);   
-    std::cout << action << " done" << std::endl;
-    if (result != kOfxStatOK) {
-        std::cout << "Error, result is " << result << std::endl;
+    LOG(action << " done" );
+    if (result != kOfxStatOK && result != kOfxStatReplyDefault) {
+        LOG_WARN( action << " resulted status " << result );
     }
     return result;
 }
@@ -128,7 +129,7 @@ struct InitializeHostRequest {
     ParameterValueProviderCallback parameterValueProviderCallback;
 };
 
-void initializeHost(InitializeHostRequest* request) {
+EXPORTED void initializeHost(InitializeHostRequest* request) {
     globalHost = createGlobalHost();
 
     globalFunctionPointers = new GlobalFunctions();
@@ -151,7 +152,7 @@ struct LoadLibraryRequest {
     int numberOfPlugins;
 };
 
-int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
+EXPORTED int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
 
     void *handle;
     
@@ -160,13 +161,13 @@ int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
     #ifdef __linux__
         handle = dlopen(file, RTLD_LAZY);
         if (!handle) {
-            fprintf(stderr, "Error: %s\n", dlerror());
+            LOG_ERROR("Unable to load native library" << dlerror());
             return EXIT_FAILURE;
         }
     #elif _WIN32 || __CYGWIN__
         handle = LoadLibraryA(file); 
         if (!handle) {
-            fprintf(stderr, "Error: %d\n", GetLastError());
+            LOG_ERROR("Unable to load native library" << GetLastError());
             return EXIT_FAILURE;
         }
     #endif
@@ -179,7 +180,7 @@ int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
         func_print_name = (intFptr) dlsym(handle, "OfxGetNumberOfPlugins");
         if (!func_print_name) {
             /* no such symbol */
-            fprintf(stderr, "Error: %s\n", dlerror());
+            LOG_ERROR("Unable to find numberOfPlugins function" << dlerror());
             dlclose(handle);
             return EXIT_FAILURE;
         }
@@ -187,13 +188,13 @@ int loadLibrary(LoadLibraryRequest* loadLibraryRequest) {
         func_print_name = (intFptr) GetProcAddress((HINSTANCE)handle, "OfxGetNumberOfPlugins");
         if (!func_print_name) {
             /* no such symbol */
-            fprintf(stderr, "Error: ???\n");
+            LOG_ERROR("Unable to find numberOfPlugins function");
             //dlclose(handle);
             return EXIT_FAILURE;
         }
     #endif
     int plugins = func_print_name();
-    fprintf(stderr, "Loaded, number of plugins %d\n", plugins);
+    LOG("Loaded library " << file << " number of plugins " << plugins);
 
     getPluginFptr getPlugin = NULL;
     #ifdef __linux__
@@ -226,18 +227,19 @@ struct LoadedPluginDescriptor {
     
 
     char* name;
+    char* pluginDescription;
 };
 
 int globalUniqueLoadedPluginIndex = 0;
 
 std::map<int, LoadedPluginDescriptor*> pluginDescriptors;
 
-int loadPlugin(LoadPluginRequest* loadPluginRequest) {
+EXPORTED int loadPlugin(LoadPluginRequest* loadPluginRequest) {
     LoadedLibraryDescriptor* loadedLibraryDescriptor = loadedLibraries[loadPluginRequest->libraryDescriptor];
 
     OfxPlugin* plugin = loadedLibraryDescriptor->getPlugin(loadPluginRequest->pluginIndex);
 
-    std::cout << "Api version = " << plugin->apiVersion << " plugin_index=" << loadPluginRequest->pluginIndex << std::endl;
+    LOG("Api version = " << plugin->apiVersion << " plugin_index=" << loadPluginRequest->pluginIndex );
 
     plugin->setHost(globalHost);
 
@@ -338,26 +340,25 @@ int clamp(int v, int min, int max) {
 struct DescribeRequest {
     int pluginIndex;
 
+    char* pluginId;
     char* name;
     char* description;
     int supportedContextSize;
     char** supportedContexts;
 };
 
-void describe(DescribeRequest* describeRequest) {
+EXPORTED void describe(DescribeRequest* describeRequest) {
     LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
-    std::cout << "Calling entrypoint" << std::endl;
+    LOG("Calling entrypoint" );
 
     callEntryPoint(kOfxActionDescribe, effectHandle, NULL, NULL, pluginDefinition->plugin);
     
-    std::cout << "!DESCRIBE! Returning back" << std::endl;
-
     printAllProperties(effectHandle->properties);
-
+    
     propGetString(effectHandle->properties, kOfxPropLabel, 0, &pluginDefinition->name);
-    //propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
+    propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
 
     for (int i = 0; i < effectHandle->properties->strings[kOfxImageEffectPropSupportedContexts].size(); ++i) {
         char* pointer;
@@ -366,9 +367,10 @@ void describe(DescribeRequest* describeRequest) {
     }
 
     describeRequest->name = pluginDefinition->name;
-    describeRequest->description = "";// pluginDefinition->pluginDescription;
+    describeRequest->description = pluginDefinition->pluginDescription;
     describeRequest->supportedContexts = &pluginDefinition->supportedContexts[0];
     describeRequest->supportedContextSize = pluginDefinition->supportedContexts.size();
+    describeRequest->pluginId = (char*)pluginDefinition->plugin->pluginIdentifier;
 }
 
 struct ParameterMap {
@@ -396,7 +398,7 @@ struct DescribeInContextRequest {
     char* context;
 };
 
-int describeInContext(DescribeInContextRequest* describeInContextRequest) {
+EXPORTED int describeInContext(DescribeInContextRequest* describeInContextRequest) {
     LoadedPluginDescriptor* pluginDefinition = pluginDescriptors[describeInContextRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectDescriptor;
 
@@ -477,7 +479,7 @@ OfxImageEffectHandle copyImageEffectHandle(OfxImageEffectHandle from) {
         copiedParameter->paramId = globalParameterIndex++;
         copiedParameter->imageEffectHandle = actualHandle;
 
-        std::cout << "Creating new parameter " << copiedParameter->name << " " << globalParameterIndex << std::endl;
+        LOG("Creating new parameter " << copiedParameter->name << " " << globalParameterIndex );
 
         actualHandle->parameters->parameters.push_back(copiedParameter);
     }
@@ -499,11 +501,10 @@ void deleteImageEffectHandle(OfxImageEffectHandle toDelete) {
         }
         delete element.second;
     }
-    delete toDelete->parameters;
     delete toDelete;
 }
 
-int createInstance(CreateInstanceRequest* request) {
+EXPORTED int createInstance(CreateInstanceRequest* request) {
     LoadedPluginDescriptor* pluginDescriptor = pluginDescriptors[request->pluginIndex];
     LoadedLibraryDescriptor* loadedLibraryDescriptor = loadedLibraries[pluginDescriptor->libraryDescriptor];
 
@@ -578,7 +579,7 @@ int createInstance(CreateInstanceRequest* request) {
     return globalUniquePluginIndex;
 }
 
-int renderImage(RenderImageRequest* imageRequest)
+EXPORTED int renderImage(RenderImageRequest* imageRequest)
 {
     PluginDefinition* pluginDefinition = createdPlugins[imageRequest->pluginIndex];
     OfxImageEffectHandle effectHandle = pluginDefinition->effectHandle;
@@ -637,7 +638,7 @@ int renderImage(RenderImageRequest* imageRequest)
    // callEntryPoint(kOfxImageEffectActionGetRegionOfDefinition, effectHandle, inParam, outParam, pluginDefinition->ofxPlugin);
 
 
-    std::cout << "Transition " << imageRequest->isTransition << " " << imageRequest->transitionProgress << std::endl;
+    LOG("Transition " << imageRequest->isTransition << " " << imageRequest->transitionProgress );
     if (imageRequest->isTransition) {
         propSetDouble(inParam, kOfxImageEffectTransitionParamName, 0, imageRequest->transitionProgress);
         renderRequest->transitionProgress = imageRequest->transitionProgress;
@@ -773,7 +774,7 @@ int main(int argc, char** argv) {
     InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
     initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
 
-    int pluginToLoad = 170;
+    int pluginToLoad = 17;
 
     if (argc > 1) {
         pluginToLoad = atoi(argv[1]);
@@ -782,7 +783,7 @@ int main(int argc, char** argv) {
     initializeHost(initializeHostRequest);
 
     LoadLibraryRequest loadLibraryRequest;
-    loadLibraryRequest.file = "/usr/OFX/Plugins/Sapphire.ofx.bundle/Contents/Linux-x86-64/Sapphire.ofx";
+    loadLibraryRequest.file = "/usr/OFX/Plugins/Misc.ofx.bundle/Contents/Linux-x86-64/Misc.ofx";
     
     int libraryIndex = loadLibrary(&loadLibraryRequest);
 
@@ -815,7 +816,7 @@ int main(int argc, char** argv) {
 
 
     for (int i = 0; i < createInstanceRequest.clips->numberOfEntries; ++i) {
-        std::cout << createInstanceRequest.clips->clip[i].name << std::endl;
+        LOG(createInstanceRequest.clips->clip[i].name );
     }
 
     RenderImageClip clip;

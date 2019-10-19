@@ -9,6 +9,7 @@ import com.sun.jna.Structure;
 public class DescribeRequest extends Structure implements Structure.ByReference {
     public int pluginIndex;
 
+    public String pluginId;
     public String name;
     public String description;
     public int supportedContextSize;
@@ -16,6 +17,6 @@ public class DescribeRequest extends Structure implements Structure.ByReference 
 
     @Override
     protected List<String> getFieldOrder() {
-        return Arrays.asList("pluginIndex", "name", "description", "supportedContextSize", "supportedContexts");
+        return Arrays.asList("pluginIndex", "pluginId", "name", "description", "supportedContextSize", "supportedContexts");
     }
 }
