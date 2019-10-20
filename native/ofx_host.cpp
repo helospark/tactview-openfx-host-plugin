@@ -411,7 +411,7 @@ EXPORTED int describeInContext(DescribeInContextRequest* describeInContextReques
 
     OfxStatus status = callEntryPoint(kOfxImageEffectActionDescribeInContext, effectHandle, &inParam, NULL, pluginDefinition->plugin);
 
-    bool returnStatus = 0;
+    int returnStatus = 0;
     if (status == kOfxStatErrUnsupported) {
         returnStatus = -1;
     }
@@ -756,7 +756,7 @@ void uninitialize() {
         #ifdef __linux__
             dlclose(toDelete->handle);
         #elif _WIN32 || __CYGWIN__
-            FreeLibrary((HINSTANCE)pluginDefinition->handle); 
+            FreeLibrary((HINSTANCE)toDelete->handle); 
         #endif
     }
     delete globalHost->host;
@@ -774,7 +774,7 @@ int main(int argc, char** argv) {
     InitializeHostRequest* initializeHostRequest = new InitializeHostRequest();
     initializeHostRequest->loadImageCallback = &loadImageCallbackMock;
 
-    int pluginToLoad = 17;
+    int pluginToLoad = 11;
 
     if (argc > 1) {
         pluginToLoad = atoi(argv[1]);
@@ -783,7 +783,7 @@ int main(int argc, char** argv) {
     initializeHost(initializeHostRequest);
 
     LoadLibraryRequest loadLibraryRequest;
-    loadLibraryRequest.file = "/usr/OFX/Plugins/Misc.ofx.bundle/Contents/Linux-x86-64/Misc.ofx";
+    loadLibraryRequest.file = "C:\\Users\\black\\Documents\\ofx\\BCC12_OFX.ofx.bundle\\Contents\\Win64\\BCC12_OFX.ofx";
     
     int libraryIndex = loadLibrary(&loadLibraryRequest);
 
@@ -823,7 +823,7 @@ int main(int argc, char** argv) {
     clip.width = createInstanceRequest.width;
     clip.height = createInstanceRequest.height;
     clip.name = "Mask";
-    Image* sourceImage = loadImage("/home/black/Downloads/image.ppm");
+    Image* sourceImage = loadImage("C:\\Users\\black\\Downloads\\image.ppm");
 
     RenderImageRequest* renderImageRequest = new RenderImageRequest();
     renderImageRequest->width = sourceImage->width;
@@ -839,7 +839,7 @@ int main(int argc, char** argv) {
     
 
     std::stringstream ss;
-    ss << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_1" << ".ppm";
+    ss << "C:\\Temp\\result_native_" << pluginToLoad << "_" << describeRequest.name << "_1" << ".ppm";
 
     writeImage(ss.str().c_str(), image, "OfxBitDepthByte");
 
@@ -847,7 +847,7 @@ int main(int argc, char** argv) {
     delete image;
     delete sourceImage;
 
-    sourceImage = loadImage("/home/black/Downloads/image.ppm");
+    sourceImage = loadImage("C:\\Users\\black\\Downloads\\image.ppm");
 
 
 
@@ -885,7 +885,7 @@ int main(int argc, char** argv) {
     delete sourceImage;
 
     std::stringstream ss2;
-    ss2 << "/tmp/result_native_" << pluginToLoad << "_" << describeRequest.name << "_2" << ".ppm";
+    ss2 << "C:\\Temp\\result_native_" << pluginToLoad << "_" << describeRequest.name << "_2" << ".ppm";
 
 
     writeImage(ss2.str().c_str(), image, "OfxBitDepthByte");

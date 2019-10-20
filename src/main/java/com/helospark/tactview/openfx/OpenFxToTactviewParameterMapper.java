@@ -125,6 +125,8 @@ public class OpenFxToTactviewParameterMapper {
                         pointProvider = PointProvider.of(defaultValue1, defaultValue2);
                     }
                     nameToEffect.put(parameter.getName(), pointProvider);
+                } else {
+                   System.out.println("ERROR, cannot find parameter mapping for " + type);
                 }
             }
         }
