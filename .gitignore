@@ -4,3 +4,10 @@ target
 *.so
 *.log
 *.txt
+*.obj
+*.dll
+*.exp
+*.lib
+*.pdb
+*.stackdump
+*.exe

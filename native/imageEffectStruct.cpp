@@ -42,6 +42,7 @@ OfxStatus clipDefine(OfxImageEffectHandle imageEffect,
                 bool isAlpha = strcmp(name, "Mask") == 0;
                // const char* supportedComponents[] = {kOfxImageComponentRGBA, kOfxImageComponentAlpha};
                 propSetString(clip, kOfxImageEffectPropComponents, 0, kOfxImageComponentRGBA);
+                propSetString(clip, kOfxImageEffectPropPreMultiplication, 0, kOfxImageUnPreMultiplied);
               //  propSetStringN(clip, kOfxImageEffectPropSupportedComponents, 2, supportedComponents);
 
                 auto actualSupportedFormats = imageEffect->properties->strings[kOfxImageEffectPropSupportedPixelDepths];
