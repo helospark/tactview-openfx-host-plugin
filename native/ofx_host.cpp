@@ -358,7 +358,13 @@ EXPORTED void describe(DescribeRequest* describeRequest) {
     printAllProperties(effectHandle->properties);
     
     propGetString(effectHandle->properties, kOfxPropLabel, 0, &pluginDefinition->name);
-    propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
+
+    OfxStatus status = propGetString(effectHandle->properties, kOfxPropPluginDescription, 0, &pluginDefinition->pluginDescription);
+
+    if (status != kOfxStatOK) {
+        pluginDefinition->pluginDescription = "";
+    }
+
 
     for (int i = 0; i < effectHandle->properties->strings[kOfxImageEffectPropSupportedContexts].size(); ++i) {
         char* pointer;

@@ -108,8 +108,8 @@ public class OpenFXTransitionEffect extends AbstractVideoTransitionEffect {
     }
 
     @Override
-    public List<ValueProviderDescriptor> getValueProviders() {
-        List<ValueProviderDescriptor> valueProviders = super.getValueProviders();
+    protected List<ValueProviderDescriptor> getValueProvidersInternal() {
+        List<ValueProviderDescriptor> valueProviders = super.getValueProvidersInternal();
         valueProviders.addAll(initializedPluginData.descriptors);
         return valueProviders;
     }
