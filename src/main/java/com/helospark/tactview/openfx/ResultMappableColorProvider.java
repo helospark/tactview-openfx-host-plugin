@@ -1,7 +1,6 @@
 package com.helospark.tactview.openfx;
 
 import com.helospark.tactview.core.timeline.TimelinePosition;
-import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
 import com.helospark.tactview.core.timeline.effect.interpolation.interpolator.MultiKeyframeBasedDoubleInterpolator;
 import com.helospark.tactview.core.timeline.effect.interpolation.pojo.Color;
 import com.helospark.tactview.core.timeline.effect.interpolation.provider.ColorProvider;
@@ -51,7 +50,7 @@ public class ResultMappableColorProvider extends ColorProvider {
     }
 
     @Override
-    public Class<? extends DesSerFactory<? extends KeyframeableEffect>> generateSerializableContent() {
+    public Class<? extends DesSerFactory<? extends ResultMappableColorProvider>> generateSerializableContent() {
         return ResultMappableColorProviderFactory.class;
     }
 

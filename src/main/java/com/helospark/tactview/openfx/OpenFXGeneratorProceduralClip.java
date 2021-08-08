@@ -10,6 +10,7 @@ import com.helospark.tactview.core.clone.CloneRequestMetadata;
 import com.helospark.tactview.core.decoder.ImageMetadata;
 import com.helospark.tactview.core.decoder.VisualMediaMetadata;
 import com.helospark.tactview.core.save.LoadMetadata;
+import com.helospark.tactview.core.save.SaveMetadata;
 import com.helospark.tactview.core.timeline.GetFrameRequest;
 import com.helospark.tactview.core.timeline.TimelineClip;
 import com.helospark.tactview.core.timeline.TimelineInterval;
@@ -46,7 +47,7 @@ public class OpenFXGeneratorProceduralClip extends ProceduralVisualClip {
 
         Map<String, KeyframeableEffect> clonedParameterMap = new HashMap<>();
         for (var entry : openfxEffect.initializedPluginData.nameToParameter.entrySet()) {
-            clonedParameterMap.put(entry.getKey(), entry.getValue().deepClone());
+            clonedParameterMap.put(entry.getKey(), entry.getValue().deepClone(cloneRequestMetadata));
         }
 
         this.initializedPluginData = openFxPluginInitializer.initialize(openfxEffect.loadedPluginIndex, getId(), clonedParameterMap);
@@ -73,8 +74,8 @@ public class OpenFXGeneratorProceduralClip extends ProceduralVisualClip {
     }
 
     @Override
-    protected void generateSavedContentInternal(Map<String, Object> result) {
-        super.generateSavedContentInternal(result);
+    protected void generateSavedContentInternal(Map<String, Object> result, SaveMetadata saveMetadata) {
+        super.generateSavedContentInternal(result, saveMetadata);
         result.put(PLUGIN_NAME_KEY, pluginName);
         result.put(PARAMETERS_KEY, initializedPluginData.nameToParameter);
     }

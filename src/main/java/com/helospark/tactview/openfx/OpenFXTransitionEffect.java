@@ -8,6 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.helospark.tactview.core.clone.CloneRequestMetadata;
 import com.helospark.tactview.core.save.LoadMetadata;
+import com.helospark.tactview.core.save.SaveMetadata;
 import com.helospark.tactview.core.timeline.StatelessEffect;
 import com.helospark.tactview.core.timeline.TimelineInterval;
 import com.helospark.tactview.core.timeline.effect.interpolation.KeyframeableEffect;
@@ -41,7 +42,7 @@ public class OpenFXTransitionEffect extends AbstractVideoTransitionEffect {
 
         Map<String, KeyframeableEffect> clonedParameterMap = new HashMap<>();
         for (var entry : openfxEffect.initializedPluginData.nameToParameter.entrySet()) {
-            clonedParameterMap.put(entry.getKey(), entry.getValue().deepClone());
+            clonedParameterMap.put(entry.getKey(), entry.getValue().deepClone(cloneRequestMetadata));
         }
 
         this.initializedPluginData = openFxPluginInitializer.initialize(openfxEffect.loadedPluginIndex, getId(), clonedParameterMap);
@@ -68,8 +69,8 @@ public class OpenFXTransitionEffect extends AbstractVideoTransitionEffect {
     }
 
     @Override
-    protected void generateSavedContentInternal(Map<String, Object> result) {
-        super.generateSavedContentInternal(result);
+    protected void generateSavedContentInternal(Map<String, Object> result, SaveMetadata saveMetadata) {
+        super.generateSavedContentInternal(result, saveMetadata);
         result.put(PLUGIN_NAME_KEY, pluginName);
         result.put(PARAMETERS_KEY, initializedPluginData.nameToParameter);
     }
