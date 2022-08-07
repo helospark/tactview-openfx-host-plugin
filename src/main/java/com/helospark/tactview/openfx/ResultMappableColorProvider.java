@@ -20,12 +20,12 @@ public class ResultMappableColorProvider extends ColorProvider {
     }
 
     @Override
-    public Color getValueAt(TimelinePosition position) {
-        return super.getValueAt(position);
+    public Color getValueWithoutScriptAt(TimelinePosition position) {
+        return super.getValueWithoutScriptAt(position);
     }
 
     public Color getUnmappedValue(TimelinePosition position) {
-        Color c = super.getValueAt(position);
+        Color c = super.getValueWithoutScriptAt(position);
         double unMappedR = unmapComponent(c.red, min.red, max.red);
         double unMappedG = unmapComponent(c.green, min.green, max.green);
         double unMappedB = unmapComponent(c.blue, min.blue, max.blue);

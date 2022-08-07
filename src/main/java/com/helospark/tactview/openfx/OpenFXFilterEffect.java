@@ -97,7 +97,7 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
 
             for (var entry : initializedPluginData.nameToParameter.entrySet()) {
                 if (entry.getValue() instanceof DependentClipProvider) {
-                    ReadOnlyClipImage clipImage = requestedClips.get(((DependentClipProvider) entry.getValue()).getValueAt(request.getEffectPosition()));
+                    ReadOnlyClipImage clipImage = requestedClips.get(((DependentClipProvider) entry.getValue()).getValueAt(request.getEffectPosition(), request.getEvaluationContext()));
                     if (clipImage != null) {
                         clipNameToClipImage.put(entry.getKey(), clipImage);
                     }
@@ -160,7 +160,7 @@ public class OpenFXFilterEffect extends StatelessVideoEffect {
         initializedPluginData.nameToParameter.values()
                 .stream()
                 .filter(a -> a instanceof DependentClipProvider)
-                .map(a -> ((DependentClipProvider) a).getValueAt(position))
+                .map(a -> ((DependentClipProvider) a).getValueWithoutScriptAt(position))
                 .filter(a -> a != null)
                 .filter(a -> !a.isEmpty())
                 .forEach(a -> dependencies.add(a));

@@ -40,11 +40,11 @@ public class ParameterResolverImplementation implements ParameterValueProviderCa
 
         TimelinePosition position = new TimelinePosition(resolveValueRequest.time);
         if (keyframeableEffect instanceof IntegerProvider) {
-            resolveValueRequest.result.intValue1 = ((IntegerProvider) keyframeableEffect).getValueAt(position);
+            resolveValueRequest.result.intValue1 = ((IntegerProvider) keyframeableEffect).getValueWithoutScriptAt(position);
         } else if (keyframeableEffect instanceof BooleanProvider) {
-            resolveValueRequest.result.intValue1 = ((BooleanProvider) keyframeableEffect).getValueAt(position) ? 1 : 0;
+            resolveValueRequest.result.intValue1 = ((BooleanProvider) keyframeableEffect).getValueWithoutScriptAt(position) ? 1 : 0;
         } else if (keyframeableEffect instanceof DoubleProvider) {
-            resolveValueRequest.result.doubleValue1 = ((DoubleProvider) keyframeableEffect).getValueAt(position);
+            resolveValueRequest.result.doubleValue1 = ((DoubleProvider) keyframeableEffect).getValueWithoutScriptAt(position);
         } else if (keyframeableEffect instanceof ResultMappableColorProvider) {
             Color color = ((ResultMappableColorProvider) keyframeableEffect).getUnmappedValue(position);
             resolveValueRequest.result.doubleValue1 = color.red;
@@ -52,11 +52,11 @@ public class ParameterResolverImplementation implements ParameterValueProviderCa
             resolveValueRequest.result.doubleValue3 = color.blue;
             resolveValueRequest.result.doubleValue4 = 1.0; // alpha always 1.0 for now
         } else if (keyframeableEffect instanceof ValueListProvider) {
-            OpenfxValueListElement element = (OpenfxValueListElement) ((ValueListProvider) keyframeableEffect).getValueAt(position);
+            OpenfxValueListElement element = (OpenfxValueListElement) ((ValueListProvider) keyframeableEffect).getValueWithoutScriptAt(position);
             resolveValueRequest.result.intValue1 = element.openfxId;
         } else if (keyframeableEffect instanceof PointProvider) {
             PointProvider pointProvider = (PointProvider) keyframeableEffect;
-            Point point = pointProvider.getValueAt(position);
+            Point point = pointProvider.getValueWithoutScriptAt(position);
             resolveValueRequest.result.doubleValue1 = point.x;
             resolveValueRequest.result.doubleValue2 = point.y;
         } else {
